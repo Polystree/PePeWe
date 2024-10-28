@@ -1,215 +1,230 @@
 body {
-    margin: 0;
-    line-height: normal;
+  margin: 0;
+  line-height: normal;
 }
 
 :root {
-    font-family: var(--font-inter), var(--font-poppins), var(--font-smooch-sans);
-    --font-inter: Inter;
-    --font-poppins: Poppins;
-    --font-smooch-sans: 'Smooch Sans';
+  font-family: var(--font-inter), var(--font-poppins), var(--font-smooch-sans);
+  --font-inter: Inter;
+  --font-poppins: Poppins;
+  --font-smooch-sans: "Smooch Sans";
 }
 
 .account-page {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-    gap: 2rem;
-    height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10vw;
+  height: 100vh;
 }
 
 .account-form {
-    height: 800px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .credential-form {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 #welcome {
-    font-family: var(--font-smooch-sans);
-    font-size: 144px;
-    margin-bottom: -36px;
+  font-family: var(--font-smooch-sans);
+  font-size: 7.5rem;
+  margin-bottom: -28px;
 }
 
 #caption {
-    font-family: var(--font-poppins);
+  font-family: var(--font-poppins);
 }
 
-#sign-in, #privacy-link, #terms-link {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #d8602b;
+#sign-in,
+#privacy-link,
+#terms-link {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #d8602b;
 }
 
 .glogin {
-    gap: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid black;
-    width: 90%;
-    padding: 1rem 1rem;
-    border-radius: 1rem;
-    cursor: pointer;
-    margin-top: 1rem;
+  gap: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid black;
+  width: 90%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-top: 1rem;
 }
 
 .next-button {
-    background-color: black;
-    color: white;
-    border: none;
-    padding: 1rem 1rem;
-    border-radius: 1rem;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    margin-top: 2rem;
-    width: 100%;
-    display: flex;
-    justify-content: center;
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .remember-and-forgot {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
 }
 
 form {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
-input[type="text"], input[type="password"], input[type="email"], a {
-    all: unset;
-    width: 100%;
+input[type="text"],
+input[type="password"],
+input[type="email"],
+a {
+  all: unset;
+  width: 100%;
 }
 
-input[type=checkbox] , a {
-    color: #d8602b;
-    cursor: pointer;
+input[type="checkbox"],
+a {
+  color: #d8602b;
+  cursor: pointer;
 }
 
-input[type=checkbox] {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 20px;
-    height: 20px;
-    background-color: #eee;
-    border: 2px solid #888;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  background-color: #eee;
+  border: 2px solid #888;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 
 input[type="checkbox"]:checked {
-    background-color: #d8602b;
-    border-color: #d8602b;
+  background-color: #d8602b;
+  border-color: #d8602b;
 }
 
 input[type="checkbox"]:checked::before {
-    content: "✔";
-    color: white;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
+  content: "✔";
+  color: white;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 #terms {
-    margin-top: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #others-form {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 .account-credential {
-    margin: 2rem 0 0;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  margin: 0.5rem 0 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .credential-form {
-    background-color: #F2F2F2;
-    color: black;
-    padding: 1rem 1rem;
-    border-radius: 0.25rem;
-    font-size: 1rem;
-    margin-top: 1rem;
-    gap: 1rem;
+  background-color: #f2f2f2;
+  color: black;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  gap: 1rem;
 }
 
-#show-login:checked ~ .account-form .login, #show-register:checked ~ .account-form .register {
-    opacity: 1;
-    pointer-events: auto;
-    position: relative;
+#show-login:checked ~ .account-form .login,
+#show-register:checked ~ .account-form .register {
+  opacity: 1;
+  pointer-events: auto;
+  position: relative;
 }
 
-#show-login:checked ~ .account-form .register, #show-register:checked ~ .account-form .login {
-    opacity: 0;
-    pointer-events: none;
-    position: absolute;
+#show-login:checked ~ .account-form .register,
+#show-register:checked ~ .account-form .login {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
 }
 
-.login, .register {
-    opacity: 0;
-    pointer-events: none;
-    position: absolute;
+.login,
+.register {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
 }
 
-#show-login, #show-register {
-    display: none;
+#show-login,
+#show-register {
+  display: none;
 }
 
-#login-register-changer, #login-register-changer label {
-    width: 95%;
-    display: flex;
-    justify-content: space-around;
-    cursor: pointer;
+#login-register-changer,
+#login-register-changer label {
+  width: 95%;
+  display: flex;
+  justify-content: space-around;
+  cursor: pointer;
 }
 
 #login-register-changer {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-bottom: 1rem;
 }
 
 #login-register-changer label {
-    cursor: pointer;
-    padding: 0.5rem 1rem;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.3s;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s;
 }
 
-#show-login:checked ~ .account-form #login-register-changer label[for="show-login"],
-#show-register:checked ~ .account-form #login-register-changer label[for="show-register"] {
-    border-color: black;
+#show-login:checked
+  ~ .account-form
+  #login-register-changer
+  label[for="show-login"],
+#show-register:checked
+  ~ .account-form
+  #login-register-changer
+  label[for="show-register"] {
+  border-color: black;
 }
 
 #remember-me {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #forgot-password {
-    font-weight: bold;
+  font-weight: bold;
 }
