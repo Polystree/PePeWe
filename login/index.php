@@ -78,10 +78,9 @@
             </div>
         </div>
         <div class="sign-up-wp">
-            <img loading="lazy" src="../assets/img/wp2.png" alt="background" height="400px" />
+            <img loading="lazy" src="../assets/img/logo.svg" alt="background" height="400px" />
         </div>
     </div>
-    <?php include '../footer.php'; ?>
 </body>
 
 </html>

@@ -2,9 +2,9 @@
     <div class="footer">
         <div class="logo-parent">
             <div class="footer-links">
-                <a href="/"><b href="" class="logo">Yohohoho</b></a>
+                <a href="/" class="logo"><img src="/assets/img/logo-landscape-light.svg" height="60px" alt="logo"></a>
                 <div class="subscribe">Subscribe</div>
-                <div class="get-10-your">Get 10% your first order</div>
+                <div class="get-10-your">Get 10% off your first order</div>
                 <div class="email-footer">
                     <div class="email">
                         <input type="email" class="email-input" placeholder="Enter your email" />

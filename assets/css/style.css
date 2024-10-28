@@ -12,11 +12,11 @@ body {
 
 .login-main {
   display: flex;
-  gap: 10vw;
+  gap: 6vw;
   height: 64vh;
-  min-height: 500px;
+  min-height: 600px;
   justify-content: center;
-  margin: 10vh 0;
+  margin: 7.5vh 0;
   align-items: flex-start;
 }
 
@@ -269,6 +269,7 @@ input[type="checkbox"]:checked::before {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 100%;
 }
 
 .search-text {
@@ -347,6 +348,7 @@ input[type="checkbox"]:checked::before {
   font-size: 1.5rem;
   letter-spacing: 0.03em;
   font-family: var(--font-poppins);
+  height: 100%;
 }
 
 header {

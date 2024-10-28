@@ -1,8 +1,8 @@
 <header>
         <div class="frame">
-            <a class="logo" href="/"><b>Yohohoho</b></a>
+            <a class="logo" href="/"><img src="/assets/img/logo-landscape.svg" height="100%" alt="logo"></a>
             <div class="header-right">
-                <a href="" class="header-item">Home</a>
+                <a href="/" class="header-item">Home</a>
                 <a href="" class="header-item">Contact</a>
                 <a href="" class="header-item">Products</a>
                 <a href="" class="header-item">About</a>
