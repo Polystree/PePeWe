@@ -86,7 +86,7 @@ body {
 form {
     display: flex;
     flex-direction: column;
-    width: 95%;
+    width: 100%;
 }
 
 input[type="text"], input[type="password"], input[type="email"], a {
@@ -94,13 +94,44 @@ input[type="text"], input[type="password"], input[type="email"], a {
     width: 100%;
 }
 
-input[type=checkbox], a {
+input[type=checkbox] , a {
+    color: #d8602b;
     cursor: pointer;
-    margin: 0;
+}
+
+input[type=checkbox] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 20px;
+    height: 20px;
+    background-color: #eee;
+    border: 2px solid #888;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #d8602b;
+    border-color: #d8602b;
+}
+
+input[type="checkbox"]:checked::before {
+    content: "✔";
+    color: white;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 
 #terms {
     margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 #others-form {
@@ -171,4 +202,14 @@ input[type=checkbox], a {
 #show-login:checked ~ .account-form #login-register-changer label[for="show-login"],
 #show-register:checked ~ .account-form #login-register-changer label[for="show-register"] {
     border-color: black;
+}
+
+#remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#forgot-password {
+    font-weight: bold;
 }
