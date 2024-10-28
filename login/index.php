@@ -12,7 +12,7 @@
 
 <body>
     <?php include '../header.php'; ?>
-    <div class="main">
+    <div class="login-main">
         <div class="account-page">
             <input type="radio" id="show-login" name="toggle" checked />
             <input type="radio" id="show-register" name="toggle" />
@@ -76,9 +76,9 @@
                     </div>
                 </div>
             </div>
-            <div class="sign-up-wp">
-                <img loading="lazy" src="../assets/img/wp2.png" alt="background" height="400px" />
-            </div>
+        </div>
+        <div class="sign-up-wp">
+            <img loading="lazy" src="../assets/img/wp2.png" alt="background" height="400px" />
         </div>
     </div>
     <?php include '../footer.php'; ?>

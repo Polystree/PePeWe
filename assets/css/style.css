@@ -10,19 +10,25 @@ body {
   --font-smooch-sans: "Smooch Sans";
 }
 
-.account-page {
+.login-main {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
   gap: 10vw;
-  height: 90vh;
+  height: 64vh;
+  min-height: 500px;
+  justify-content: center;
+  margin: 10vh 0;
+  align-items: flex-start;
+}
+
+.account-page {
+  margin-bottom: 10vh;
 }
 
 .account-form {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 400px;
 }
 
 .credential-form {
@@ -46,6 +52,11 @@ body {
   font-size: 1rem;
   font-weight: 600;
   color: #d8602b;
+}
+
+.sign-up-wp {
+  position: relative;
+  top: 64px;
 }
 
 .glogin {
@@ -98,7 +109,7 @@ a {
 }
 
 input[type="submit"] {
-    display: none;
+  display: none;
 }
 
 input[type="checkbox"],
@@ -136,7 +147,6 @@ input[type="checkbox"]:checked::before {
 }
 
 #terms {
-  margin-top: 1rem;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -236,386 +246,387 @@ input[type="checkbox"]:checked::before {
 /* Homepage */
 
 .search input {
-    border: unset;
-    outline: unset;
-    background-color: unset;
-    width: 100%;
+  border: unset;
+  outline: unset;
+  background-color: unset;
+  width: 100%;
 }
 
 .email label {
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .home {
-    position: relative;
-    letter-spacing: 0.03em;
-    line-height: 1.5rem;
+  position: relative;
+  letter-spacing: 0.03em;
+  line-height: 1.5rem;
 }
 
 .frame {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .search-text {
-    position: relative;
-    line-height: 1.125rem;
-    opacity: 0.5;
+  position: relative;
+  line-height: 1.125rem;
+  opacity: 0.5;
 }
 
 .search-icon {
-    width: 1.5rem;
-    position: relative;
-    height: 1.5rem;
-    overflow: hidden;
-    flex-shrink: 0;
+  width: 1.5rem;
+  position: relative;
+  height: 1.5rem;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .search {
-    display: flex;
-    gap: 1rem;
-    width: 100%;
-    justify-content: space-between;
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .search-input {
-    border-radius: 4px;
-    background-color: #f5f5f5;
-    display: flex;
-    flex-direction: row;
-    padding: 0.5rem 1rem 0.5rem 1rem;
-    font-size: 0.75rem;
-    min-width: 240px;
-    font-family: var(--font-poppins);
-    justify-content: space-between;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  font-size: 0.75rem;
+  min-width: 240px;
+  font-family: var(--font-poppins);
+  justify-content: space-between;
 }
 
 .wishlist-icon {
-    width: 2rem;
-    position: relative;
-    height: 2rem;
-    overflow: hidden;
-    flex-shrink: 0;
+  width: 2rem;
+  position: relative;
+  height: 2rem;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .cart-icon {
-    width: 2rem;
-    position: relative;
-    height: 2rem;
+  width: 2rem;
+  position: relative;
+  height: 2rem;
 }
 
 .frame1 {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .generic-avatar-icon {
-    width: 2.5rem;
-    position: relative;
-    border-radius: 100px;
-    height: 2.5rem;
-    overflow: hidden;
-    flex-shrink: 0;
+  width: 2.5rem;
+  position: relative;
+  border-radius: 100px;
+  height: 2.5rem;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .header-right {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
 }
 
 .logo {
-    font-size: 1.5rem;
-    letter-spacing: 0.03em;
-    font-family: var(--font-poppins);
+  font-size: 1.5rem;
+  letter-spacing: 0.03em;
+  font-family: var(--font-poppins);
 }
 
 header {
-    height: 2.5rem;
-    font-size: 1.25rem;
-    font-family: var(--font-inter);
-    padding: 1rem 2rem 1rem 2rem;
-    border-bottom: 1px solid #d6d6d6;
+  height: 2.5rem;
+  font-size: 1.25rem;
+  font-family: var(--font-inter);
+  padding: 1rem 2rem 1rem 2rem;
+  border-bottom: 1px solid #d6d6d6;
 }
 
-
 .support {
-    font-size: 1.25rem;
-    line-height: 1.5rem;
-    display: inline-block;
-    width: 5.338rem;
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+  display: inline-block;
+  width: 5.338rem;
 }
 
 .subscribe {
-    font-size: 1.125rem;
-    line-height: 1.5rem;
-    display: inline-block;
-    width: 10.188rem;
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  display: inline-block;
+  width: 10.188rem;
 }
 
 .get-10-your {
-    line-height: 1.5rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1.5rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .div {
-    line-height: 1.5rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1.5rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .sigmaskibidigmailcom {
-    text-decoration: underline;
-    line-height: 1.5rem;
-    font-weight: 300;
-    color: inherit;
-    display: inline-block;
-    width: 12rem;
+  text-decoration: underline;
+  line-height: 1.5rem;
+  font-weight: 300;
+  color: inherit;
+  display: inline-block;
+  width: 12rem;
 }
 
 .fanum-v-blok {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .my-account {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .email {
-    display: flex;
+  display: flex;
 }
 
 .login-register {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .cart {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .wishlist {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .privacy-policy {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .terms-of-use {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .faq {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .contact {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .shop {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
+  line-height: 1rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 10.813rem;
 }
 
 .account {
-    font-size: 1.25rem;
-    line-height: 1.5rem;
-    display: inline-block;
-    width: 5.6rem;
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+  display: inline-block;
+  width: 5.6rem;
 }
 
 .quick-link {
-    font-size: 1.25rem;
-    line-height: 1.5rem;
-    display: inline-block;
-    width: 6.538rem;
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+  display: inline-block;
+  width: 6.538rem;
 }
 
 .download-app {
-    font-size: 1.25rem;
-    line-height: 1.5rem;
-    display: inline-block;
-    width: 9.8rem;
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+  display: inline-block;
+  width: 9.8rem;
 }
 
 .logo-parent {
-    height: 100%;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-evenly;
-    flex-direction: row;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  flex-direction: row;
 }
 
 .vector-icon {
-    height: 33.49%;
-    width: 11.56%;
-    max-width: 100%;
-    overflow: hidden;
-    max-height: 100%;
+  height: 33.49%;
+  width: 11.56%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
 }
 
 .email-footer {
-    border: 2px solid #edecec;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: row;
-    padding: 0.5rem 1rem 0.5rem 1rem;
-    font-size: 0.75rem;
-    font-family: var(--font-poppins);
-    justify-content: space-between;
+  border: 2px solid #edecec;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-family: var(--font-poppins);
+  justify-content: space-between;
 }
 
 .save-rp9999-with {
-    position: relative;
-    line-height: 1.125rem;
-    font-weight: 500;
-    opacity: 0.7;
+  position: relative;
+  line-height: 1.125rem;
+  font-weight: 500;
+  opacity: 0.7;
 }
 
 .qr-code-icon {
-    width: 5rem;
-    position: relative;
-    height: 5rem;
-    overflow: hidden;
-    flex-shrink: 0;
-    object-fit: cover;
+  width: 5rem;
+  position: relative;
+  height: 5rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  object-fit: cover;
 }
 
 .googleplay-icon {
-    position: relative;
-    height: 2.5rem;
-    overflow: hidden;
-    flex-shrink: 0;
+  position: relative;
+  height: 2.5rem;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .appstore-icon {
-    position: relative;
-    height: 2.5rem;
-    overflow: hidden;
-    flex-shrink: 0;
-    object-fit: cover;
+  position: relative;
+  height: 2.5rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  object-fit: cover;
 }
 
 .store-parent {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.25rem;
 }
 
 .qr-code-parent {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
 }
 
 .save-rp9999-with-app-new-user-parent {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 0.5rem;
-    color: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  color: #fafafa;
 }
 
 .social-media {
-    width: 1.5rem;
-    position: relative;
-    height: 1.5rem;
-    overflow: hidden;
-    flex-shrink: 0;
+  width: 1.5rem;
+  position: relative;
+  height: 1.5rem;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .social-media-parent {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1.5rem;
 }
 
 header a {
-    color: #000;
-    width: auto;
+  color: #000;
+  width: auto;
 }
 
 footer {
-    background-color: #000;
+  background-color: #000;
 }
 
 .footer-links a {
-    color: #fff;
-    text-decoration: none;
+  color: #fff;
+  text-decoration: none;
 }
 
-.footer-links a:hover, header a:hover {
-    color: #d8602b;
-    text-decoration: underline;
+.footer-links a:hover,
+header a:hover {
+  color: #d8602b;
+  text-decoration: underline;
 }
 
 .footer {
-    font-size: 0.75rem;
-    color: #fff;
-    font-family: var(--font-poppins);
-    padding: 5vh 0;
+  font-size: 0.75rem;
+  color: #fff;
+  font-family: var(--font-poppins);
+  padding: 5vh 0;
 }
 
 .footer-links {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1rem;
 }
+
 .copyright-team-3 {
-font-size: .5rem;
-display: flex;
-justify-content: center;
-color: #c7c7c7;
-padding-bottom: 0.5rem;
+  font-size: 0.5rem;
+  display: flex;
+  justify-content: center;
+  color: #c7c7c7;
+  padding-bottom: 0.5rem;
 }
