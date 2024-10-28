@@ -81,13 +81,23 @@ body {
     justify-content: center;
 }
 
+.remember-and-forgot {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1rem;
+}
+
 form {
     display: flex;
     flex-direction: column;
+    width: 95%;
 }
 
 input[type="text"], input[type="password"], input[type="email"], a {
     all: unset;
+    width: 100%;
 }
 
 input[type=checkbox], a {
