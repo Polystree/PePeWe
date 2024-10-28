@@ -3,7 +3,6 @@ body {
     line-height: normal;
 }
 
-
 :root {
     font-family: var(--font-inter), var(--font-poppins), var(--font-smooch-sans);
     --font-inter: Inter;
@@ -25,7 +24,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 }
 
 .credential-form {
@@ -41,10 +39,6 @@ body {
 
 #caption {
     font-family: var(--font-poppins);
-}
-
-#have-an-account {
-    margin-top: 2rem;
 }
 
 #sign-in, #privacy-link, #terms-link {
@@ -66,7 +60,7 @@ body {
     margin-top: 1rem;
 }
 
-.sign-up-button, .sign-in-button {
+.next-button {
     background-color: black;
     color: white;
     border: none;
@@ -75,19 +69,29 @@ body {
     cursor: pointer;
     font-size: 1rem;
     font-weight: 600;
-    margin-top: 1rem;
-    width: 90%;
+    margin-top: 2rem;
+    width: 100%;
     display: flex;
     justify-content: center;
+}
+
+.remember-and-forgot {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1rem;
 }
 
 form {
     display: flex;
     flex-direction: column;
+    width: 95%;
 }
 
 input[type="text"], input[type="password"], input[type="email"], a {
     all: unset;
+    width: 100%;
 }
 
 input[type=checkbox], a {
@@ -97,6 +101,18 @@ input[type=checkbox], a {
 
 #terms {
     margin-top: 1rem;
+}
+
+#others-form {
+    margin-top: 1rem;
+}
+
+.account-credential {
+    margin: 2rem 0 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .credential-form {
@@ -109,6 +125,50 @@ input[type=checkbox], a {
     gap: 1rem;
 }
 
-#others-form {
-    margin-top: 1rem;
+#show-login:checked ~ .account-form .login, #show-register:checked ~ .account-form .register {
+    opacity: 1;
+    pointer-events: auto;
+    position: relative;
+}
+
+#show-login:checked ~ .account-form .register, #show-register:checked ~ .account-form .login {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+}
+
+.login, .register {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+}
+
+#show-login, #show-register {
+    display: none;
+}
+
+#login-register-changer, #login-register-changer label {
+    width: 95%;
+    display: flex;
+    justify-content: space-around;
+    cursor: pointer;
+}
+
+#login-register-changer {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+#login-register-changer label {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s;
+}
+
+#show-login:checked ~ .account-form #login-register-changer label[for="show-login"],
+#show-register:checked ~ .account-form #login-register-changer label[for="show-register"] {
+    border-color: black;
 }
