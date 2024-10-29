@@ -142,8 +142,12 @@ header a {
   color: white !important;
 }
 
-.profile-item a:hover {
+.profile-item:hover, header a:hover {
   text-decoration: underline;
+}
+
+header a:hover {
+  color: #d8602b;
 }
 
 #profile:checked ~ .header-right .profile-dropdown,

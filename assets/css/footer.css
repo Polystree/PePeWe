@@ -238,8 +238,7 @@
     text-decoration: none;
   }
   
-  .footer-links a:hover,
-  header a:hover {
+  .footer-links a:hover {
     color: #d8602b;
     text-decoration: underline;
   }
