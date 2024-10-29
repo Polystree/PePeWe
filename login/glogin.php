@@ -1,6 +1,6 @@
 <?php
 require_once '../vendor/autoload.php';
-include '../database.php';
+include 'database.php';
 session_start();
 
 $config = parse_ini_file('auth.txt');
