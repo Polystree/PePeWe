@@ -26,6 +26,7 @@ function handleLogin($connect) {
 
     if ($loginResult->num_rows > 0) {
         $_SESSION['user_id'] = $username;
+        $_SESSION['username'] = $username;
         header("Location: /");
         exit();
     } else {
