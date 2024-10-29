@@ -2,6 +2,7 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
 include 'database.php';
 
 $loginFail = false;
@@ -20,6 +21,12 @@ function handleLogin($connect) {
     global $loginFail;
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $captchaAnswer = $_POST['captcha'];
+
+    if ($captchaAnswer != $_SESSION['captcha_answer']) {
+        $loginFail = true;
+        return;
+    }
 
     $stmt = $connect->prepare("SELECT * FROM users WHERE username=? AND password=?");
     $stmt->bind_param("ss", $username, $password);
@@ -131,6 +138,13 @@ function handleRegistration($connect) {
                                 <a href="" id="forgot-password">Forgot Password?</a>
                             </div>
                         </div>
+                        <?php
+                        $number1 = rand(1, 10);
+                        $number2 = rand(1, 10);
+                        $captchaQuestion = "$number1 + $number2 = ?";
+                        $_SESSION['captcha_answer'] = $number1 + $number2;?>
+                        <label for='captcha'><?php echo $captchaQuestion; ?></label>
+                        <input type='text' name='captcha' required>
                         <button class="next-button" name="login">Submit</button>
                         <?php if ($loginFail): ?>
                             <div id="login-fail">Invalid username or password!</div>
