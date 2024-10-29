@@ -3,10 +3,11 @@ require_once '../vendor/autoload.php';
 include '../database.php';
 session_start();
 
+$config = parse_ini_file('auth.txt');
 $client = new Google_Client();
-$client->setClientId('52407408904-p3j9v8tce3mogo6qul7mt0nboade0smk.apps.googleusercontent.com');
-$client->setClientSecret('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');
-$client->setRedirectUri('http://localhost/pepewe-main/login/glogin.php');
+$client->setClientId($config['client_id']);
+$client->setClientSecret($config['client_secret']);
+$client->setRedirectUri('http://localhost');
 $client->addScope(['email', 'profile']);
 
 if (isset($_GET['code'])) {
@@ -19,14 +20,11 @@ function handleGoogleCallback($client) {
     $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
     $client->setAccessToken($token['access_token']);
 
-    // Get user info
     $oauth2 = new Google_Service_Oauth2($client);
     $userInfo = $oauth2->userinfo->get();
 
-    // Save user info to your database
     saveUserInfo($userInfo);
 
-    // Redirect to home page
     header("Location: ../index.php");
     exit();
 }
@@ -40,28 +38,25 @@ function redirectToGoogleLogin($client) {
 }
 
 function saveUserInfo($userInfo) {
-    global $conn; 
+    global $connect; 
     $username = $userInfo->name;
     $email = $userInfo->email;
 
-    // Check if user exists in your database
     checkUserExists($username, $email);
 }
 
 function checkUserExists($username, $email) {
-    global $conn; 
+    global $connect; 
 
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt = $connect->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
     if (!$user) {
-        // User does not exist, create a new user
-        $stmt = $conn->prepare("INSERT INTO users (username, email) VALUES (?, ?)");
+        $stmt = $connect->prepare("INSERT INTO user (username, email) VALUES (?, ?)");
         $stmt->execute([$username, $email]);
         $_SESSION['user_id'] = $username;
     } else {
-        // Set session variable for logged-in user
         $_SESSION['user_id'] = $username;
     }
 }

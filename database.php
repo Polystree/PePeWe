@@ -1,12 +1,13 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "test_db";
+$config = parse_ini_file('/login/auth.txt');
+$servername = $config['db_server_name'];
+$username = $config['db_username'];
+$password = $config['db_password'];
+$dbname = $config['db_name'];
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+$connect = new mysqli($servername, $username, $password, $dbname);
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if ($connect->connect_error) {
+    die("Connection failed: " . $connect->connect_error);
 }
 ?>

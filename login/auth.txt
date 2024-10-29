@@ -1,0 +1,6 @@
+client_id=your-client-id
+client_secret=your-client-secret
+db_server_name=your-db-server-address
+db_username=your-db-username
+db_password=your-db-password
+db_name=your-db-name

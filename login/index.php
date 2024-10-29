@@ -2,55 +2,55 @@
 session_start();
 include '../database.php';
 
+$loginFail = false;
+$registerFail = false;
+$registerSuccess = false;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['login'])) {
-        handleLogin($conn);
+        handleLogin($connect);
     } elseif (isset($_POST['register'])) {
-        handleRegistration($conn);
+        handleRegistration($connect);
     }
 }
 
-function handleLogin($conn) {
+function handleLogin($connect) {
+    global $loginFail;
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Use prepared statements to prevent SQL injection
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username=? AND password=?");
+    $stmt = $connect->prepare("SELECT * FROM user WHERE username=? AND password=?");
     $stmt->bind_param("ss", $username, $password);
     $stmt->execute();
     $loginResult = $stmt->get_result();
 
     if ($loginResult->num_rows > 0) {
-        $_SESSION['user_id'] = $username; // Store user ID or username
-        header("Location: ../index.php");
+        $_SESSION['user_id'] = $username;
+        header("Location: /");
         exit();
     } else {
-        echo "Invalid username or password.";
+        $loginFail = true;
     }
 }
 
-function handleRegistration($conn) {
+function handleRegistration($connect) {
+    global $registerFail, $registerSuccess;
     $username = $_POST['username'];
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Check if username or email already exists
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username=? OR email=?");
+    $stmt = $connect->prepare("SELECT * FROM user WHERE username=? OR email=?");
     $stmt->bind_param("ss", $username, $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        echo "Username or Email already exists.";
+        $registerFail = true;
     } else {
-        // Insert new user
-        $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+        $stmt = $connect->prepare("INSERT INTO user (username, email, password) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $username, $email, $password);
-        if ($stmt->execute()) {
-            echo "New record created successfully";
-        } else {
-            echo "Error: " . $stmt->error;
-        }
+        $stmt->execute();
+        $registerSuccess = true;
     }
 }
 ?>
@@ -62,7 +62,7 @@ function handleRegistration($conn) {
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, width=device-width" />
     <link rel="stylesheet" href="../assets/css/style.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Smooch Sans:wght@700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" />
 </head>
@@ -71,8 +71,8 @@ function handleRegistration($conn) {
     <?php include '../header.php'; ?>
     <div class="login-main">
         <div class="account-page">
-            <input type="radio" id="show-login" name="toggle" checked />
-            <input type="radio" id="show-register" name="toggle" />
+            <input type="radio" id="show-login" name="toggle" <?php if (!$registerFail) echo 'checked'; ?> />
+            <input type="radio" id="show-register" name="toggle" <?php if ($registerFail) echo 'checked'; ?> />
             <div class="account-form">
                 <b id="welcome">Welcome</b>
                 <div id="caption">We are glad to see you back with us</div>
@@ -103,6 +103,12 @@ function handleRegistration($conn) {
                             </span>
                         </div>
                         <button class="next-button" name="register">Submit</button>
+                        <?php if ($registerFail): ?>
+                            <div id="register-fail">Email or username already exist!</div>
+                        <?php endif; ?>
+                        <?php if ($registerSuccess): ?>
+                            <div id="register-success">Registration Success</div>
+                        <?php endif; ?>
                     </form>
                     <form class="login" method="POST">
                         <div class="credential-form">
@@ -123,6 +129,9 @@ function handleRegistration($conn) {
                             </div>
                         </div>
                         <button class="next-button" name="login">Submit</button>
+                        <?php if ($loginFail): ?>
+                            <div id="login-fail">Invalid username or password!</div>
+                        <?php endif; ?>
                     </form>
                 </div>
                 <span id="others-form"><b>Login</b> with Others</span>
@@ -130,7 +139,7 @@ function handleRegistration($conn) {
                     <img class="google-1-icon" alt="" src="../assets/img/google.png" height="24px" />
                     <div>
                         <span>Login with </span>
-                        <b>google</b>
+                        <b>Google</b>
                     </div>
                 </a>
             </div>
