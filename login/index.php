@@ -1,3 +1,60 @@
+<?php
+session_start();
+include '../database.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['login'])) {
+        handleLogin($conn);
+    } elseif (isset($_POST['register'])) {
+        handleRegistration($conn);
+    }
+}
+
+function handleLogin($conn) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Use prepared statements to prevent SQL injection
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username=? AND password=?");
+    $stmt->bind_param("ss", $username, $password);
+    $stmt->execute();
+    $loginResult = $stmt->get_result();
+
+    if ($loginResult->num_rows > 0) {
+        $_SESSION['user_id'] = $username; // Store user ID or username
+        header("Location: ../index.php");
+        exit();
+    } else {
+        echo "Invalid username or password.";
+    }
+}
+
+function handleRegistration($conn) {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // Check if username or email already exists
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username=? OR email=?");
+    $stmt->bind_param("ss", $username, $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        echo "Username or Email already exists.";
+    } else {
+        // Insert new user
+        $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $username, $email, $password);
+        if ($stmt->execute()) {
+            echo "New record created successfully";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -24,36 +81,37 @@
                         <label for="show-login">Login</label>
                         <label for="show-register">Register</label>
                     </div>
-                    <form class="register">
+                    <form class="register" method="POST">
                         <div class="credential-form">
                             <img alt="" src="../assets/img/user.svg" />
-                            <input type="text" placeholder="Username" />
+                            <input type="text" placeholder="Username" name="username" required/>
                         </div>
                         <div class="credential-form">
                             <img alt="" src="../assets/img/email.svg" />
-                            <input type="email" placeholder="Email" />
+                            <input type="email" placeholder="Email" name="email" required/>
                         </div>
                         <div class="credential-form">
                             <img alt="" src="../assets/img/password.svg" />
-                            <input type="password" placeholder="Password" />
+                            <input type="password" placeholder="Password" name="password" required/>
                         </div>
                         <div id="terms">
-                            <input type="checkbox" />
+                            <input type="checkbox" required/>
                             <span>I agree with
                                 <a href="/" id="privacy-link">Privacy Policy</a>
                                 and
                                 <a href="/" id="terms-link">Terms of Service</a>
                             </span>
                         </div>
+                        <button class="next-button" name="register">Submit</button>
                     </form>
-                    <form class="login">
+                    <form class="login" method="POST">
                         <div class="credential-form">
                             <img alt="" src="../assets/img/user.svg" />
-                            <input type="text" placeholder="Username" />
+                            <input type="text" placeholder="Username" name="username" required/>
                         </div>
                         <div class="credential-form">
                             <img alt="" src="../assets/img/password.svg" />
-                            <input type="password" placeholder="Password" />
+                            <input type="password" placeholder="Password" name="password" required />
                         </div>
                         <div class="remember-and-forgot">
                             <div id="remember-me">
@@ -64,17 +122,17 @@
                                 <a href="" id="forgot-password">Forgot Password?</a>
                             </div>
                         </div>
+                        <button class="next-button" name="login">Submit</button>
                     </form>
-                    <button class="next-button">Submit</button>
                 </div>
                 <span id="others-form"><b>Login</b> with Others</span>
-                <div class="glogin">
+                <a href="glogin.php" class="glogin">
                     <img class="google-1-icon" alt="" src="../assets/img/google.png" height="24px" />
                     <div>
                         <span>Login with </span>
                         <b>google</b>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
         <div class="sign-up-wp">
