@@ -7,7 +7,7 @@ $config = parse_ini_file('auth.txt');
 $client = new Google_Client();
 $client->setClientId($config['client_id']);
 $client->setClientSecret($config['client_secret']);
-$client->setRedirectUri('http://localhost');
+$client->setRedirectUri($config['redirect_uri']);
 $client->addScope(['email', 'profile']);
 
 if (isset($_GET['code'])) {
