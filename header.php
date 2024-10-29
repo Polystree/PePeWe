@@ -1,5 +1,7 @@
-<?php
-session_start(); ?>
+<?php session_unset();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+} ?>
 
 <link rel="stylesheet" href="/assets/css/header.css" />
 <header>
@@ -9,7 +11,7 @@ session_start(); ?>
         <div class="header-right">
             <a href="/" class="header-item">Home</a>
             <a href="" class="header-item">Contact</a>
-            <a href="" class="header-item">Products</a>
+            <a href="/product" class="header-item">Products</a>
             <a href="" class="header-item">About</a>
             <div class="search-input">
                 <div class="search">
