@@ -19,7 +19,7 @@ function handleLogin($connect) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $stmt = $connect->prepare("SELECT * FROM user WHERE username=? AND password=?");
+    $stmt = $connect->prepare("SELECT * FROM users WHERE username=? AND password=?");
     $stmt->bind_param("ss", $username, $password);
     $stmt->execute();
     $loginResult = $stmt->get_result();
@@ -39,7 +39,7 @@ function handleRegistration($connect) {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $stmt = $connect->prepare("SELECT * FROM user WHERE username=? OR email=?");
+    $stmt = $connect->prepare("SELECT * FROM users WHERE username=? OR email=?");
     $stmt->bind_param("ss", $username, $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -47,7 +47,7 @@ function handleRegistration($connect) {
     if ($result->num_rows > 0) {
         $registerFail = true;
     } else {
-        $stmt = $connect->prepare("INSERT INTO user (username, email, password) VALUES (?, ?, ?)");
+        $stmt = $connect->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $username, $email, $password);
         $stmt->execute();
         $registerSuccess = true;
