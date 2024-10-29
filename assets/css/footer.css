@@ -1,0 +1,269 @@
+.support {
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+    display: inline-block;
+    width: 5.338rem;
+  }
+  
+  .subscribe {
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    display: inline-block;
+    width: 10.188rem;
+  }
+  
+  .get-10-your {
+    line-height: 1.5rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .div {
+    line-height: 1.5rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .sigmaskibidigmailcom {
+    text-decoration: underline;
+    line-height: 1.5rem;
+    font-weight: 300;
+    color: inherit;
+    display: inline-block;
+    width: 12rem;
+  }
+  
+  .fanum-v-blok {
+    line-height: 1rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .my-account {
+    line-height: 1rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .email {
+    display: flex;
+  }
+  
+  .login-register {
+    line-height: 1rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .cart {
+    line-height: 1rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .wishlist {
+    line-height: 1rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .privacy-policy {
+    line-height: 1rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .terms-of-use {
+    line-height: 1rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .faq {
+    line-height: 1rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .contact {
+    line-height: 1rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .shop {
+    line-height: 1rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 10.813rem;
+  }
+  
+  .account {
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+    display: inline-block;
+    width: 5.6rem;
+  }
+  
+  .quick-link {
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+    display: inline-block;
+    width: 6.538rem;
+  }
+  
+  .download-app {
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+    display: inline-block;
+    width: 9.8rem;
+  }
+  
+  .logo-parent {
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-evenly;
+    flex-direction: row;
+  }
+  
+  .vector-icon {
+    height: 33.49%;
+    width: 11.56%;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 100%;
+  }
+  
+  .email-footer {
+    border: 2px solid #edecec;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    font-size: 0.75rem;
+    font-family: var(--font-poppins);
+    justify-content: space-between;
+  }
+  
+  .save-rp9999-with {
+    position: relative;
+    line-height: 1.125rem;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+  
+  .qr-code-icon {
+    width: 5rem;
+    position: relative;
+    height: 5rem;
+    overflow: hidden;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+  
+  .googleplay-icon {
+    position: relative;
+    height: 2.5rem;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  
+  .appstore-icon {
+    position: relative;
+    height: 2.5rem;
+    overflow: hidden;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+  
+  .store-parent {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .qr-code-parent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .save-rp9999-with-app-new-user-parent {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    color: #fafafa;
+  }
+  
+  .social-media {
+    width: 1.5rem;
+    position: relative;
+    height: 1.5rem;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  
+  .social-media-parent {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1.5rem;
+  }
+
+  footer {
+    background-color: #000;
+  }
+  
+  .footer-links a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .footer-links a:hover,
+  header a:hover {
+    color: #d8602b;
+    text-decoration: underline;
+  }
+  
+  .footer {
+    font-size: 0.75rem;
+    color: #fff;
+    font-family: var(--font-poppins);
+    padding: 5vh 0;
+  }
+  
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1rem;
+  }
+  
+  .copyright-team-3 {
+    font-size: 0.5rem;
+    display: flex;
+    justify-content: center;
+    color: #c7c7c7;
+    padding-bottom: 0.5rem;
+  }
+  
