@@ -53,7 +53,7 @@ function checkUserExists($username, $email) {
     $user = $stmt->fetch();
 
     if (!$user) {
-        $stmt = $connect->prepare("INSERT INTO user (username, email) VALUES (?, ?)");
+        $stmt = $connect->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, '')");
         $stmt->execute([$username, $email]);
         $_SESSION['user_id'] = $username;
     } else {

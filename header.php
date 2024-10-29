@@ -1,3 +1,6 @@
+<?php
+session_start(); ?>
+
 <link rel="stylesheet" href="/assets/css/header.css" />
 <header>
     <div class="frame">
@@ -18,6 +21,9 @@
                 <img class="wishlist-icon" alt="" src="/assets/img/Wishlist.svg" />
                 <img class="cart-icon" alt="" src="/assets/img/cart.svg" />
             </div>
+            <?php
+            echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; 
+            ?>
             <label for="profile">
                 <img class="generic-avatar-icon" alt="" src="/assets/img/Generic avatar.svg" />
             </label>
