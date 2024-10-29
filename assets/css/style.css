@@ -31,7 +31,7 @@ body {
   width: 400px;
 }
 
-.credential-form {
+.credential-form, captcha {
   display: flex;
   flex-direction: row;
 }
@@ -103,10 +103,19 @@ form {
 input[type="text"],
 input[type="password"],
 input[type="email"],
+input[type="number"],
 a {
   background-color: transparent !important;
   all: unset;
   width: 100%;
+}
+
+input[type="number"],
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 input,
@@ -173,7 +182,7 @@ input[type="checkbox"]:checked::before {
   align-items: center;
 }
 
-.credential-form {
+.credential-form, #captcha {
   background-color: #f2f2f2;
   color: black;
   padding: 0.5rem 1rem;
@@ -250,4 +259,25 @@ input[type="checkbox"]:checked::before {
 
 #forgot-password {
   font-weight: bold;
+}
+
+.captcha {
+  margin-top: 1rem;
+}
+
+#captcha {
+  margin-top: .5rem;
+  display: flex;
+  gap: 4px;
+  flex-direction: row;
+}
+
+#captcha-answer {
+  margin-left: 0.5rem;
+}
+
+#captcha-question {
+  width: auto;
+  min-width: 70px;
+  border-right: 1px solid black;
 }

@@ -8,6 +8,7 @@ include 'database.php';
 $loginFail = false;
 $registerFail = false;
 $registerSuccess = false;
+$captchaFail = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['login'])) {
@@ -17,14 +18,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-function handleLogin($connect) {
-    global $loginFail;
+function handleLogin($connect)
+{
+    global $loginFail, $captchaFail;
     $username = $_POST['username'];
     $password = $_POST['password'];
     $captchaAnswer = $_POST['captcha'];
 
     if ($captchaAnswer != $_SESSION['captcha_answer']) {
-        $loginFail = true;
+        $captchaFail = true;
         return;
     }
 
@@ -43,8 +45,9 @@ function handleLogin($connect) {
     }
 }
 
-function handleRegistration($connect) {
-    global $registerFail, $registerSuccess;
+function handleRegistration($connect)
+{
+    global $registerFail, $registerSuccess, $captchaFail;
     $username = $_POST['username'];
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -64,6 +67,11 @@ function handleRegistration($connect) {
     }
 }
 ?>
+<?php
+$number1 = rand(1, 99);
+$number2 = rand(1, 99);
+$captchaQuestion = "$number1 + $number2";
+$_SESSION['captcha_answer'] = $number1 + $number2; ?>
 
 <!DOCTYPE html>
 <html>
@@ -83,8 +91,10 @@ function handleRegistration($connect) {
     <?php include '../header.php'; ?>
     <div class="login-main">
         <div class="account-page">
-            <input type="radio" id="show-login" name="toggle" <?php if (!$registerFail) echo 'checked'; ?> />
-            <input type="radio" id="show-register" name="toggle" <?php if ($registerFail) echo 'checked'; ?> />
+            <input type="radio" id="show-login" name="toggle" <?php if (!$registerFail)
+                echo 'checked'; ?> />
+            <input type="radio" id="show-register" name="toggle" <?php if ($registerFail)
+                echo 'checked'; ?> />
             <div class="account-form">
                 <b id="welcome">Welcome</b>
                 <div id="caption">We are glad to see you back with us</div>
@@ -96,36 +106,44 @@ function handleRegistration($connect) {
                     <form class="register" method="POST">
                         <div class="credential-form">
                             <img alt="" src="../assets/img/user.svg" />
-                            <input type="text" placeholder="Username" name="username" required/>
+                            <input type="text" placeholder="Username" name="username" required />
                         </div>
                         <div class="credential-form">
                             <img alt="" src="../assets/img/email.svg" />
-                            <input type="email" placeholder="Email" name="email" required/>
+                            <input type="email" placeholder="Email" name="email" required />
                         </div>
                         <div class="credential-form">
                             <img alt="" src="../assets/img/password.svg" />
-                            <input type="password" placeholder="Password" name="password" required/>
+                            <input type="password" placeholder="Password" name="password" required />
                         </div>
                         <div id="terms">
-                            <input type="checkbox" required/>
+                            <input type="checkbox" required />
                             <span>I agree with
                                 <a href="/" id="privacy-link">Privacy Policy</a>
                                 and
                                 <a href="/" id="terms-link">Terms of Service</a>
                             </span>
                         </div>
+                        <div class="captcha">
+                            <span>Captcha</span>
+                            <div id="captcha">
+                                <label for='captcha' id="captcha-question"><?php echo $captchaQuestion; ?></label>
+                                <input type='number' name='captcha' id="captcha-answer" required>
+                            </div>
+                            <?php if ($captchaFail): ?>
+                                <div id="captcha-fail" style="color:red">Invalid Captcha!</div>
+                            <?php elseif ($registerFail): ?>
+                                <div id="register-fail" style="color:red">Email or username already exist!</div>
+                            <?php elseif ($registerSuccess): ?>
+                                <div id="register-success">Registration Success</div>
+                            <?php endif; ?>
+                        </div>
                         <button class="next-button" name="register">Submit</button>
-                        <?php if ($registerFail): ?>
-                            <div id="register-fail">Email or username already exist!</div>
-                        <?php endif; ?>
-                        <?php if ($registerSuccess): ?>
-                            <div id="register-success">Registration Success</div>
-                        <?php endif; ?>
                     </form>
                     <form class="login" method="POST">
                         <div class="credential-form">
                             <img alt="" src="../assets/img/user.svg" />
-                            <input type="text" placeholder="Username" name="username" required/>
+                            <input type="text" placeholder="Username" name="username" required />
                         </div>
                         <div class="credential-form">
                             <img alt="" src="../assets/img/password.svg" />
@@ -140,17 +158,19 @@ function handleRegistration($connect) {
                                 <a href="" id="forgot-password">Forgot Password?</a>
                             </div>
                         </div>
-                        <?php
-                        $number1 = rand(1, 10);
-                        $number2 = rand(1, 10);
-                        $captchaQuestion = "$number1 + $number2 = ?";
-                        $_SESSION['captcha_answer'] = $number1 + $number2;?>
-                        <label for='captcha'><?php echo $captchaQuestion; ?></label>
-                        <input type='text' name='captcha' required>
+                        <div class="captcha">
+                            <span>Captcha</span>
+                            <div id="captcha">
+                                <label for='captcha' id="captcha-question"><?php echo $captchaQuestion; ?></label>
+                                <input type='number' name='captcha' id="captcha-answer" required>
+                            </div>
+                            <?php if ($captchaFail): ?>
+                                <div id="captcha-fail" style="color:red">Invalid Captcha!</div>
+                            <?php elseif ($loginFail): ?>
+                                <div id="login-fail" style="color:red">Invalid username or password!</div>
+                            <?php endif; ?>
+                        </div>
                         <button class="next-button" name="login">Submit</button>
-                        <?php if ($loginFail): ?>
-                            <div id="login-fail">Invalid username or password!</div>
-                        <?php endif; ?>
                     </form>
                 </div>
                 <span id="others-form"><b>Login</b> with Others</span>
