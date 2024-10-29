@@ -4,7 +4,7 @@ include '../login/database.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $price = $_POST['price'];
-    $image_path = 'img/' . basename($_FILES['image']['name']);
+    $image_path = '../assets/img/product/' . basename($_FILES['image']['name']);
     $description = $_POST['description'];
     
     // Move the uploaded file to the desired directory
@@ -22,11 +22,16 @@ $connect->close();
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Add Product</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, width=device-width" />
+    <title>iniGadget</title>
+    <link rel="icon" type="image/x-icon" href="/assets/img/logo-light.svg" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap" />
 </head>
 <body>
+    <?php include '../header.php'; ?>
     <h1>Add New Product</h1>
     <form method="POST" enctype="multipart/form-data">
         <label for="name">Product Name:</label>
@@ -39,6 +44,7 @@ $connect->close();
         <input type="text" name="description"><br>
         <button type="submit">Add Product</button>
     </form>
-    <a href="index.php" class="link">Back to shopping</a>
+    <a href="/" class="link">Back to shopping</a>
+    <?php include '../footer.php'; ?>
 </body>
 </html>
