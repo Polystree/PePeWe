@@ -10,6 +10,10 @@ body {
   --font-smooch-sans: "Smooch Sans";
 }
 
+.main {
+  min-height: 55vh;
+}
+
 .login-main {
   display: flex;
   gap: 6vw;
@@ -94,7 +98,7 @@ body {
   width: 100%;
 }
 
-form {
+.account-credential form {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -104,6 +108,7 @@ input[type="text"],
 input[type="password"],
 input[type="email"],
 input[type="number"],
+input[type="file"],
 a {
   background-color: transparent !important;
   all: unset;
@@ -123,7 +128,6 @@ select {
   -webkit-background-clip: text !important;
   background-clip: text !important;
 }
-
 
 input[type="submit"] {
   display: none;
@@ -182,7 +186,7 @@ input[type="checkbox"]:checked::before {
   align-items: center;
 }
 
-.credential-form, #captcha {
+.credential-form, #captcha, #upload-product-input {
   background-color: #f2f2f2;
   color: black;
   padding: 0.5rem 1rem;
@@ -278,6 +282,79 @@ input[type="checkbox"]:checked::before {
 
 #captcha-question {
   width: auto;
-  min-width: 70px;
+  min-width: 60px;
   border-right: 1px solid black;
+}
+
+.back {
+  margin: 1.5rem;
+}
+
+/* upload product page */
+
+#upload-product-form {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 10vw;
+  justify-content: center;
+}
+#upload-product-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.back a {
+  color: rgb(100, 100, 100);
+}
+
+.back a:hover {
+  color: black;
+}
+
+::-webkit-file-upload-button {
+  all: unset;
+  background: black;
+  color: white;
+  padding: .2rem 1rem;
+  gap: 1rem;
+  margin: 0 12px 0 0;
+  border-radius: 4px;
+}
+
+.upload-product-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-label {
+  width: 15rem;
+  border-right: 1px solid black;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.form-description {
+  height: auto;
+  min-height: 40px;
+  align-items: flex-start;
+}
+
+.form-description .input-description {
+  width: 100%;
+  resize: vertical;
+  height: 40px;
+  max-height: 400px;
+  min-height: 40px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: var(--font-inter);
+  box-sizing: border-box;
 }

@@ -67,12 +67,6 @@ function handleRegistration($connect)
     }
 }
 ?>
-<?php
-$number1 = rand(1, 99);
-$number2 = rand(1, 99);
-$captchaQuestion = "$number1 + $number2";
-$_SESSION['captcha_answer'] = $number1 + $number2; ?>
-
 <!DOCTYPE html>
 <html>
 
@@ -89,102 +83,109 @@ $_SESSION['captcha_answer'] = $number1 + $number2; ?>
 
 <body>
     <?php include '../header.php'; ?>
-    <div class="login-main">
-        <div class="account-page">
-            <input type="radio" id="show-login" name="toggle" <?php if (!$registerFail)
-                echo 'checked'; ?> />
-            <input type="radio" id="show-register" name="toggle" <?php if ($registerFail)
-                echo 'checked'; ?> />
-            <div class="account-form">
-                <b id="welcome">Welcome</b>
-                <div id="caption">We are glad to see you back with us</div>
-                <div class="account-credential">
-                    <div id="login-register-changer">
-                        <label for="show-login">Login</label>
-                        <label for="show-register">Register</label>
+    <div class="main">
+        <div class="login-main">
+            <div class="account-page">
+                <input type="radio" id="show-login" name="toggle" <?php if (!$registerFail)
+                    echo 'checked'; ?> />
+                <input type="radio" id="show-register" name="toggle" <?php if ($registerFail)
+                    echo 'checked'; ?> />
+                <div class="account-form">
+                    <b id="welcome">Welcome</b>
+                    <div id="caption">We are glad to see you back with us</div>
+                    <div class="account-credential">
+                        <?php
+                        $number1 = rand(1, 10);
+                        $number2 = rand(1, 10);
+                        $captchaQuestion = "$number1 + $number2";
+                        $_SESSION['captcha_answer'] = $number1 + $number2; ?>
+                        <div id="login-register-changer">
+                            <label for="show-login">Login</label>
+                            <label for="show-register">Register</label>
+                        </div>
+                        <form class="register" method="POST">
+                            <div class="credential-form">
+                                <img alt="" src="../assets/img/user.svg" />
+                                <input type="text" placeholder="Username" name="username" required />
+                            </div>
+                            <div class="credential-form">
+                                <img alt="" src="../assets/img/email.svg" />
+                                <input type="email" placeholder="Email" name="email" required />
+                            </div>
+                            <div class="credential-form">
+                                <img alt="" src="../assets/img/password.svg" />
+                                <input type="password" placeholder="Password" name="password" required />
+                            </div>
+                            <div id="terms">
+                                <input type="checkbox" required />
+                                <span>I agree with
+                                    <a href="/" id="privacy-link">Privacy Policy</a>
+                                    and
+                                    <a href="/" id="terms-link">Terms of Service</a>
+                                </span>
+                            </div>
+                            <div class="captcha">
+                                <span>Captcha</span>
+                                <div id="captcha">
+                                    <label for='captcha' id="captcha-question"><?php echo $captchaQuestion; ?></label>
+                                    <input type='number' name='captcha' id="captcha-answer" required>
+                                </div>
+                                <?php if ($captchaFail): ?>
+                                    <div id="captcha-fail" style="color:red">Invalid Captcha!</div>
+                                <?php elseif ($registerFail): ?>
+                                    <div id="register-fail" style="color:red">Email or username already exist!</div>
+                                <?php elseif ($registerSuccess): ?>
+                                    <div id="register-success">Registration Success</div>
+                                <?php endif; ?>
+                            </div>
+                            <button class="next-button" name="register">Submit</button>
+                        </form>
+                        <form class="login" method="POST">
+                            <div class="credential-form">
+                                <img alt="" src="../assets/img/user.svg" />
+                                <input type="text" placeholder="Username" name="username" required />
+                            </div>
+                            <div class="credential-form">
+                                <img alt="" src="../assets/img/password.svg" />
+                                <input type="password" placeholder="Password" name="password" required />
+                            </div>
+                            <div class="remember-and-forgot">
+                                <div id="remember-me">
+                                    <input type="checkbox" />
+                                    <span>Remember Me</span>
+                                </div>
+                                <div>
+                                    <a href="" id="forgot-password">Forgot Password?</a>
+                                </div>
+                            </div>
+                            <div class="captcha">
+                                <span>Captcha</span>
+                                <div id="captcha">
+                                    <label for='captcha' id="captcha-question"><?php echo $captchaQuestion; ?></label>
+                                    <input type='text' name='captcha' id="captcha-answer" required>
+                                </div>
+                                <?php if ($captchaFail): ?>
+                                    <div id="captcha-fail" style="color:red">Invalid Captcha!</div>
+                                <?php elseif ($loginFail): ?>
+                                    <div id="login-fail" style="color:red">Invalid username or password!</div>
+                                <?php endif; ?>
+                            </div>
+                            <button class="next-button" name="login">Submit</button>
+                        </form>
                     </div>
-                    <form class="register" method="POST">
-                        <div class="credential-form">
-                            <img alt="" src="../assets/img/user.svg" />
-                            <input type="text" placeholder="Username" name="username" required />
+                    <span id="others-form"><b>Login</b> with Others</span>
+                    <a href="glogin.php" class="glogin">
+                        <img class="google-1-icon" alt="" src="../assets/img/google.png" height="24px" />
+                        <div>
+                            <span>Login with </span>
+                            <b>Google</b>
                         </div>
-                        <div class="credential-form">
-                            <img alt="" src="../assets/img/email.svg" />
-                            <input type="email" placeholder="Email" name="email" required />
-                        </div>
-                        <div class="credential-form">
-                            <img alt="" src="../assets/img/password.svg" />
-                            <input type="password" placeholder="Password" name="password" required />
-                        </div>
-                        <div id="terms">
-                            <input type="checkbox" required />
-                            <span>I agree with
-                                <a href="/" id="privacy-link">Privacy Policy</a>
-                                and
-                                <a href="/" id="terms-link">Terms of Service</a>
-                            </span>
-                        </div>
-                        <div class="captcha">
-                            <span>Captcha</span>
-                            <div id="captcha">
-                                <label for='captcha' id="captcha-question"><?php echo $captchaQuestion; ?></label>
-                                <input type='number' name='captcha' id="captcha-answer" required>
-                            </div>
-                            <?php if ($captchaFail): ?>
-                                <div id="captcha-fail" style="color:red">Invalid Captcha!</div>
-                            <?php elseif ($registerFail): ?>
-                                <div id="register-fail" style="color:red">Email or username already exist!</div>
-                            <?php elseif ($registerSuccess): ?>
-                                <div id="register-success">Registration Success</div>
-                            <?php endif; ?>
-                        </div>
-                        <button class="next-button" name="register">Submit</button>
-                    </form>
-                    <form class="login" method="POST">
-                        <div class="credential-form">
-                            <img alt="" src="../assets/img/user.svg" />
-                            <input type="text" placeholder="Username" name="username" required />
-                        </div>
-                        <div class="credential-form">
-                            <img alt="" src="../assets/img/password.svg" />
-                            <input type="password" placeholder="Password" name="password" required />
-                        </div>
-                        <div class="remember-and-forgot">
-                            <div id="remember-me">
-                                <input type="checkbox" />
-                                <span>Remember Me</span>
-                            </div>
-                            <div>
-                                <a href="" id="forgot-password">Forgot Password?</a>
-                            </div>
-                        </div>
-                        <div class="captcha">
-                            <span>Captcha</span>
-                            <div id="captcha">
-                                <label for='captcha' id="captcha-question"><?php echo $captchaQuestion; ?></label>
-                                <input type='number' name='captcha' id="captcha-answer" required>
-                            </div>
-                            <?php if ($captchaFail): ?>
-                                <div id="captcha-fail" style="color:red">Invalid Captcha!</div>
-                            <?php elseif ($loginFail): ?>
-                                <div id="login-fail" style="color:red">Invalid username or password!</div>
-                            <?php endif; ?>
-                        </div>
-                        <button class="next-button" name="login">Submit</button>
-                    </form>
+                    </a>
                 </div>
-                <span id="others-form"><b>Login</b> with Others</span>
-                <a href="glogin.php" class="glogin">
-                    <img class="google-1-icon" alt="" src="../assets/img/google.png" height="24px" />
-                    <div>
-                        <span>Login with </span>
-                        <b>Google</b>
-                    </div>
-                </a>
             </div>
-        </div>
-        <div class="sign-up-wp">
-            <img loading="lazy" src="../assets/img/logo.svg" alt="background" height="400px" />
+            <div class="sign-up-wp">
+                <img loading="lazy" src="../assets/img/logo.svg" alt="background" height="400px" />
+            </div>
         </div>
     </div>
 </body>

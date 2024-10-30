@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $price = $_POST['price'];
     $image_path = '../assets/img/product/' . basename($_FILES['image']['name']);
     $description = $_POST['description'];
-    
+
     // Move the uploaded file to the desired directory
     move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
 
@@ -21,6 +21,7 @@ $connect->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, width=device-width" />
@@ -30,21 +31,42 @@ $connect->close();
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap" />
 </head>
+
 <body>
     <?php include '../header.php'; ?>
-    <h1>Add New Product</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <label for="name">Product Name:</label>
-        <input type="text" name="name" required>
-        <label for="price">Price:</label>
-        <input type="number" name="price" step="0.01" required>
-        <label for="image">Product Image:</label>
-        <input type="file" name="image" accept="image/*" required>
-        <label for="description">Description: </label>
-        <input type="text" name="description"><br>
-        <button type="submit">Add Product</button>
-    </form>
-    <a href="/" class="link">Back to shopping</a>
+    <div class="main">
+        <div class="back">
+            <a href="/">
+                <- Back to shopping </a>
+        </div>
+        <div id="upload-product-title">
+            <span>
+                Add New Product
+            </span>
+        </div>
+        <form method="POST" id="upload-product-form" enctype="multipart/form-data">
+        <div class=" upload-product-item">
+            <div class="credential-form">
+                <label for="image" id="upload-image-label" class="upload-label">Product Image</label>
+                <input type="file" name="image" id="image" accept="image/*" required>
+            </div>
+            <div class="credential-form">
+                <label for="name" class="upload-label">Product Name</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="credential-form">
+                <label for="price" class="upload-label">Price</label>
+                <input type="number" name="price" step="0.01" required>
+            </div>
+            <div class="credential-form form-description">
+                <label for="description" class="upload-label">Description</label>
+                <textarea name="description" id="description" class="input-description" rows="4" required></textarea>
+            </div>
+        <button type="submit" class="next-button">Add Product</button>
+        </div>
+        </form>
+    </div>
     <?php include '../footer.php'; ?>
 </body>
+
 </html>
