@@ -362,3 +362,18 @@ input[type="checkbox"]:checked::before {
 .upload-product-item .credential-form {
   font-size: 0.8rem;
 }
+
+.price-input {
+  width: 100%;
+  display: flex;
+  gap: 4px;
+  flex-direction: row-reverse;
+}
+
+.currency-symbol {
+  display: none;
+}
+
+#price:not(:placeholder-shown) ~ .currency-symbol-container .currency-symbol{
+  display: block;
+}

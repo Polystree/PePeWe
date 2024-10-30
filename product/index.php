@@ -56,7 +56,12 @@ $connect->close();
             </div>
             <div class="credential-form">
                 <label for="price" class="upload-label">Price</label>
-                <input type="number" name="price" placeholder="Your product price..." required>
+                <div class="price-input">
+                    <input type="number" name="price" id="price" placeholder="Your product price..." required>
+                    <div class="currency-symbol-container">
+                        <span class="currency-symbol">Rp</span>
+                    </div>
+                </div>
             </div>
             <div class="credential-form form-description">
                 <label for="description" class="upload-label">Description</label>
