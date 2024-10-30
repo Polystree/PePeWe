@@ -45,18 +45,18 @@ $connect->close();
             </span>
         </div>
         <form method="POST" id="upload-product-form" enctype="multipart/form-data">
-        <div class=" upload-product-item">
+        <div class="upload-product-item">
             <div class="credential-form">
                 <label for="image" id="upload-image-label" class="upload-label">Product Image</label>
                 <input type="file" name="image" id="image" accept="image/*" required>
             </div>
             <div class="credential-form">
                 <label for="name" class="upload-label">Product Name</label>
-                <input type="text" name="name" required>
+                <input type="text" name="name" placeholder="Your product name..." required>
             </div>
             <div class="credential-form">
                 <label for="price" class="upload-label">Price</label>
-                <input type="number" name="price" step="0.01" required>
+                <input type="number" name="price" placeholder="Your product price..." required>
             </div>
             <div class="credential-form form-description">
                 <label for="description" class="upload-label">Description</label>
