@@ -13,6 +13,7 @@
 
 <body>
     <?php include './header.php'; ?>
+    <?php include './ad-header.php' ?>
     <div class="main">
 
     </div>

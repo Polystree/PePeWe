@@ -1,0 +1,39 @@
+.summer-sale {
+  line-height: 1.3rem;
+}
+
+.shopnow {
+  text-decoration: underline;
+  line-height: 1.5rem;
+  font-weight: 600;
+}
+
+.summer-sale-parent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.english {
+  line-height: 1.3rem;
+}
+
+.english-parent {
+  display: flex;
+  align-items: center;
+}
+
+.frame-parent {
+  display: flex;
+  justify-content: space-between;
+  gap: 15rem;
+  height: 100%;
+  margin: 0 2rem;
+}
+
+.top-header {
+  background-color: #000;
+  height: 3rem;
+  color: #f0f0f0;
+  font-family: var(--font-poppins);
+}
