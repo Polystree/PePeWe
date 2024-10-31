@@ -17,10 +17,7 @@
     <div class="main">
         <?php 
         if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
-            // Sanitize the search query to prevent security issues
             $searchQuery = htmlspecialchars(trim($_GET['query']));
-            // Optionally, you can pass the query to search.php via a variable or GET parameter
-            // Here, we'll assume search.php accesses $_GET['query'] directly
             include 'search.php';
         } else {
             include 'home.php';

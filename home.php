@@ -372,6 +372,27 @@
                 <span>(88)</span>
             </div>
         </div>
+        <div class="product">
+            <div class="discount">-99%</div>
+            <i class="far fa-heart wishlistt"></i>
+            <div class="image-container">
+                <img src="/assets/img/ip14.png" alt="Product image of HAVIT HV-G92 Gamepad" width="200" height="200" />
+                <div class="add-to-cart">Add To Cart</div>
+            </div>
+            <div class="title-item">Apple iPhone 14 Pro</div>
+            <div class="prices">
+                <div class="price">Rp 159.999</div>
+                <div class="original-price">Rp 15.999.999</div>
+            </div>
+            <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+                <span>(88)</span>
+            </div>
+        </div>
     </div>
     </div>
 </section>
@@ -410,6 +431,44 @@
             </div>
         </div>
         <div class="our-product-list">
+            <div class="product">
+                <i class="far fa-heart wishlistt"></i>
+                <div class="image-container">
+                    <img src="/assets/img/ip14.png" alt="Product image of HAVIT HV-G92 Gamepad" width="200" height="200" />
+                    <div class="add-to-cart">Add To Cart</div>
+                </div>
+                <div class="title-item">Apple iPhone 14 Pro</div>
+                <div class="prices">
+                    <div class="price">Rp 15.999.999</div>
+                </div>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span>(88)</span>
+                </div>
+            </div>
+            <div class="product">
+                <i class="far fa-heart wishlistt"></i>
+                <div class="image-container">
+                    <img src="/assets/img/ip14.png" alt="Product image of HAVIT HV-G92 Gamepad" width="200" height="200" />
+                    <div class="add-to-cart">Add To Cart</div>
+                </div>
+                <div class="title-item">Apple iPhone 14 Pro</div>
+                <div class="prices">
+                    <div class="price">Rp 15.999.999</div>
+                </div>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span>(88)</span>
+                </div>
+            </div>
             <div class="product">
                 <i class="far fa-heart wishlistt"></i>
                 <div class="image-container">
