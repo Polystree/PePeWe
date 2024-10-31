@@ -120,6 +120,7 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -moz-appearance: textfield;
   -webkit-appearance: none;
+  appearance: none;
   margin: 0;
 }
 
@@ -354,7 +355,7 @@ input[type="checkbox"]:checked::before {
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: .75rem;
   font-family: var(--font-inter);
   box-sizing: border-box;
 }
