@@ -8,17 +8,30 @@ if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $product_name = $_POST['product_name'];
-    $image_path = $_POST['image_path'];
+    if (!isset($_POST['productId'])) {
+        echo "Invalid request.";
+        exit();
+    }
+
+    $productId = $_POST['productId'];
 
     $connect->begin_transaction();
 
     try {
-        $stmt = $connect->prepare("DELETE FROM products WHERE name = ?");
-        $stmt->bind_param("s", $product_name);
+        $stmt = $connect->prepare("SELECT name, image_path FROM products WHERE productId = ?");
+        $stmt->bind_param("i", $productId);
+        $stmt->execute();
+        $stmt->bind_result($product_name, $image_path);
+        if (!$stmt->fetch()) {
+            throw new Exception("No product found with the given ID.");
+        }
+        $stmt->close();
+
+        $stmt = $connect->prepare("DELETE FROM products WHERE productId = ?");
+        $stmt->bind_param("i", $productId);
         $stmt->execute();
         if ($stmt->affected_rows === 0) {
-            throw new Exception("No product found with the given name.");
+            throw new Exception("Failed to delete the product.");
         }
         $stmt->close();
 
@@ -27,14 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute();
         $stmt->close();
 
-        $connect->commit();
-
         $fileName = '../products/' . strtolower(str_replace(' ', '-', $product_name)) . '.php';
         if (file_exists($fileName)) {
             unlink($fileName);
         }
 
-        header("Location: /");
+        $connect->commit();
+
+        header("Location: /admin/index.php");
         exit();
     } catch (Exception $e) {
         $connect->rollback();

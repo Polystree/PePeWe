@@ -10,12 +10,15 @@
   .container {
     padding: 20px 40px;
   }
-  .container .btn {
+  .container .btn, .main-content .add-product-btn {
     padding: 10px 20px;
     border: 1px solid #000;
     background: #fff;
     cursor: pointer;
     margin-right: 10px;
+  }
+  .container .btn:hover, .main-content .add-product-btn:hover {
+    filter: invert(1);
   }
   .container .btn.update {
     background: #000;
@@ -83,10 +86,22 @@
     justify-content: space-between;
     margin: 10px 0;
   }
-  .cart-total .btn {
+  .cart-total .btn, .manage-product-btn button {
     width: 100%;
     text-align: center;
     background: #000;
     color: #fff;
     border: none;
+    cursor: pointer;
   }
+
+  .manage-product-btn button {
+    padding: 10px;
+    margin: 0.25rem 0;
+    border-radius: 0.25rem;
+}
+
+.manage-product-btn .delete-button {
+    background-color: #d8602b;
+    padding: 4px 10px;
+}

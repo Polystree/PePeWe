@@ -38,7 +38,7 @@ function handleLogin($connect)
     if ($loginResult->num_rows > 0) {
         $_SESSION['username'] = $username;
         if (isset($_SESSION['username']) && $_SESSION['username'] == 'admin') {
-            header('Location: /product');
+            header('Location: /admin');
             exit();
         } else {
             header('Location: /');

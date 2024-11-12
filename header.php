@@ -22,9 +22,11 @@ if (isset($_SESSION['username'])) {
         <a class="logo" href="/"><img src="/assets/img/logo-landscape.svg" height="100%" alt="logo"></a>
         <input type="checkbox" name="profile" id="profile">
         <div class="header-right">
+
             <?php if (isset($_SESSION['username']) && $_SESSION['username'] === 'admin'): ?>
-                <a href="/product" class="header-item">Products</a>
+                <a href="/admin" class="header-item">Admin</a>
             <?php endif; ?>
+
             <div class="search-input">
                 <form action="/index.php" method="GET" id="header-search">
                     <div class="search">
@@ -37,16 +39,19 @@ if (isset($_SESSION['username'])) {
                     </div>
                 </form>
             </div>
-            <?php if (isset($_SESSION['username'])): ?>
+
+            <?php if (isset($_SESSION['username']) && $_SESSION['username'] !== 'admin'): ?>
                 <div class="frame1">
                     <label for="cart-switch">
                         <img class="cart-icon" alt="" src="/assets/img/cart.svg" />
                     </label>
                 </div>
             <?php endif; ?>
+
             <?php
             echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
             ?>
+
             <label for="profile">
                 <?php if (isset($userData['profile_image'])): ?>
                     <img class="generic-avatar-icon" alt="Profile Image"
@@ -56,6 +61,7 @@ if (isset($_SESSION['username'])) {
                         src="<?php echo htmlspecialchars($profileImage); ?>" />
                 <?php endif; ?>
             </label>
+
             <div class="profile-dropdown">
                 <?php if (!isset($_SESSION['username'])): ?>
                     <a href="/login" class="profile-item" id="profile-login">Login / Register</a>
@@ -65,6 +71,7 @@ if (isset($_SESSION['username'])) {
                     <a href="/login/logout.php" class="profile-item" id="profile-login">Logout</a>
                 <?php endif; ?>
             </div>
+            
         </div>
     </div>
 </header>
