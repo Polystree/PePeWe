@@ -1,6 +1,4 @@
 <?php
-include './login/database.php';
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
     foreach ($_POST['quantity'] as $productName => $quantity) {
         $quantity = (int) $quantity;

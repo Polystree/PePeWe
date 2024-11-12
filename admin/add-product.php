@@ -47,6 +47,10 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST' && isset(\$_POST['cart'])) {
 </head>
 <body>
 <?php include '../header.php'; ?>
+<div class='cart'>
+    <?php include '../cart.php'; ?>
+</div>
+<div class='main'>
     <div class='product-details'>
         <h1>$name</h1>
         <img src='$image_path' alt='$name' />
@@ -61,6 +65,7 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST' && isset(\$_POST['cart'])) {
             <button type='submit' class='next-button' name='cart'>Add to Cart</button>
         </form>
     </div>
+</div>
 <?php include '../footer.php'; ?>
 </body>
 </html>
