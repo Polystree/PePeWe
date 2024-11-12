@@ -60,13 +60,6 @@
     width: 10.813rem;
   }
   
-  .cart {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
   .wishlist {
     line-height: 1rem;
     font-weight: 300;
@@ -247,7 +240,6 @@
   .footer {
     font-size: 0.75rem;
     color: #fff;
-    font-family: var(--font-poppins);
     padding: 5vh 0;
   }
   

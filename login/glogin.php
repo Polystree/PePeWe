@@ -55,10 +55,8 @@ function checkUserExists($username, $email) {
     if (!$user) {
         $stmt = $connect->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, '')");
         $stmt->execute([$username, $email]);
-        $_SESSION['user_id'] = $username;
         $_SESSION['username'] = $username;
     } else {
-        $_SESSION['user_id'] = $username;
         $_SESSION['username'] = $username;
     }
 }

@@ -19,19 +19,22 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
         if ($result->num_rows > 0) {
             echo "<div class='products'>";
             while ($row = $result->fetch_assoc()) {
+                echo "<a href='{$row['url']}'>";
                 echo "<div class='product'>";
                 echo "<img src='" . htmlspecialchars($row['image_path']) . "' alt='" . htmlspecialchars($row['name']) . "' />";
                 echo "<h3>" . htmlspecialchars($row['name']) . "</h3>";
                 echo "<p>Price: Rp " . number_format($row['price'], 0, ',', '.') . "</p>";
                 echo "<p>" . nl2br(htmlspecialchars($row['description'])) . "</p>";
-                echo "<button class='add-to-cart next-button' name='product-page'>Add to cart</button>";
+                // echo "<button class='add-to-cart next-button' name='cart'>Add to cart</button>";
                 echo "</div>";
+                echo "</a>";
             }
             echo "</div>";
         } else {
             echo "<p>No products found matching your search.</p>";
         }
         echo "</div>";
+        echo "</a>";
 
         $stmt->close();
     } else {

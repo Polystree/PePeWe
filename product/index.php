@@ -1,6 +1,5 @@
 <?php
 include '../login/database.php';
-
 function generateProductPage($name, $price, $image_path, $description) {
     $productPageContent = "
 <?php
@@ -14,12 +13,7 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST' && isset(\$_POST['cart'])) {
 
     \$stmt = \$connect->prepare('INSERT INTO cart (product_name, price, image_path, quantity) VALUES (?, ?, ?, ?)');
     \$stmt->bind_param('sisi', \$product_name, \$price, \$image_path, \$quantity);
-
-    if (\$stmt->execute()) {
-        echo 'Product added to cart successfully.';
-    } else {
-        echo 'Error: ' . \$stmt->error;
-    }
+    \$stmt->execute();
     \$stmt->close();
 }
 ?>
@@ -30,6 +24,7 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST' && isset(\$_POST['cart'])) {
     <meta name='viewport' content='initial-scale=1, width=device-width' />
     <title>$name - Product Details</title>
     <link rel='stylesheet' href='../assets/css/style.css' />
+    <link rel='stylesheet' href='../assets/css/product.css' />
 </head>
 <body>
 <?php include '../header.php'; ?>
@@ -38,11 +33,13 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST' && isset(\$_POST['cart'])) {
         <img src='$image_path' alt='$name' />
         <p>Rp $price</p>
         <p>Description: $description</p>
+        <?php if (isset(\$_SESSION['username']) && \$_SESSION['username'] === 'admin'): ?>
         <form method='POST' action='delete_product.php'>
             <input type='hidden' name='product_name' value='$name'>
             <input type='hidden' name='image_path' value='$image_path'>
             <button type='submit' class='delete-button'>Delete Product</button>
         </form>
+        <?php endif; ?>
         <form method='POST'>
             <input type='hidden' name='product_name' value='$name'>
             <input type='hidden' name='price' value='$price'>
@@ -98,10 +95,6 @@ $connect->close();
 <body>
     <?php include '../header.php'; ?>
     <div class="main">
-        <div class="back">
-            <a href="/">
-                <- Back to shopping </a>
-        </div>
         <div id="upload-product-title">
             <span>
                 Add New Product

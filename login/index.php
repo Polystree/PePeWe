@@ -36,10 +36,14 @@ function handleLogin($connect)
     $loginResult = $stmt->get_result();
 
     if ($loginResult->num_rows > 0) {
-        $_SESSION['user_id'] = $username;
         $_SESSION['username'] = $username;
-        header("Location: /");
-        exit();
+        if (isset($_SESSION['username']) && $_SESSION['username'] == 'admin') {
+            header('Location: /product');
+            exit();
+        } else {
+            header('Location: /');
+            exit();
+        }
     } else {
         $loginFail = true;
     }

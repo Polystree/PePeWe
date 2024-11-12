@@ -13,7 +13,6 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 15px;
-  width: calc(15% - 20px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: transform 0.2s;
@@ -57,4 +56,8 @@
 
 .product:hover .add-to-cart {
   display: block;
+}
+
+.products a {
+  width: calc(15% - 20px);
 }

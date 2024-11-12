@@ -14,6 +14,9 @@
 <body>
     <?php include 'header.php'; ?>
     <?php include 'ad-header.php' ?>
+    <div class="cart">
+        <?php include 'cart.php'; ?>
+    </div>
     <div class="main">
         <?php 
         if (isset($_GET['query']) && !empty(trim($_GET['query']))) {

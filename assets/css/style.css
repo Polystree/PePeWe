@@ -1,6 +1,7 @@
 body {
   margin: 0;
   line-height: normal;
+  font-family: 'Poppins', 'Inter', 'Smooch Sans', sans-serif;
 }
 
 :root {
@@ -113,6 +114,14 @@ a {
   background-color: transparent !important;
   all: unset;
   width: 100%;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="file"]:focus {
+    border-color: #d8602b;
+    outline: none;
 }
 
 input[type="number"],
@@ -287,10 +296,6 @@ input[type="checkbox"]:checked::before {
   border-right: 1px solid black;
 }
 
-.back {
-  margin: 1.5rem;
-}
-
 /* upload product page */
 
 #upload-product-form {
@@ -306,14 +311,6 @@ input[type="checkbox"]:checked::before {
   display: flex;
   justify-content: center;
   margin: 2rem 0;
-}
-
-.back a {
-  color: rgb(100, 100, 100);
-}
-
-.back a:hover {
-  color: black;
 }
 
 ::-webkit-file-upload-button {
@@ -377,4 +374,10 @@ input[type="checkbox"]:checked::before {
 
 #price:not(:placeholder-shown) ~ .currency-symbol-container .currency-symbol{
   display: block;
+}
+
+.cart {
+  display: none;
+  min-height: 50rem;
+  margin-bottom: 20rem;
 }

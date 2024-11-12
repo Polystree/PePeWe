@@ -1,3 +1,16 @@
+<?php
+include './login/database.php';
+
+$stmt = $connect->prepare("SELECT name, price, image_path, description, url FROM products ORDER BY productId DESC LIMIT 5");
+$stmt->execute();
+$result = $stmt->get_result();
+
+$_SESSION['recently_updated'] = $result->fetch_all(MYSQLI_ASSOC);
+
+$stmt->close();
+$connect->close();
+?>
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet"
@@ -5,20 +18,36 @@
 <link rel="stylesheet" href="/assets/css/home.css">
 <section class="hero">
     <div class="text">
-        <p>
-            Pro.Beyond.
-        </p>
-        <h1>
-            IPhone 16 Pro
-        </h1>
-        <p>
-            Created to change everything for the better. For everyone
-        </p>
-        <button>
-            Shop Now
-        </button>
+        <p>Pro.Beyond.</p>
+        <h1>IPhone 16 Pro</h1>
+        <p>Created to change everything for the better. For everyone</p>
+        <a href="#recently-updated" class="shop-button">Shop Now</a>
     </div>
     <img alt="IPhone 16 Pro" src="/assets/img/hero.webp" />
+</section>
+<section id="recently-updated" class="recently-updated">
+    <div class="section-title">
+        <h2>Recently Updated Products</h2>
+    </div>
+    <div class="products-container">
+        <?php if(isset($_SESSION['recently_updated']) && !empty($_SESSION['recently_updated'])): ?>
+            <?php foreach ($_SESSION['recently_updated'] as $product): ?>
+                <div class="product">
+                <?php echo "<a href='{$product['url']}'>"; ?>
+                    <img src="<?php echo htmlspecialchars($product['image_path']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" width="200" height="200" />
+                    <div class="product-info">
+                        <h3><?php echo htmlspecialchars($product['name']); ?></h3>
+                        <p class="price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></p>
+                        <p class="description"><?php echo htmlspecialchars($product['description']); ?></p>
+                        <a href="/products/<?php echo strtolower(str_replace(' ', '-', $product['name'])); ?>.php" class="shop-now-btn">Shop Now</a>
+                    </div>
+                    <?php echo "</a>"; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No recently updated products found.</p>
+        <?php endif; ?>
+    </div>
 </section>
 <section class="flash-sales">
     <div class="title">

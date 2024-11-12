@@ -24,7 +24,7 @@
   margin-bottom: 20px;
   margin-top: 0;
 }
-.hero .text button {
+.shop-button{
   padding: 10px 20px;
   border: 1px solid #fff;
   background: none;
@@ -32,6 +32,7 @@
   cursor: pointer;
   border-radius: 5px;
   transition: background 0.3s, color 0.3s;
+  text-decoration: none;
 }
 .hero .text button:hover {
   background: #fff;
@@ -758,4 +759,89 @@
 .feature-na p {
   font-size: 14px;
   color: #666;
+}
+
+/* Recently Updated Section */
+.recently-updated {
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+}
+
+.recently-updated .section-title h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: var(--accent-color);
+}
+
+.products-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.product {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    width: 220px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.product:hover {
+    transform: translateY(-5px);
+}
+
+.product img {
+    max-width: 100%;
+    height: auto;
+    max-height: 300px;
+    width: auto;
+    border-radius: 4px;
+}
+
+.product-info h3 {
+    font-size: 1.2rem;
+    margin: 10px 0;
+    color: #333;
+}
+
+.product .price {
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+}
+
+.product .description {
+    font-size: 0.9rem;
+    color: #555;
+    height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 15px;
+}
+
+.shop-now-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: var(--accent-color);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.shop-now-btn:hover {
+    background-color: #b75023; /* Slightly darker shade of #d8602b */
+}
+
+:root {
+    --accent-color: #d8602b;
+    --primary-font: 'Roboto', sans-serif;
+    --secondary-font: 'Poppins', sans-serif;
+    /* Add other variables as needed */
 }
