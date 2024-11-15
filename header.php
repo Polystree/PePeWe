@@ -8,9 +8,10 @@ $profileImage = '/assets/img/Generic avatar.svg';
 
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
-    $query = "SELECT profile_image FROM users WHERE username = '$username'";
+    $query = "SELECT id, profile_image FROM users WHERE username = '$username'";
     $result = mysqli_query($connect, $query);
     $row = mysqli_fetch_assoc($result);
+    $_SESSION['userId'] = $row['id'] ?? null;
     $profileImage = $row['profile_image'] ?? '/assets/img/Generic avatar.svg';
 }
 ?>
@@ -50,6 +51,7 @@ if (isset($_SESSION['username'])) {
 
             <?php
             echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
+            $_SESSION['userId'] = $row['id'] ?? null;
             ?>
 
             <label for="profile">

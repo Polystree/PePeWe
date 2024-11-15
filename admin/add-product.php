@@ -11,7 +11,7 @@ $product = [
 $productId = null;
 
 if (isset($_GET['productId'])) {
-    $productId = $_GET['productId'];
+    $productId = (int)$_GET['productId'];
     $stmt = $connect->prepare("SELECT name, price, image_path, description, quantity FROM products WHERE productId = ?");
     $stmt->bind_param("i", $productId);
     $stmt->execute();
@@ -19,9 +19,11 @@ if (isset($_GET['productId'])) {
     $stmt->fetch();
     $stmt->close();
 }
-function generateProductPage($name, $price, $image_path, $description, $quantity) {
+
+function generateProductPage($name, $price, $image_path, $description, $quantity, $productId) {
     $productPageContent = "
 <?php
+session_start();
 include '../login/database.php';
 
 if (\$_SERVER['REQUEST_METHOD'] == 'POST' && isset(\$_POST['cart'])) {
@@ -29,9 +31,17 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST' && isset(\$_POST['cart'])) {
     \$price = \$_POST['price'];
     \$image_path = \$_POST['image_path'];
     \$quantity = \$_POST['quantity'];
+    \$userId = \$_SESSION['userId'];
 
-    \$stmt = \$connect->prepare('INSERT INTO cart (product_name, price, image_path, quantity) VALUES (?, ?, ?, ?)');
-    \$stmt->bind_param('sisi', \$product_name, \$price, \$image_path, \$quantity);
+    \$stmt = \$connect->prepare('SELECT productId FROM products WHERE name = ? AND price = ? AND image_path = ?');
+    \$stmt->bind_param('sis', \$product_name, \$price, \$image_path);
+    \$stmt->execute();
+    \$stmt->bind_result(\$productId);
+    \$stmt->fetch();
+    \$stmt->close();
+
+    \$stmt = \$connect->prepare('INSERT INTO cart (product_name, price, image_path, quantity, productId, userId) VALUES (?, ?, ?, ?, ?, ?)');
+    \$stmt->bind_param('sisiii', \$product_name, \$price, \$image_path, \$quantity, \$productId, \$userId);
     \$stmt->execute();
     \$stmt->close();
 }
@@ -60,6 +70,7 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST' && isset(\$_POST['cart'])) {
             <input type='hidden' name='product_name' value='$name'>
             <input type='hidden' name='price' value='$price'>
             <input type='hidden' name='image_path' value='$image_path'>
+            <input type='hidden' name='productId' value='<?php echo isset(\$productId) ? \$productId : ''; ?>'>
             <label for='quantity'>Quantity:</label>
             <input type='number' name='quantity' id='quantity' value='1' min='1'>
             <button type='submit' class='next-button' name='cart'>Add to Cart</button>
@@ -89,10 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $image_path = $product['image_path'];
     }
 
-    $url = generateProductPage($name, $price, $image_path, $description, $quantity);
+    $url = generateProductPage($name, $price, $image_path, $description, $quantity, $productId);
 
     if (isset($_POST['productId'])) {
-        $productId = $_POST['productId'];
+        $productId = (int)$_POST['productId'];
         $stmt = $connect->prepare("UPDATE products SET name = ?, price = ?, image_path = ?, description = ?, quantity = ?, url = ? WHERE productId = ?");
         $stmt->bind_param("sissisi", $name, $price, $image_path, $description, $quantity, $url, $productId);
     } else {

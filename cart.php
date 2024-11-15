@@ -1,15 +1,17 @@
 <?php
+$userId = $_SESSION['userId'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
     foreach ($_POST['quantity'] as $productName => $quantity) {
         $quantity = (int) $quantity;
         if ($quantity > 0) {
-            $stmt = $connect->prepare("UPDATE cart SET quantity = ? WHERE product_name = ?");
-            $stmt->bind_param("is", $quantity, $productName);
+            $stmt = $connect->prepare("UPDATE cart SET quantity = ? WHERE product_name = ? AND userId = ?");
+            $stmt->bind_param("isi", $quantity, $productName, $userId);
             $stmt->execute();
             $stmt->close();
         } else {
-            $stmt = $connect->prepare("DELETE FROM cart WHERE product_name = ?");
-            $stmt->bind_param("s", $productName);
+            $stmt = $connect->prepare("DELETE FROM cart WHERE product_name = ? AND userId = ?");
+            $stmt->bind_param("si", $productName, $userId);
             $stmt->execute();
             $stmt->close();
         }
@@ -18,8 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
     exit();
 }
 
-$query = "SELECT product_name, price, image_path, quantity FROM cart";
-$result = $connect->query($query);
+$query = "SELECT product_name, price, image_path, quantity FROM cart WHERE userId = ?";
+$stmt = $connect->prepare($query);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
 $totalPrice = 0;
 ?>
 <link rel='stylesheet' href='/assets/css/cart.css' />
