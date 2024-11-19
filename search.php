@@ -1,3 +1,12 @@
+<form method="GET" action="">
+    <input type="hidden" name="query" value="<?php echo htmlspecialchars($searchQuery); ?>">
+    <select name="sort" onchange="this.form.submit()">
+        <option value="">Sort by</option>
+        <option value="price_asc" <?php echo ($_GET['sort'] ?? '') === 'price_asc' ? 'selected' : ''; ?>>Price: Low to High</option>
+        <option value="price_desc" <?php echo ($_GET['sort'] ?? '') === 'price_desc' ? 'selected' : ''; ?>>Price: High to Low</option>
+    </select>
+</form>
+
 <?php
 if (!isset($connect)) {
     include 'login/database.php';
@@ -5,8 +14,19 @@ if (!isset($connect)) {
 
 if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
     $searchQuery = htmlspecialchars(trim($_GET['query']));
+    $sort = isset($_GET['sort']) ? $_GET['sort'] : '';
+    $orderBy = '';
 
-    $stmt = $connect->prepare("SELECT * FROM products WHERE name LIKE ?");
+    switch ($sort) {
+        case 'price_asc':
+            $orderBy = 'ORDER BY price ASC';
+            break;
+        case 'price_desc':
+            $orderBy = 'ORDER BY price DESC';
+            break;
+        }
+
+    $stmt = $connect->prepare("SELECT * FROM products WHERE name LIKE ? $orderBy");
     if ($stmt) {
         $likeQuery = "%" . $searchQuery . "%";
         $stmt->bind_param("s", $likeQuery);

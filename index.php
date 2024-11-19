@@ -18,9 +18,10 @@
         <?php include 'cart.php'; ?>
     </div>
     <div class="main">
-        <?php 
+    <?php 
         if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
             $searchQuery = htmlspecialchars(trim($_GET['query']));
+            $sort = isset($_GET['sort']) ? htmlspecialchars($_GET['sort']) : '';
             include 'search.php';
         } else {
             include 'home.php';
