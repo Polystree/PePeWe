@@ -159,7 +159,7 @@ function handleRegistration($connect)
                                     <span>Remember Me</span>
                                 </div>
                                 <div>
-                                    <a href="" id="forgot-password">Forgot Password?</a>
+                                    <a href="http://localhost/login/recover.php" id="forgot-password">Forgot Password?</a>
                                 </div>
                             </div>
                             <div class="captcha">
