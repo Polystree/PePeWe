@@ -27,6 +27,8 @@ if ($result->num_rows > 0) {
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, width=device-width" />
+    <title>iniGadget</title>
+    <link rel="icon" type="image/x-icon" href="../assets/img/logo-light.svg" />
     <title>Manage Products - iniGadget</title>
     <link rel="stylesheet" href="../assets/css/style.css" />
     <link rel="stylesheet" href="../assets/css/cart.css" />
