@@ -25,15 +25,19 @@
                 <?php endif; ?>
             </div>
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" placeholder="<?php echo htmlspecialchars($currentUsername); ?>" required />
+            <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($currentUsername); ?>" required />
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required />
+            <input type="password" id="password" name="password"  />
             <label for="confirm-password">Confirm Password:</label>
-            <input type="password" id="confirm-password" name="password" required />
+            <input type="password" id="confirm-password" name="password"  />
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" placeholder="<?php echo htmlspecialchars($userData['email']); ?>" required />
+            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($userData['email']); ?>" required />
             <label for="profile_image">Profile Image:</label>
             <input type="file" id="profile_image" name="profile_image" />
+            <label for="contact_details">Contact Details:</label>
+            <input type="text" id="contact_details" name="contact_details" value="<?php echo htmlspecialchars($userData['contact_details']); ?>" required />
+            <label for="address">Shipping Address:</label>
+            <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($userData['address']); ?>" required />
             <button type="submit" class="next-button">Update</button>
         </form>
     </div>

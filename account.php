@@ -8,6 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $newPassword = $_POST['password'];
     $newEmail = $_POST['email'];
     $newProfileImage = preg_replace("/[^a-zA-Z0-9.\-_]/", "", $_FILES['profile_image']['name']);
+    $newContactDetails = $_POST['contact_details'];
+    $newAddress = $_POST['address'];
 
     if (!empty($newProfileImage)) {
         $targetDir = __DIR__ . "/assets/img/profile/";
@@ -28,8 +30,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $newProfileImage = $userData['profile_image'];
     }
 
-    $stmt = $connect->prepare("UPDATE users SET username = ?, password = ?, email = ?, profile_image = ? WHERE username = ?");
-    $stmt->bind_param("sssss", $newUsername, $newPassword, $newEmail, $newProfileImage, $currentUsername);
+    $stmt = $connect->prepare("UPDATE users SET username = ?, email = ?, profile_image = ?, contact_details = ?, address = ? WHERE username = ?");
+    $stmt->bind_param("ssssss", $newUsername, $newEmail, $newProfileImage, $newContactDetails, $newAddress, $currentUsername);
+
+    if (!empty($newPassword)) {
+        $stmtPassword = $connect->prepare("UPDATE users SET password = ? WHERE username = ?");
+        $stmtPassword->bind_param("ss", $newPassword, $currentUsername);
+        $stmtPassword->execute();
+        $stmtPassword->close();
+    }
 
     if ($stmt->execute()) {
         $_SESSION['username'] = $newUsername;
@@ -41,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $currentUsername = $_SESSION['username'];
-$stmt = $connect->prepare("SELECT email, profile_image FROM users WHERE username = ?");
+$stmt = $connect->prepare("SELECT email, profile_image, contact_details, address FROM users WHERE username = ?");
 $stmt->bind_param("s", $currentUsername);
 $stmt->execute();
 $result = $stmt->get_result();
