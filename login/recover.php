@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form method="POST" id="upload-product-form">
             <div class="upload-product-item">
                 <div class="credential-form">
-                    <label for="identifier" class="upload-label">Email or Username:</label>
+                    <label for="identifier" class="upload-label">Email or Username</label>
                     <input type="text" id="identifier" name="identifier" required>
                 </div>
                 <?php if ($error): ?>

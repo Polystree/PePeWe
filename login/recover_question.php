@@ -73,10 +73,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <span>Security Question</span>
         </div>
         <form method="POST" id="upload-product-form">
-            <div class="upload-product-item">
+            <div class="upload-product-item security-question">
                 <?php if (!$isQuestionSet): ?>
                     <div class="credential-form">
-                        <label for="security_question" class="upload-label">Select a Security Question:</label>
+                        <label for="security_question" class="upload-label">Select a Security Question</label>
                         <select id="security_question" name="security_question" required>
                             <?php foreach ($securityQuestions as $question): ?>
                                 <option value="<?php echo htmlspecialchars($question); ?>"><?php echo htmlspecialchars($question); ?></option>
@@ -85,12 +85,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                 <?php else: ?>
                     <div class="credential-form">
-                        <label class="upload-label">Your Security Question:</label>
+                        <label class="upload-label">Your Security Question</label>
                         <p><?php echo htmlspecialchars($user['security_question']); ?></p>
                     </div>
                 <?php endif; ?>
                 <div class="credential-form">
-                    <label for="security_answer" class="upload-label">Your Answer:</label>
+                    <label for="security_answer" class="upload-label">Your Answer</label>
                     <input type="text" id="security_answer" name="security_answer" required>
                 </div>
                 <?php if ($error): ?>

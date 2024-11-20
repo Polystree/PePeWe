@@ -54,11 +54,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form method="POST" id="upload-product-form">
             <div class="upload-product-item">
                 <div class="credential-form">
-                    <label for="new_password" class="upload-label">New Password:</label>
+                    <label for="new_password" class="upload-label">New Password</label>
                     <input type="password" id="new_password" name="new_password" required>
                 </div>
                 <div class="credential-form">
-                    <label for="confirm_password" class="upload-label">Confirm Password:</label>
+                    <label for="confirm_password" class="upload-label">Confirm Password</label>
                     <input type="password" id="confirm_password" name="confirm_password" required>
                 </div>
                 <?php if ($error): ?>
