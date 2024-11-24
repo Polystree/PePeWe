@@ -11,6 +11,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $newContactDetails = $_POST['contact_details'];
     $newAddress = $_POST['address'];
 
+    // Check if the new username or email already exists
+    $stmtCheck = $connect->prepare("SELECT username, email FROM users WHERE (username = ? OR email = ?) AND username != ?");
+    $stmtCheck->bind_param("sss", $newUsername, $newEmail, $currentUsername);
+    $stmtCheck->execute();
+    $resultCheck = $stmtCheck->get_result();
+
+    if ($resultCheck->num_rows > 0) {
+        echo "Username or email already in use.";
+        exit;
+    }
+
     if (!empty($newProfileImage)) {
         $targetDir = __DIR__ . "/assets/img/profile/";
         $targetFile = $targetDir . basename($newProfileImage);
