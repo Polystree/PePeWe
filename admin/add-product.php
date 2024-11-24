@@ -26,6 +26,16 @@ function generateProductPage($name, $price, $image_path, $description, $quantity
 session_start();
 include '../login/database.php';
 
+function getProductId(\$product_name, \$connect) {
+    \$stmt = \$connect->prepare('SELECT productId FROM products WHERE name = ? LIMIT 1');
+    \$stmt->bind_param('s', \$product_name);
+    \$stmt->execute();
+    \$stmt->bind_result(\$productId);
+    \$stmt->fetch();
+    \$stmt->close();
+    return \$productId;
+}
+
 if (\$_SERVER['REQUEST_METHOD'] == 'POST' && isset(\$_POST['cart'])) {
     \$product_name = \$_POST['product_name'];
     \$price = \$_POST['price'];
@@ -45,6 +55,50 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST' && isset(\$_POST['cart'])) {
     \$stmt->execute();
     \$stmt->close();
 }
+
+// Handle adding, editing, or deleting reviews
+if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset(\$_POST['add_review'])) {
+        \$userId = \$_SESSION['userId'];
+        \$product_name = '$name';
+        \$productId = getProductId(\$product_name, \$connect);
+
+        \$review = \$_POST['review'];
+        
+        \$stmt = \$connect->prepare(\"INSERT INTO reviews (userId, productId, review) VALUES (?, ?, ?)\");
+        \$stmt->bind_param(\"iis\", \$userId, \$productId, \$review);
+        \$stmt->execute();
+        \$stmt->close();
+    } elseif (isset(\$_POST['edit_review'])) {
+        \$reviewId = \$_POST['review_id'];
+        \$review = \$_POST['review'];
+        
+        \$stmt = \$connect->prepare(\"UPDATE reviews SET review = ? WHERE id = ? AND userId = ?\");
+        \$stmt->bind_param(\"sii\", \$review, \$reviewId, \$_SESSION['userId']);
+        \$stmt->execute();
+        \$stmt->close();
+    } elseif (isset(\$_POST['delete_review'])) {
+        \$reviewId = \$_POST['review_id'];
+        
+        \$stmt = \$connect->prepare(\"DELETE FROM reviews WHERE id = ? AND userId = ?\");
+        \$stmt->bind_param(\"ii\", \$reviewId, \$_SESSION['userId']);
+        \$stmt->execute();
+        \$stmt->close();
+    }
+}
+
+// Fetch reviews for this product
+\$product_name = '$name';
+\$productId = getProductId(\$product_name, \$connect);
+\$stmt = \$connect->prepare('SELECT r.id, r.review, r.userId, u.username, u.profile_image 
+                           FROM reviews r 
+                           JOIN users u ON r.userId = u.id 
+                           WHERE r.productId = ?');
+\$stmt->bind_param('i', \$productId);
+\$stmt->execute();
+\$result = \$stmt->get_result();
+\$reviews = \$result->fetch_all(MYSQLI_ASSOC);
+\$stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang='en'>
@@ -75,6 +129,45 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST' && isset(\$_POST['cart'])) {
             <input type='number' name='quantity' id='quantity' value='1' min='1'>
             <button type='submit' class='next-button' name='cart'>Add to Cart</button>
         </form>
+
+        <div class='review-section'>
+            <h2>Reviews</h2>
+            <?php foreach (\$reviews as \$review): ?>
+                <div class='review'>
+                    <img src='<?php echo \$review['profile_image']; ?>' alt='<?php echo \$review['username']; ?>' class='profile-image'>
+                    <div class='review-content'>
+                        <h3><?php echo \$review['username']; ?></h3>
+                        <p><?php echo \$review['review']; ?></p>
+                        <?php if (isset(\$_SESSION['userId']) && \$_SESSION['userId'] == \$review['userId']): ?>
+                            <form method='POST'>
+                                <input type='hidden' name='review_id' value='<?php echo \$review['id']; ?>'>
+                                <textarea name='review'><?php echo \$review['review']; ?></textarea>
+                                <button type='submit' name='edit_review'>Edit</button>
+                                <button type='submit' name='delete_review'>Delete</button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+
+            <?php if (isset(\$_SESSION['userId'])): ?>
+                <?php
+                \$userHasReviewed = false;
+                foreach (\$reviews as \$review) {
+                    if (\$review['userId'] == \$_SESSION['userId']) {
+                        \$userHasReviewed = true;
+                        break;
+                    }
+                }
+                if (!\$userHasReviewed):
+                ?>
+                    <form method='POST' class='add-review-form'>
+                        <textarea name='review' placeholder='Write your review here...'></textarea>
+                        <button type='submit' name='add_review'>Submit Review</button>
+                    </form>
+                <?php endif; ?>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
 <?php include '../footer.php'; ?>
