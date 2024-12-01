@@ -116,8 +116,12 @@ a {
   width: 100%;
 }
 
+input[value] {
+  color: gray;
+}
 
-input[type="text"]{
+
+.security-question input[type="text"]{
   width: unset;
 }
 
