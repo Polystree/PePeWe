@@ -1,4 +1,6 @@
 <?php
+require_once 'login/database.php';
+
 $userId = $_SESSION['userId'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
@@ -28,6 +30,7 @@ $result = $stmt->get_result();
 $totalPrice = 0;
 ?>
 <link rel='stylesheet' href='/assets/css/cart.css' />
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-XvNfPDRV6aHEMfWG"></script>
 
 <div class="breadcrumb">
     <a href="#">Home</a> / <span>Cart List</span>
@@ -59,13 +62,14 @@ $totalPrice = 0;
                             </td>
                             <td>Rp <?php echo number_format($row['price'], 0, ',', '.'); ?></td>
                             <td>
-                            <form method="post" action="">
-                                <label for="quantity_<?php echo $row['product_name']; ?>">Quantity:</label>
-                                <input type="number" id="quantity_<?php echo $row['product_name']; ?>" name="quantity[<?php echo $row['product_name']; ?>]" value="<?php echo $row['quantity']; ?>" min="0" />
-                                <input type="submit" value="Update" />
-                            </form>
+                                <input type="number" 
+                                    class="quantity-input"
+                                    data-price="<?php echo $row['price']; ?>"
+                                    data-product="<?php echo htmlspecialchars($row['product_name']); ?>" 
+                                    value="<?php echo $row['quantity']; ?>" 
+                                    min="0" />
                             </td>
-                            <td>Rp <?php echo number_format($row['price'] * $row['quantity'], 0, ',', '.'); ?></td>
+                            <td class="subtotal">Rp <?php echo number_format($row['price'] * $row['quantity'], 0, ',', '.'); ?></td>
                         </tr>
                         <?php $totalPrice += $row['price'] * $row['quantity']; ?>
                     <?php endwhile; ?>
@@ -86,6 +90,109 @@ $totalPrice = 0;
         <p><span>Subtotal:</span> <span>Rp <?php echo number_format($totalPrice, 0, ',', '.'); ?></span></p>
         <p><span>Shipping:</span> <span>Free</span></p>
         <p><span>Total:</span> <span>Rp <?php echo number_format($totalPrice, 0, ',', '.'); ?></span></p>
-        <button class="btn" type="button" onclick="window.location.href='/'">Process to Checkout</button>
+        <button class="btn" type="button" id="pay-button">Process to Payment</button>
     </div>
 </div>
+
+<script type="text/javascript">
+document.getElementById('pay-button').onclick = function() {
+    fetch('process_payment.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            amount: <?php echo $totalPrice; ?>,
+            user_id: <?php echo $userId; ?>
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.token) {
+            snap.pay(data.token, {
+                onSuccess: function(result) {
+                    window.location.href = 'payment_success.php?order_id=' + result.order_id;
+                },
+                onPending: function(result) {
+                    window.location.href = 'payment_pending.php?order_id=' + result.order_id;
+                },
+                onError: function(result) {
+                    alert('Payment failed: ' + result.status_message);
+                }
+            });
+        } else {
+            alert('Error: ' + data.error);
+        }
+    });
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+    const cartTotal = document.querySelector('.cart-total');
+    
+    quantityInputs.forEach(input => {
+        input.addEventListener('change', debounce(function(e) {
+            const productName = this.dataset.product;
+            const quantity = this.value;
+            const price = parseFloat(this.dataset.price);
+            const subtotalCell = this.closest('tr').querySelector('.subtotal');
+            
+            fetch('update_cart.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    product_name: productName,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update subtotal for this row
+                    const subtotal = price * quantity;
+                    subtotalCell.textContent = 'Rp ' + numberFormat(subtotal);
+                    
+                    // Update cart total
+                    updateCartTotal();
+                    
+                    // Remove row if quantity is 0
+                    if (quantity <= 0) {
+                        this.closest('tr').remove();
+                    }
+                } else {
+                    alert('Error updating cart');
+                }
+            });
+        }, 500));
+    });
+
+    function updateCartTotal() {
+        let total = 0;
+        document.querySelectorAll('.subtotal').forEach(cell => {
+            const value = parseInt(cell.textContent.replace(/[^0-9]/g, ''));
+            total += value;
+        });
+        document.querySelector('.cart-total p:first-child span:last-child').textContent = 'Rp ' + numberFormat(total);
+        document.querySelector('.cart-total p:last-child span:last-child').textContent = 'Rp ' + numberFormat(total);
+    }
+
+    function numberFormat(number) {
+        return new Intl.NumberFormat('id-ID').format(number);
+    }
+
+    // Debounce function to prevent too many requests
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func.apply(this, args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+});
+</script>

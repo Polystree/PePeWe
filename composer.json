@@ -1,0 +1,14 @@
+{
+    "name": "polystree/pe-pe-we",
+    "description": "PPW_Project",
+    "type": "project",
+    "authors": [
+        {
+            "name": "adr-polystree",
+            "email": "47147560+Polystree@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "midtrans/midtrans-php": "^2.6"
+    }
+}
