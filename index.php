@@ -1,34 +1,18 @@
-<!DOCTYPE html>
-<html>
+<?php
+require_once 'config/config.php';
+require_once 'includes/Database.php';
+require_once 'includes/Template.php';
 
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1, width=device-width" />
-    <title>iniGadget</title>
-    <link rel="icon" type="image/x-icon" href="/assets/img/logo-light.svg" />
-    <link rel="stylesheet" href="/assets/css/style.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap" />
-</head>
+$template = Template::getInstance();
 
-<body>
-    <?php include 'header.php'; ?>
-    <?php include 'ad-header.php' ?>
-    <div class="cart">
-        <?php include 'cart.php'; ?>
-    </div>
-    <div class="main">
-    <?php 
-        if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
-            $searchQuery = htmlspecialchars(trim($_GET['query']));
-            $sort = isset($_GET['sort']) ? htmlspecialchars($_GET['sort']) : '';
-            include 'search.php';
-        } else {
-            include 'home.php';
-        }
-        ?>
-    </div>
-    <?php include 'footer.php'; ?>
-</body>
+ob_start();
+if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
+    $searchQuery = htmlspecialchars(trim($_GET['query']));
+    $sort = isset($_GET['sort']) ? htmlspecialchars($_GET['sort']) : '';
+    include 'templates/search.php';
+} else {
+    include 'templates/home.php';
+}
+$content = ob_get_clean();
 
-</html>
+include 'templates/base.php';

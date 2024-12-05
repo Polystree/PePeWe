@@ -6,6 +6,7 @@
     padding: 20px;
 }
 
+/* Use common form and container styles from style.css */
 .profile-form {
     background-color: #fff;
     padding: 30px;
@@ -13,10 +14,21 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 500px;
-    display: flex;
-    flex-direction: column;
 }
 
+/* Account specific styles */
+.profile-image-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    border-radius: 100%;
+}
+
+.frame1 {
+    display: none !important;
+}
+
+/* Remove duplicate form styles that are now in style.css */
 .profile-form h2 {
     margin-bottom: 20px;
     font-size: 24px;
@@ -96,15 +108,4 @@
 .success {
     background-color: #d4edda;
     color: #155724;
-}
-
-.profile-image-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1rem;
-    border-radius: 100%;
-}
-
-.frame1 {
-    display: none !important;
 }

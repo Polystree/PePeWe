@@ -1,33 +1,72 @@
+
 <?php
-require_once 'login/database.php';
+require_once __DIR__ . '/../includes/Database.php';
 
-$userId = $_SESSION['userId'];
+class Cart {
+    private $db;
+    private static $cache = [];
+    
+    public function __construct() {
+        $this->db = Database::getInstance();
+    }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
-    foreach ($_POST['quantity'] as $productName => $quantity) {
-        $quantity = (int) $quantity;
-        if ($quantity > 0) {
-            $stmt = $connect->prepare("UPDATE cart SET quantity = ? WHERE product_name = ? AND userId = ?");
-            $stmt->bind_param("isi", $quantity, $productName, $userId);
-            $stmt->execute();
-            $stmt->close();
-        } else {
-            $stmt = $connect->prepare("DELETE FROM cart WHERE product_name = ? AND userId = ?");
-            $stmt->bind_param("si", $productName, $userId);
-            $stmt->execute();
-            $stmt->close();
+    public function getCartItems($userId) {
+        $cacheKey = "cart_$userId";
+        if (isset(self::$cache[$cacheKey])) {
+            return self::$cache[$cacheKey];
         }
+
+        $stmt = $this->db->prepare(
+            "SELECT c.*, p.name, p.price, p.image_path 
+             FROM cart c 
+             JOIN products p ON c.product_id = p.id 
+             WHERE c.user_id = ?"
+        );
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        
+        self::$cache[$cacheKey] = $result;
+        return $result;
+    }
+
+    public function updateQuantity($userId, $productId, $quantity) {
+        if ($quantity <= 0) {
+            return $this->removeItem($userId, $productId);
+        }
+
+        $stmt = $this->db->prepare(
+            "UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?"
+        );
+        $stmt->bind_param("iii", $quantity, $userId, $productId);
+        $success = $stmt->execute();
+        
+        unset(self::$cache["cart_$userId"]);
+        return $success;
+    }
+}
+
+$userId = $_SESSION['userId'] ?? null;
+if (!$userId) {
+    header('Location: /login');
+    exit();
+}
+
+$cart = new Cart();
+
+// Handle POST requests
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
+    foreach ($_POST['quantity'] as $productId => $quantity) {
+        $cart->updateQuantity($userId, $productId, (int)$quantity);
     }
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
 }
 
-$query = "SELECT product_name, price, image_path, quantity FROM cart WHERE userId = ?";
-$stmt = $connect->prepare($query);
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
-$totalPrice = 0;
+$cartItems = $cart->getCartItems($userId);
+$totalPrice = array_reduce($cartItems, function($carry, $item) {
+    return $carry + ($item['price'] * $item['quantity']);
+}, 0);
 ?>
 <link rel='stylesheet' href='/assets/css/cart.css' />
 <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-XvNfPDRV6aHEMfWG"></script>
@@ -48,31 +87,31 @@ $totalPrice = 0;
                 </tr>
             </thead>
             <tbody>
-                <?php if ($result->num_rows > 0): ?>
-                    <?php while ($row = $result->fetch_assoc()): ?>
+                <?php if (!empty($cartItems)): ?>
+                    <?php foreach ($cartItems as $item): ?>
                         <tr>
                             <td>
                                 <div class="product-info">
-                                    <img src="../<?php echo htmlspecialchars($row['image_path']); ?>"
-                                        alt="<?php echo htmlspecialchars($row['product_name']); ?>" />
+                                    <img src="/<?php echo htmlspecialchars($item['image_path']); ?>"
+                                        alt="<?php echo htmlspecialchars($item['name']); ?>" />
                                     <div>
-                                        <p><?php echo htmlspecialchars($row['product_name']); ?></p>
+                                        <p><?php echo htmlspecialchars($item['name']); ?></p>
                                     </div>
                                 </div>
                             </td>
-                            <td>Rp <?php echo number_format($row['price'], 0, ',', '.'); ?></td>
+                            <td>Rp <?php echo number_format($item['price'], 0, ',', '.'); ?></td>
                             <td>
                                 <input type="number" 
                                     class="quantity-input"
-                                    data-price="<?php echo $row['price']; ?>"
-                                    data-product="<?php echo htmlspecialchars($row['product_name']); ?>" 
-                                    value="<?php echo $row['quantity']; ?>" 
+                                    data-price="<?php echo $item['price']; ?>"
+                                    data-product="<?php echo htmlspecialchars($item['product_id']); ?>" 
+                                    value="<?php echo $item['quantity']; ?>" 
                                     min="0" />
                             </td>
-                            <td class="subtotal">Rp <?php echo number_format($row['price'] * $row['quantity'], 0, ',', '.'); ?></td>
+                            <td class="subtotal">Rp <?php echo number_format($item['price'] * $item['quantity'], 0, ',', '.'); ?></td>
                         </tr>
-                        <?php $totalPrice += $row['price'] * $row['quantity']; ?>
-                    <?php endwhile; ?>
+                        <?php $totalPrice += $item['price'] * $item['quantity']; ?>
+                    <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
                         <td colspan="4">Your cart is empty.</td>
@@ -132,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     quantityInputs.forEach(input => {
         input.addEventListener('change', debounce(function(e) {
-            const productName = this.dataset.product;
+            const productId = this.dataset.product;
             const quantity = this.value;
             const price = parseFloat(this.dataset.price);
             const subtotalCell = this.closest('tr').querySelector('.subtotal');
@@ -143,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    product_name: productName,
+                    product_id: productId,
                     quantity: quantity
                 })
             })

@@ -1,63 +1,79 @@
 <?php
 require_once '../vendor/autoload.php';
-include 'database.php';
+require_once __DIR__ . '/../includes/Database.php';
 session_start();
 
-$config = parse_ini_file('auth.txt');
-$client = new Google_Client();
-$client->setClientId($config['client_id']);
-$client->setClientSecret($config['client_secret']);
-$client->setRedirectUri($config['redirect_uri']);
-$client->addScope(['email', 'profile']);
+use Google\Client;
+use Google\Service\Oauth2;
 
-if (isset($_GET['code'])) {
-    handleGoogleCallback($client);
-} else {
-    redirectToGoogleLogin($client);
-}
+try {
+    $config = include(__DIR__ . '/../config/config.php');
+    $google_config = $config['google'];
 
-function handleGoogleCallback($client) {
-    $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
-    $client->setAccessToken($token['access_token']);
+    $client = new Client();
+    $client->setClientId($google_config['client_id']);
+    $client->setClientSecret($google_config['client_secret']);
+    $client->setRedirectUri($google_config['redirect_uri']);
+    $client->addScope(['email', 'profile']);
 
-    $oauth2 = new Google_Service_Oauth2($client);
-    $userInfo = $oauth2->userinfo->get();
+    if (isset($_GET['code'])) {
+        $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+        $client->setAccessToken($token);
 
-    saveUserInfo($userInfo);
+        $oauth2 = new Oauth2($client);
+        $userInfo = $oauth2->userinfo->get();
 
-    header("Location: ../index.php");
-    exit();
-}
+        $db = Database::getInstance();
+        
+        // Sanitize user data
+        $name = $db->real_escape_string($userInfo->name);
+        $email = $db->real_escape_string($userInfo->email);
+        $picture = $db->real_escape_string($userInfo->picture ?? '');
+        
+        // Generate a secure random token for password
+        $token = bin2hex(random_bytes(32));
+        $hashed_token = password_hash($token, PASSWORD_DEFAULT);
 
-function redirectToGoogleLogin($client) {
-    if (!isset($_SESSION['access_token'])) {
+        // Check if user exists
+        $stmt = $db->prepare("SELECT id, username, profile_image FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+
+        if (!$user) {
+            // Create new user with profile image and hashed token
+            $stmt = $db->prepare("INSERT INTO users (username, email, password, profile_image, oauth_provider) VALUES (?, ?, ?, ?, 'google')");
+            $stmt->bind_param("ssss", $name, $email, $hashed_token, $picture);
+            if (!$stmt->execute()) {
+                throw new Exception("Failed to create user account");
+            }
+            $_SESSION['username'] = $name;
+            $_SESSION['userId'] = $db->insert_id;
+            $_SESSION['profile_image'] = $picture;
+        } else {
+            // Update existing user's profile image if it has changed
+            if ($picture && $picture !== $user['profile_image']) {
+                $stmt = $db->prepare("UPDATE users SET profile_image = ? WHERE id = ?");
+                $stmt->bind_param("si", $picture, $user['id']);
+                $stmt->execute();
+            }
+            
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['userId'] = $user['id'];
+            $_SESSION['profile_image'] = $picture ?: $user['profile_image'];
+        }
+
+        header("Location: /");
+        exit();
+    } else {
         $authUrl = $client->createAuthUrl();
-        header("Location: $authUrl");
+        header("Location: " . $authUrl);
         exit();
     }
-}
-
-function saveUserInfo($userInfo) {
-    global $connect; 
-    $username = $userInfo->name;
-    $email = $userInfo->email;
-
-    checkUserExists($username, $email);
-}
-
-function checkUserExists($username, $email) {
-    global $connect; 
-
-    $stmt = $connect->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
-
-    if (!$user) {
-        $stmt = $connect->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, '')");
-        $stmt->execute([$username, $email]);
-        $_SESSION['username'] = $username;
-    } else {
-        $_SESSION['username'] = $username;
-    }
+} catch (Exception $e) {
+    $_SESSION['errors']['login'] = 'Google login failed: ' . $e->getMessage();
+    header("Location: /login");
+    exit();
 }
 ?>

@@ -1,13 +1,17 @@
 <?php
-$config = parse_ini_file('auth.txt');
-$servername = $config['db_server_name'];
-$username = $config['db_username'];
-$password = $config['db_password'];
-$dbname = $config['db_name'];
+$config = include(__DIR__ . '/../config/config.php');
+$db_config = $config['db'];
 
-$connect = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli(
+    $db_config['db_server_name'],
+    $db_config['db_username'],
+    $db_config['db_password'],
+    $db_config['db_name']
+);
 
-if ($connect->connect_error) {
-    die("Connection failed: " . $connect->connect_error);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
+
+return $conn;
 ?>

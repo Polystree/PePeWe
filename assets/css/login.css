@@ -1,0 +1,266 @@
+:root {
+  --form-bg: #ffffff;
+  --primary: #000000;
+  --accent: #d8602b;  /* Changed to match site theme */
+  --text-primary: #2C2C2C;
+  --text-secondary: #6B6B6B;
+  --input-bg: #F8F8F8;
+  --input-border: #E0E0E0;
+  --shadow: rgba(0, 0, 0, 0.08);
+}
+
+/* Add global font for this component */
+.login-main * {
+  font-family: 'Poppins', sans-serif;
+}
+
+.login-main {
+  display: flex;
+  min-height: calc(100vh - 120px);
+  align-items: center;
+  justify-content: center;
+  gap: 8vw;
+  padding: 2rem;
+  background: linear-gradient(135deg, #fff 0%, var(--input-bg) 100%);
+}
+
+.account-page {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.account-form {
+  background: var(--form-bg);
+  padding: 3rem;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px var(--shadow);
+  width: 420px;
+  position: relative;
+  overflow: hidden;
+}
+
+#welcome {
+  color: var(--primary);
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+}
+
+#caption {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.credential-form {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.credential-form:hover {
+  background: var(--input-hover);
+}
+
+.credential-form:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+}
+
+.credential-form input {
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  color: var(--text-primary);
+  width: 100%;
+  padding: 0;
+}
+
+.credential-form img {
+  width: 20px;
+  height: 20px;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.credential-form:focus-within img {
+  opacity: 1;
+}
+
+#login-register-changer {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+#login-register-changer label {
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+#login-register-changer label:hover {
+  color: var(--accent);
+}
+
+#show-login:checked ~ .account-form #login-register-changer label[for="show-login"],
+#show-register:checked ~ .account-form #login-register-changer label[for="show-register"] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.next-button {
+  background-color: var(--accent);
+  color: white;
+  padding: 0.875rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.next-button:hover {
+  background-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.sign-up-wp {
+  filter: drop-shadow(0 8px 24px var(--shadow));
+  position: relative;
+  top: 32px; /* Adjusted from 64px to move logo higher */
+}
+
+.glogin {
+  border: 1px solid var(--input-border);
+  background: var(--form-bg);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0.875rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  margin-top: 1em;
+}
+
+.glogin:hover {
+  border-color: var(--accent);
+  background: var(--input-bg);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .sign-up-wp {
+    display: none;
+  }
+  
+  .login-main {
+    padding: 1rem;
+  }
+  
+  .account-form {
+    width: 100%;
+    max-width: 420px;
+    padding: 2rem;
+  }
+}
+
+.social-auth {
+  margin-top: 2rem;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Captcha styling improvements */
+#captcha {
+  display: flex;
+  align-items: center;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  gap: 12px;
+}
+
+#captcha-question {
+  color: var(--text-primary);
+  font-weight: 500;
+  min-width: max-content; /* Adjust width to content */
+  padding-right: 12px;
+  border-right: 1px solid var(--input-border);
+}
+
+#captcha-answer {
+  border: none;
+  background: transparent;
+  width: 100%;
+  color: var(--text-primary);
+}
+
+/* Others section alignment */
+#others-form {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  padding-top: 1em;
+  position: relative;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+#others-form::before,
+#others-form::after {
+  content: '';
+  position: relative;
+  height: 1px;
+  background: var(--input-border);
+  flex: 1;
+}
+
+/* Alert styles */
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-sm);
+  margin-bottom: 1rem;
+}
+
+.alert-error {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-bg);
+}
+
+.alert-success {
+  background: var(--success-bg);
+  color: var (--success-text);
+  border: 1px solid var(--success-bg);
+}
+
+/* Update captcha styling */
+.captcha span {
+  display: none; /* Hide "Captcha" text */
+}

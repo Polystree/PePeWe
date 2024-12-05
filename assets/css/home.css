@@ -1,8 +1,39 @@
-/* BANNER STYLE */
+/* Common section styles */
+:root {
+  --section-padding: 40px 130px;
+  --section-title-size: 1.25rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: var(--section-title-size);
+  position: relative;
+  padding-left: 15px;
+}
+
+.section-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 50%;
+  background-color: var(--accent-color);
+}
+
+/* Hero section */
 .hero {
   background: linear-gradient(to right, #231b27 0%, #211c24 100%);
   color: #fff;
-  padding: 0px 125px;
+  padding: var(--section-padding);
+  padding-bottom: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -39,13 +70,30 @@
   color: #211c24;
 }
 
-/* FLASH SALE STYLE */
-.flash-sales {
-  padding-left: 130px;
-  padding-right: 130px;
-  padding-bottom: 20px;
-  padding-top: 100px;
+/* Common carousel styles */
+.carousel-container {
+  overflow-x: scroll;
+  width: 100%;
+  padding-bottom: 1rem;
 }
+
+.carousel-container::-webkit-scrollbar {
+  width: 5px;
+  height: 8px;
+  background-color: #aaa;
+}
+
+.carousel-container::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+}
+
+/* Product sections */
+.flash-sales,
+.best-selling {
+  padding: var(--section-padding);
+}
+
+/* FLASH SALE STYLE */
 .flash-sales .title {
   display: flex;
   align-items: center;
@@ -101,23 +149,8 @@
   align-items: center;
   margin-bottom: 20px;
 }
-.carousel-container {
-  overflow-x: scroll;
-  overflow-y: hidden;
-  width: 100%;
-  padding-bottom: 1rem;
-}
 .carousel-container .products .product  {
   min-width: 15%;
-}
-.carousel-container::-webkit-scrollbar {
-  width: 5px;
-  height: 8px;
-  background-color: #aaa;
-}
-
-.carousel-container::-webkit-scrollbar-thumb {
-  background: #000;
 }
 .products {
   display: flex;
@@ -323,11 +356,6 @@
 }
 
 /* BEST SELLING STLYE */
-.best-selling {
-  padding: 130px;
-  padding-top: 20px;
-}
-
 .best-selling .title {
   display: flex;
   align-items: center;

@@ -1,3 +1,10 @@
+<?php
+require_once __DIR__ . '/../includes/Database.php';
+
+// Initialize searchQuery
+$searchQuery = isset($_GET['query']) ? trim($_GET['query']) : '';
+
+?>
 <form method="GET" action="">
     <input type="hidden" name="query" value="<?php echo htmlspecialchars($searchQuery); ?>">
     <select name="sort" onchange="this.form.submit()">
@@ -8,12 +15,10 @@
 </form>
 
 <?php
-if (!isset($connect)) {
-    include 'login/database.php';
-}
+$db = Database::getInstance();  // This already returns the mysqli connection
 
-if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
-    $searchQuery = htmlspecialchars(trim($_GET['query']));
+if (!empty($searchQuery)) {
+    $searchQuery = htmlspecialchars($searchQuery);
     $sort = isset($_GET['sort']) ? $_GET['sort'] : '';
     $orderBy = '';
 
@@ -24,9 +29,9 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
         case 'price_desc':
             $orderBy = 'ORDER BY price DESC';
             break;
-        }
+    }
 
-    $stmt = $connect->prepare("SELECT * FROM products WHERE name LIKE ? $orderBy");
+    $stmt = $db->prepare("SELECT * FROM products WHERE name LIKE ? $orderBy");  // Use $db directly
     if ($stmt) {
         $likeQuery = "%" . $searchQuery . "%";
         $stmt->bind_param("s", $likeQuery);
@@ -39,15 +44,24 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
         if ($result->num_rows > 0) {
             echo "<div class='products'>";
             while ($row = $result->fetch_assoc()) {
-                echo "<a href='{$row['url']}'>";
+                $url = $row['url'] ?? '';
+                $image = $row['image_path'] ?? '';
+                $name = $row['name'] ?? '';
+                $price = $row['price'] ?? 0;
+                $description = $row['description'] ?? '';
+                $productId = $row['id'] ?? 0;
+
+                echo "<div class='product-card'>";
+                echo "<a href='" . htmlspecialchars($url) . "' class='product-link'>";
                 echo "<div class='product'>";
-                echo "<img src='" . htmlspecialchars($row['image_path']) . "' alt='" . htmlspecialchars($row['name']) . "' />";
-                echo "<h3>" . htmlspecialchars($row['name']) . "</h3>";
-                echo "<p>Price: Rp " . number_format($row['price'], 0, ',', '.') . "</p>";
-                echo "<p>" . nl2br(htmlspecialchars($row['description'])) . "</p>";
-                // echo "<button class='add-to-cart next-button' name='cart'>Add to cart</button>";
+                echo "<img src='" . htmlspecialchars($image) . "' alt='" . htmlspecialchars($name) . "' />";
+                echo "<h3>" . htmlspecialchars($name) . "</h3>";
+                echo "<p>Price: Rp " . number_format($price, 0, ',', '.') . "</p>";
+                echo "<p class='description'>" . nl2br(htmlspecialchars($description)) . "</p>";
                 echo "</div>";
                 echo "</a>";
+                echo "<button class='add-to-cart-btn next-button' data-product-id='" . $productId . "'>Add to Cart</button>";
+                echo "</div>";
             }
             echo "</div>";
         } else {

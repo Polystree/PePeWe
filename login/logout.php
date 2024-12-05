@@ -1,5 +1,21 @@
 <?php
 session_start();
+
+// Clear remember me cookie if exists
+if (isset($_COOKIE['remember_token'])) {
+    $token = $_COOKIE['remember_token'];
+    
+    // Clear token from database
+    require_once '../includes/Database.php';
+    $db = Database::getInstance();
+    $stmt = $db->prepare("UPDATE users SET remember_token = NULL WHERE remember_token = ?");
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    
+    // Delete cookie
+    setcookie('remember_token', '', time() - 3600, '/');
+}
+
 $_SESSION = array();
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();

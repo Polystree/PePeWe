@@ -11,32 +11,31 @@
 .summer-sale-parent {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
 }
 
-.english {
-  line-height: 1.3rem;
-}
-
-.english-parent {
-  display: flex;
-  align-items: center;
-}
+/* Remove .english and .english-parent styles as they're no longer needed */
 
 .frame-parent {
   display: flex;
-  justify-content: space-between;
-  gap: 15rem;
+  justify-content: center;
+  align-items: center;
   height: 100%;
-  margin: 0 0 0 2rem;
+  width: 100%;
+  margin: 0;
+  padding: 0 2rem;
 }
 
 .top-header {
-  background-color: #000;
+  background-color: var(--primary-color);
   height: 3rem;
   color: #f0f0f0;
   font-family: var(--font-poppins);
   width: 100%;
+  display: flex;
+  align-items: center;
 }
 
 #close-btn {
@@ -50,18 +49,18 @@
 
 #ad-header {
   display: flex;
+  align-items: center;
+  background-color: var(--primary-color);
 }
 
 #close-btn-label {
   font-size: 1.5rem;
-  display: flex;
-  background-color: #000;
+  background-color: var(--primary-color);
   color: white;
-  align-items: center;
-  padding-bottom: 2px;
-  padding-right: 1rem;
-  padding-left: 1rem;
+  padding: 0.5rem 1rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 #close-btn-x {
