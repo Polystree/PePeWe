@@ -32,7 +32,7 @@
   background-color: var(--primary-color);
   height: 3rem;
   color: #f0f0f0;
-  font-family: var(--font-poppins);
+  font-family: 'Poppins', sans-serif;
   width: 100%;
   display: flex;
   align-items: center;

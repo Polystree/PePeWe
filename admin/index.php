@@ -1,25 +1,45 @@
 <?php
 session_start();
-include '../login/database.php';
 
+// Get database connection using correct config keys
+$config = include(__DIR__ . '/../config/config.php');
+$db_config = $config['db'];
+
+$connect = new mysqli(
+    $db_config['host'],
+    $db_config['username'], 
+    $db_config['password'],
+    $db_config['database']
+);
+
+if ($connect->connect_error) {
+    error_log("Database connection failed: " . $connect->connect_error);
+    die("Connection failed. Please try again later.");
+}
+
+// Strict admin check with redirect
 if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin') {
-    echo "Access denied.";
+    header('Location: /login');
     exit();
 }
 
-$query = "SELECT productId, name, image_path, description, price, quantity FROM products";
-$result = $connect->query($query);
-
-if (!$result) {
-    die("Query failed: " . $connect->error);
+// Use prepared statement for better security
+$stmt = $connect->prepare("SELECT productId, name, image_path, description, price, quantity FROM products");
+if (!$stmt) {
+    error_log("Failed to prepare statement: " . $connect->error);
+    die("An error occurred. Please try again later.");
 }
 
+$stmt->execute();
+$result = $stmt->get_result();
+
 $products = [];
-if ($result->num_rows > 0) {
+if ($result) {
     while($row = $result->fetch_assoc()) {
         $products[] = $row;
     }
 }
+$stmt->close();
 ?>
 <!DOCTYPE html>
 <html>
@@ -32,13 +52,14 @@ if ($result->num_rows > 0) {
     <title>Manage Products - iniGadget</title>
     <link rel="stylesheet" href="../assets/css/style.css" />
     <link rel="stylesheet" href="../assets/css/cart.css" />
+    <link rel="stylesheet" href="../assets/css/admin.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap" />
 </head>
 
 <body>
-    <?php include '../header.php'; ?>
-    <div class="main-content" style="margin: 0 2rem;">
+    <?php include __DIR__ . '/../templates/header.php'; ?>
+    <div class="main-content">
         <h2>Manage Products</h2>
         <button onclick="window.location.href='add-product.php'" class="add-product-btn">Add Product</button>
         <table class="cart-table">
@@ -59,17 +80,19 @@ if ($result->num_rows > 0) {
                     <td>
                         <img src="<?php echo htmlspecialchars($product['image_path']); ?>"
                             alt="<?php echo htmlspecialchars($product['name']); ?>"
-                            style='width: 100px; border-radius: 5px;' />
+                            style='border-radius: 5px;' />
                     </td>
                     <td><?php echo htmlspecialchars($product['name']); ?></td>
-                    <td style='font-size: 0.7rem;'><?php echo htmlspecialchars($product['description']); ?></td>
+                    <td class="description-cell" data-full-text="<?php echo htmlspecialchars($product['description']); ?>">
+                        <?php echo htmlspecialchars($product['description']); ?>
+                    </td>
                     <td><?php echo number_format($product['price'], 0, ',', '.'); ?></td>
                     <td><?php echo htmlspecialchars($product['quantity']); ?></td>
                     <td class='manage-product-btn'>
                         <button
                             onclick="window.location.href='add-product.php?productId=<?php echo $product['productId']; ?>'"
                             class="edit-button">Edit</button>
-                        <form method="POST" action="../products/delete_product.php" style="display:inline;">
+                        <form method="POST" action="delete_product.php" style="display:inline;">
                             <input type="hidden" name="productId" value="<?php echo $product['productId']; ?>">
                             <button type="submit" class="delete-button"
                                 onclick="return confirm('Are you sure you want to delete this product?');">Delete</button>
@@ -85,7 +108,7 @@ if ($result->num_rows > 0) {
             </tbody>
         </table>
     </div>
-    <?php include '../footer.php'; ?>
+    <?php include __DIR__ . '/../templates/footer.php'; ?>
 </body>
 
 </html>
