@@ -4,8 +4,9 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/../includes/Database.php';
+require_once __DIR__ . '/../includes/Cart.php';
 $db = Database::getInstance();
-$profileImage = '/assets/img/Generic avatar.svg';
+$profileImage = '/assets/img/profile-placeholder.png';
 
 if (isset($_SESSION['username'])) {
     $username = $db->real_escape_string($_SESSION['username']);
@@ -13,9 +14,9 @@ if (isset($_SESSION['username'])) {
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $_SESSION['userId'] = $row['id'] ?? null;
-    $profileImage = $row['profile_image'] ?? '/assets/img/Generic avatar.svg';
+    $userData = $result->fetch_assoc();
+    $_SESSION['userId'] = $userData['id'];  // Set this unconditionally
+    $profileImage = $userData['profile_image'] ?? '/assets/img/profile-placeholder.png';
 }
 
 // Replace the current page detection with this
@@ -61,18 +62,12 @@ $is_login_page = (strpos($current_uri, '/login') === 0);
             <?php if (!$is_login_page): ?>
                 <?php
                 echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
-                $_SESSION['userId'] = $row['id'] ?? null;
                 ?>
             <?php endif; ?>
 
             <label for="profile">
-                <?php if (isset($userData['profile_image'])): ?>
-                    <img class="generic-avatar-icon" alt="Profile Image"
-                        src="<?php echo htmlspecialchars($userData['profile_image']); ?>" />
-                <?php else: ?>
-                    <img class="generic-avatar-icon" alt="Profile Image"
-                        src="<?php echo htmlspecialchars($profileImage); ?>" />
-                <?php endif; ?>
+                <img class="generic-avatar-icon" alt="Profile Image"
+                    src="<?php echo htmlspecialchars($profileImage); ?>" />
             </label>
 
             <div class="profile-dropdown">
@@ -88,3 +83,53 @@ $is_login_page = (strpos($current_uri, '/login') === 0);
         </div>
     </div>
 </header>
+
+<div class="cart-overlay"></div>
+<div class="cart-sidebar">
+    <h2>
+        Shopping Cart
+        <span class="close-cart" onclick="document.getElementById('cart-switch').checked = false">&times;</span>
+    </h2>
+    <div id="cart-items">
+        <?php
+        if (isset($_SESSION['username'])) {  // Change this condition from userId to username
+            $cart = new Cart();
+            $cartItems = $cart->getCartItems($_SESSION['userId']);
+            
+            if (!empty($cartItems)) {
+                foreach ($cartItems as $item) {
+                    echo '<div class="cart-item">';
+                    echo '<img src="/' . htmlspecialchars($item['image_path']) . '" alt="' . htmlspecialchars($item['product_name']) . '" />';
+                    echo '<div class="cart-item-details">';
+                    echo '<h4>' . htmlspecialchars($item['product_name']) . '</h4>';
+                    echo '<p>Rp ' . number_format($item['price'], 0, ',', '.') . ' x ' . $item['quantity'] . '</p>';
+                    echo '</div>';
+                    echo '</div>';
+                }
+                echo '<a href="/cart" class="view-cart-btn">View Cart</a>';
+            } else {
+                echo '<p>Your cart is empty</p>';
+            }
+        } else {
+            echo '<p>Please login to view your cart</p>';
+        }
+        ?>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get overlay element
+    const overlay = document.querySelector('.cart-overlay');
+
+    // Handle overlay click to close cart
+    overlay.addEventListener('click', function() {
+        document.getElementById('cart-switch').checked = false;
+    });
+
+    // Prevent cart sidebar click from closing
+    document.querySelector('.cart-sidebar').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+});
+</script>

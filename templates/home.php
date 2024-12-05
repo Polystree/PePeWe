@@ -12,6 +12,11 @@ $bestSelling = $product->getBestSelling(5);
 $newArrivals = $product->getNewArrivals(4);
 $exploredProducts = $product->getExploredProducts(8); // Add this line
 
+// Helper function to create URL-friendly product slug
+function createProductSlug($name) {
+    return './products/' . strtolower(str_replace(' ', '-', $name)) . '/';
+}
+
 // Keep existing CSS and hero section
 ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
@@ -34,11 +39,10 @@ $exploredProducts = $product->getExploredProducts(8); // Add this line
     <div class="products-container">
         <?php if(!empty($recentProducts)): ?>
             <?php foreach ($recentProducts as $product): ?>
-                <div class="product">
-                    <a href="/product/<?php echo htmlspecialchars($product['productId']); ?>">
+                <div class="product-card">
+                    <a href="<?php echo createProductSlug($product['name']); ?>">
                         <img src="<?php echo htmlspecialchars($product['image_path']); ?>" 
-                             alt="<?php echo htmlspecialchars($product['name']); ?>" 
-                             width="200" height="200" />
+                             alt="<?php echo htmlspecialchars($product['name']); ?>" />
                         <div class="product-info">
                             <h3><?php echo htmlspecialchars($product['name']); ?></h3>
                             <p class="price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></p>
@@ -77,27 +81,27 @@ $exploredProducts = $product->getExploredProducts(8); // Add this line
     <div class="carousel-container">
         <div class="products">
             <?php foreach ($flashSaleProducts as $product): ?>
-                <div class="product">
+                <div class="product-card">
                     <div class="discount">-<?php echo htmlspecialchars($product['discount']); ?>%</div>
-                    <i class="far fa-heart wishlistt"></i>
                     <div class="image-container">
                         <img src="<?php echo htmlspecialchars($product['image_path']); ?>" 
-                             alt="<?php echo htmlspecialchars($product['name']); ?>" 
-                             width="200" height="200" />
+                             alt="<?php echo htmlspecialchars($product['name']); ?>" />
                         <div class="add-to-cart">Add To Cart</div>
                     </div>
-                    <div class="title-item"><?php echo htmlspecialchars($product['name']); ?></div>
-                    <div class="prices">
-                        <div class="price">Rp <?php echo number_format($product['price'] * (100 - $product['discount']) / 100, 0, ',', '.'); ?></div>
-                        <div class="original-price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></div>
-                    </div>
-                    <div class="rating">
-                        <?php 
-                        $rating = isset($product['avg_rating']) ? round($product['avg_rating']) : 0;
-                        for($i = 1; $i <= 5; $i++): ?>
-                            <i class="fas fa-<?php echo $i <= $rating ? 'star' : ($i - 0.5 <= $rating ? 'star-half-alt' : 'star'); ?>"></i>
-                        <?php endfor; ?>
-                        <span>(<?php echo isset($product['rating_count']) ? (int)$product['rating_count'] : 0; ?>)</span>
+                    <div class="product-info">
+                        <h3><?php echo htmlspecialchars($product['name']); ?></h3>
+                        <div class="prices">
+                            <p class="price">Rp <?php echo number_format($product['price'] * (100 - $product['discount']) / 100, 0, ',', '.'); ?></p>
+                            <p class="original-price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></p>
+                        </div>
+                        <div class="rating">
+                            <?php 
+                            $rating = isset($product['avg_rating']) ? round($product['avg_rating']) : 0;
+                            for($i = 1; $i <= 5; $i++): ?>
+                                <i class="fas fa-<?php echo $i <= $rating ? 'star' : ($i - 0.5 <= $rating ? 'star-half-alt' : 'star'); ?>"></i>
+                            <?php endfor; ?>
+                            <span>(<?php echo isset($product['rating_count']) ? (int)$product['rating_count'] : 0; ?>)</span>
+                        </div>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -154,25 +158,20 @@ $exploredProducts = $product->getExploredProducts(8); // Add this line
     </div>
     <div class="products-bs">
         <?php foreach ($bestSelling as $product): ?>
-            <div class="product">
-                <i class="far fa-heart wishlistt"></i>
-                <div class="image-container">
-                    <img src="<?php echo htmlspecialchars($product['image_path']); ?>" 
-                         alt="<?php echo htmlspecialchars($product['name']); ?>" 
-                         width="200" height="200" />
-                    <div class="add-to-cart">Add To Cart</div>
-                </div>
-                <div class="title-item"><?php echo htmlspecialchars($product['name']); ?></div>
-                <div class="prices">
-                    <div class="price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></div>
-                </div>
-                <div class="rating">
-                    <?php 
-                    $rating = isset($product['avg_rating']) ? round($product['avg_rating']) : 0;
-                    for($i = 1; $i <= 5; $i++): ?>
-                        <i class="fas fa-<?php echo $i <= $rating ? 'star' : ($i - 0.5 <= $rating ? 'star-half-alt' : 'star'); ?>"></i>
-                    <?php endfor; ?>
-                    <span>(<?php echo isset($product['rating_count']) ? (int)$product['rating_count'] : 0; ?>)</span>
+            <div class="product-card">
+                <img src="<?php echo htmlspecialchars($product['image_path']); ?>" 
+                     alt="<?php echo htmlspecialchars($product['name']); ?>" />
+                <div class="product-info">
+                    <h3><?php echo htmlspecialchars($product['name']); ?></h3>
+                    <p class="price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></p>
+                    <div class="rating">
+                        <?php 
+                        $rating = isset($product['avg_rating']) ? round($product['avg_rating']) : 0;
+                        for($i = 1; $i <= 5; $i++): ?>
+                            <i class="fas fa-<?php echo $i <= $rating ? 'star' : ($i - 0.5 <= $rating ? 'star-half-alt' : 'star'); ?>"></i>
+                        <?php endfor; ?>
+                        <span>(<?php echo isset($product['rating_count']) ? (int)$product['rating_count'] : 0; ?>)</span>
+                    </div>
                 </div>
             </div>
         <?php endforeach; ?>
@@ -215,25 +214,20 @@ $exploredProducts = $product->getExploredProducts(8); // Add this line
         </div>
         <div class="our-product-list">
             <?php foreach ($exploredProducts as $product): ?>
-                <div class="product">
-                    <i class="far fa-heart wishlistt"></i>
-                    <div class="image-container">
-                        <img src="<?php echo htmlspecialchars($product['image_path']); ?>" 
-                             alt="<?php echo htmlspecialchars($product['name']); ?>" 
-                             width="200" height="200" />
-                        <div class="add-to-cart">Add To Cart</div>
-                    </div>
-                    <div class="title-item"><?php echo htmlspecialchars($product['name']); ?></div>
-                    <div class="prices">
-                        <div class="price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></div>
-                    </div>
-                    <div class="rating">
-                        <?php 
-                        $rating = isset($product['avg_rating']) ? round($product['avg_rating']) : 0;
-                        for($i = 1; $i <= 5; $i++): ?>
-                            <i class="fas fa-<?php echo $i <= $rating ? 'star' : ($i - 0.5 <= $rating ? 'star-half-alt' : 'star'); ?>"></i>
-                        <?php endfor; ?>
-                        <span>(<?php echo isset($product['rating_count']) ? (int)$product['rating_count'] : 0; ?>)</span>
+                <div class="product-card">
+                    <img src="<?php echo htmlspecialchars($product['image_path']); ?>" 
+                         alt="<?php echo htmlspecialchars($product['name']); ?>" />
+                    <div class="product-info">
+                        <h3><?php echo htmlspecialchars($product['name']); ?></h3>
+                        <p class="price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></p>
+                        <div class="rating">
+                            <?php 
+                            $rating = isset($product['avg_rating']) ? round($product['avg_rating']) : 0;
+                            for($i = 1; $i <= 5; $i++): ?>
+                                <i class="fas fa-<?php echo $i <= $rating ? 'star' : ($i - 0.5 <= $rating ? 'star-half-alt' : 'star'); ?>"></i>
+                            <?php endfor; ?>
+                            <span>(<?php echo isset($product['rating_count']) ? (int)$product['rating_count'] : 0; ?>)</span>
+                        </div>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -256,8 +250,8 @@ $exploredProducts = $product->getExploredProducts(8); // Add this line
                      alt="<?php echo htmlspecialchars($product['name']); ?>">
                 <div class="product-info-na">
                     <h3><?php echo htmlspecialchars($product['name']); ?></h3>
-                    <p><?php echo htmlspecialchars($product['description'] ?? ''); ?></p>
-                    <a href="/product/<?php echo htmlspecialchars($product['productId']); ?>">Shop Now</a>
+                    <p><?php echo strlen($product['description']) > 100 ? substr(htmlspecialchars($product['description']), 0, 100) . '...' : htmlspecialchars($product['description'] ?? ''); ?></p>
+                    <a href="<?php echo createProductSlug($product['name']); ?>">Shop Now</a>
                 </div>
             </div>
         <?php endforeach; ?>
