@@ -1,5 +1,5 @@
 <?php
-include 'database.php';
+require_once __DIR__ . '/../includes/Database.php';
 session_start();
 
 if (!isset($_SESSION['recover_user_id'])) {
@@ -7,52 +7,34 @@ if (!isset($_SESSION['recover_user_id'])) {
     exit();
 }
 
+$db = Database::getInstance();
 $userId = $_SESSION['recover_user_id'];
 $error = '';
 $success = '';
 
-$securityQuestions = [
-    "What was the name of your first pet?",
-    "In which city were you born?",
-    "What was your childhood nickname?"
-];
-
-// Check if security question and answer are already set
-$stmt = $connect->prepare("SELECT security_question, security_answer FROM users WHERE id = ?");
+// Check if security question is set
+$stmt = $db->prepare("SELECT security_question, security_answer FROM users WHERE id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-$isQuestionSet = !empty($user['security_question']) && !empty($user['security_answer']);
+if (empty($user['security_question']) || empty($user['security_answer'])) {
+    $_SESSION['error'] = "Security question not set. Please visit Account Settings to set up your security question.";
+    unset($_SESSION['recover_user_id']); // Clear the recovery session
+    header("Location: /login");
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if ($isQuestionSet) {
-        // Verify the answer
-        $answer = $_POST['security_answer'];
-        if ($answer === $user['security_answer']) {
-            $_SESSION['reset_password'] = true;
-            header("Location: reset_password.php");
-            exit();
-        } else {
-            $error = "Incorrect answer. Please try again.";
-        }
+    // Only keep the verification part
+    $answer = strtolower(trim($_POST['security_answer']));
+    if (password_verify($answer, $user['security_answer'])) {
+        $_SESSION['reset_password'] = true;
+        header("Location: reset_password.php");
+        exit();
     } else {
-        // Set the security question and answer for the first time
-        $selectedQuestion = $_POST['security_question'];
-        $answer = $_POST['security_answer'];
-        
-        $stmt = $connect->prepare("UPDATE users SET security_question = ?, security_answer = ? WHERE id = ?");
-        $stmt->bind_param("ssi", $selectedQuestion, $answer, $userId);
-        $stmt->execute();
-        
-        if ($stmt->affected_rows > 0) {
-            $success = "Security question and answer set successfully.";
-            $isQuestionSet = true;
-            $user['security_question'] = $selectedQuestion;
-        } else {
-            $error = "Failed to update security question and answer.";
-        }
+        $error = "Incorrect answer. Please try again.";
     }
 }
 ?>
@@ -65,46 +47,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Security Question - iniGadget</title>
     <link rel="icon" type="image/x-icon" href="../assets/img/logo-light.svg" />
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/add-product.css">
 </head>
 <body>
-    <?php include '../header.php'; ?>
-    <div class="main">
-        <div id="upload-product-title">
-            <span>Security Question</span>
-        </div>
-        <form method="POST" id="upload-product-form">
-            <div class="upload-product-item security-question">
-                <?php if (!$isQuestionSet): ?>
-                    <div class="credential-form">
-                        <label for="security_question" class="upload-label">Select a Security Question</label>
-                        <select id="security_question" name="security_question" required>
-                            <?php foreach ($securityQuestions as $question): ?>
-                                <option value="<?php echo htmlspecialchars($question); ?>"><?php echo htmlspecialchars($question); ?></option>
-                            <?php endforeach; ?>
-                        </select>
+    <?php include __DIR__ . '/../templates/header.php'; ?>
+    <div class="main-content">
+        <div class="product-form-container">
+            <h1 class="page-title">Security Question</h1>
+            
+            <form method="POST" class="product-form">
+                <div class="details-section">
+                    <div class="form-group">
+                        <label>Your Security Question</label>
+                        <div class="readonly-text">
+                            <?php echo htmlspecialchars($user['security_question']); ?>
+                        </div>
                     </div>
-                <?php else: ?>
-                    <div class="credential-form">
-                        <label class="upload-label">Your Security Question</label>
-                        <p><?php echo htmlspecialchars($user['security_question']); ?></p>
+
+                    <div class="form-group">
+                        <label for="security_answer">Your Answer</label>
+                        <input type="text" id="security_answer" name="security_answer" 
+                               placeholder="Enter your answer" required>
                     </div>
-                <?php endif; ?>
-                <div class="credential-form">
-                    <label for="security_answer" class="upload-label">Your Answer</label>
-                    <input type="text" id="security_answer" name="security_answer" required>
+
+                    <?php if ($error): ?>
+                        <p class="error"><?php echo $error; ?></p>
+                    <?php endif; ?>
+                    <?php if ($success): ?>
+                        <p class="success"><?php echo $success; ?></p>
+                    <?php endif; ?>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" 
+                                onclick="window.location.href='recover.php'">Back</button>
+                        <button type="submit" class="btn btn-primary">
+                            Verify Answer
+                        </button>
+                    </div>
                 </div>
-                <?php if ($error): ?>
-                    <p class="error"><?php echo $error; ?></p>
-                <?php endif; ?>
-                <?php if ($success): ?>
-                    <p class="success"><?php echo $success; ?></p>
-                <?php endif; ?>
-                <button type="submit" class="next-button">
-                    <?php echo $isQuestionSet ? 'Verify Answer' : 'Set Security Question'; ?>
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-    <?php include '../footer.php'; ?>
+    <?php include __DIR__ . '/../templates/footer.php'; ?>
 </body>
 </html>

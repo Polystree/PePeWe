@@ -1,4 +1,4 @@
-<?php include '../account.php'; ?>
+<?php include 'account.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,15 +20,12 @@
             <h1 class="page-title">Account Settings</h1>
             
             <form method="POST" class="profile-form" enctype="multipart/form-data">
+            <?php if (isset($securityNotice)) echo $securityNotice; ?>
                 <div class="form-grid">
                     <!-- Image Section -->
                     <div class="image-section">
                         <div class="profile-image-preview">
-                            <?php if (isset($userData['profile_image'])): ?>
-                                <img src="<?php echo htmlspecialchars($userData['profile_image']); ?>" alt="Profile Image">
-                            <?php else: ?>
-                                <img src="/assets/img/Generic avatar.svg" alt="Profile Image">
-                            <?php endif; ?>
+                            <img src="<?php echo htmlspecialchars($currentProfileImage); ?>" alt="Profile Image">
                         </div>
                         <div class="form-group">
                             <input type="file" name="profile_image" id="profile_image" accept="image/*" class="file-input">
@@ -60,23 +57,44 @@
 
                         <div class="form-group">
                             <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email"
-                                   placeholder="Enter your email address"
-                                   value="<?php echo htmlspecialchars($userData['email'] ?? ''); ?>" required>
+                            <input type="email" id="email" name="email" 
+                                   placeholder="<?php echo htmlspecialchars($currentEmail); ?>"
+                                   value="<?php echo htmlspecialchars($currentEmail); ?>" required>
                         </div>
 
                         <div class="form-group">
                             <label for="contact_details">Contact Details</label>
                             <input type="text" id="contact_details" name="contact_details"
-                                   placeholder="Enter your contact number"
-                                   value="<?php echo htmlspecialchars($userData['contact_details'] ?? ''); ?>" required>
+                                   placeholder="<?php echo htmlspecialchars($currentContact); ?>"
+                                   value="<?php echo htmlspecialchars($currentContact); ?>" required>
                         </div>
 
                         <div class="form-group">
                             <label for="address">Shipping Address</label>
                             <input type="text" id="address" name="address"
-                                   placeholder="Enter your shipping address"
-                                   value="<?php echo htmlspecialchars($userData['address'] ?? ''); ?>" required>
+                                   placeholder="<?php echo htmlspecialchars($currentAddress); ?>"
+                                   value="<?php echo htmlspecialchars($currentAddress); ?>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="security_question">Security Question</label>
+                            <select id="security_question" name="security_question" required>
+                                <?php foreach ($securityQuestions as $question): ?>
+                                    <option value="<?php echo htmlspecialchars($question); ?>"
+                                            <?php echo ($question === $currentSecurityQuestion) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($question); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="security_answer">Security Answer</label>
+                            <input type="text" id="security_answer" name="security_answer"
+                                   placeholder="Enter your security answer">
+                            <?php if ($currentSecurityAnswer): ?>
+                                <small class="help-text">Leave blank to keep current answer</small>
+                            <?php endif; ?>
                         </div>
 
                         <div class="form-actions">

@@ -4,7 +4,7 @@ return [
         'host' => '127.0.0.1',
         'username' => 'root',
         'password' => '',
-        'database' => 'ecommerce_v2'
+        'database' => 'ecommerce_v3'  // Change this to match your SQL file
     ],
     'google' => [
         'client_id' => '932071323991-87k4jsu4bh90o5u259f98n090v853g2h.apps.googleusercontent.com',

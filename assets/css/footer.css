@@ -72,10 +72,10 @@ footer {
   max-width: 280px; /* Added maximum width */
 }
 
-.footer-links div:not(.subscribe):not(.support):not(.account):not(.quick-link):not(.download-app) {
+.footer-links div:not(.subscribe):not(.support):not(.account):not(.quick-link):not(.download-app):not(.email) {
   font-size: 0.875rem;
   line-height: 1.5;
-  width: 100%;
+  width: 90%;
   color: #f5f5f5;
 }
 
@@ -195,9 +195,8 @@ footer {
 
 /* Promo banner */
 .save-rp9999-with {
-  background: rgba(216, 96, 43, 0.08);
   border-radius: 4px;
-  padding: 0.5rem;
+  padding-bottom: 0.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -224,10 +223,8 @@ footer {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: rgba(255, 255, 255, 0.02);  /* Slightly lighter background to maintain visual separation */
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 4px;
-  padding: 0.625rem;
-  /* Removed border property */
 }
 
 .qr-code-icon {

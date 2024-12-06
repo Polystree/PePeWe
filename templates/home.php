@@ -5,12 +5,25 @@ require_once __DIR__ . '/../includes/Template.php';
 $product = new Product();
 $template = Template::getInstance();
 
+// Add error logging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Fetch all required product data
+$featuredProducts = $product->getFeaturedProducts(8);
+if (empty($featuredProducts)) {
+    error_log("No featured products returned from query");
+}
+
 $recentProducts = $product->getRecentlyUpdated(10);
-$flashSaleProducts = $product->getFlashSaleProducts(10);
+$flashSaleProducts = $product->getFlashSaleProducts(8);
+if (empty($flashSaleProducts)) {
+    error_log("No flash sale products returned from query");
+}
+
 $bestSelling = $product->getBestSelling(5);
 $newArrivals = $product->getNewArrivals(4);
-$exploredProducts = $product->getExploredProducts(8); // Add this line
+$allProducts = $product->getAllProducts(20);
 
 // Helper function to create URL-friendly product slug
 function createProductSlug($name) {
@@ -22,256 +35,244 @@ function createProductSlug($name) {
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="/assets/css/home.css">
 
-<section class="hero">
-    <div class="text">
-        <p>Pro.Beyond.</p>
-        <h1>IPhone 16 Pro</h1>
-        <p>Created to change everything for the better. For everyone</p>
-        <a href="#recently-updated" class="shop-button">Shop Now</a>
+<!-- Hero Banner Section -->
+<section class="hero-banner">
+    <div class="hero-content container">
+        <div class="hero-text">
+            <div class="hero-tag">
+                <p>Pro.Beyond.</p>
+                <span class="badge-new">New Release</span>
+            </div>
+            <h1>iPhone 16 Pro</h1>
+            <p>Experience the future with the latest flagship device</p>
+            <a href="#products" class="cta-button">Shop Now</a>
+        </div>
+        <div class="hero-image">
+            <img src="/assets/img/hero.webp" alt="iPhone 16 Pro">
+        </div>
     </div>
-    <img alt="IPhone 16 Pro" src="/assets/img/hero.webp" />
 </section>
 
-<section id="recently-updated" class="recently-updated">
-    <div class="section-title">
-        <h2>Recently Updated Products</h2>
-    </div>
-    <div class="products-container">
-        <?php if(!empty($recentProducts)): ?>
-            <?php foreach ($recentProducts as $product): ?>
-                <div class="product-card">
-                    <a href="<?php echo createProductSlug($product['name']); ?>">
-                        <img src="<?php echo htmlspecialchars($product['image_path']); ?>" 
-                             alt="<?php echo htmlspecialchars($product['name']); ?>" />
-                        <div class="product-info">
-                            <h3><?php echo htmlspecialchars($product['name']); ?></h3>
-                            <p class="price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></p>
-                        </div>
-                    </a>
+<main class="container">
+    <!-- Featured Products Grid -->
+    <section class="featured-section">
+        <div class="section-header">
+            <div class="header-group">
+                <span class="section-tag">Best Deals</span>
+                <div>
+                    <h2>Featured Products</h2>
+                    <a href="/featured" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
                 </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No recently updated products found.</p>
-        <?php endif; ?>
-    </div>
-</section>
+            </div>
+        </div>
 
-<section class="flash-sales">
-    <div class="title">
-        <h2><span style="color: #ff4d4f;">Today's</span></h2>
-    </div>
-    <div class="flash-sales-header">
-        <div class="flash-sales-text">Flash Sales</div>
-        <div class="timer">
-            <div><span id="days">01</span>
-                <p>Days</p>
-            </div>
-            <div><span id="hours">12</span>
-                <p>Hours</p>
-            </div>
-            <div><span id="minutes">32</span>
-                <p>Minutes</p>
-            </div>
-            <div><span id="seconds">48</span>
-                <p>Seconds</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="carousel-container">
-        <div class="products">
-            <?php foreach ($flashSaleProducts as $product): ?>
-                <div class="product-card">
-                    <div class="discount">-<?php echo htmlspecialchars($product['discount']); ?>%</div>
-                    <div class="image-container">
-                        <img src="<?php echo htmlspecialchars($product['image_path']); ?>" 
-                             alt="<?php echo htmlspecialchars($product['name']); ?>" />
-                        <div class="add-to-cart">Add To Cart</div>
-                    </div>
-                    <div class="product-info">
-                        <h3><?php echo htmlspecialchars($product['name']); ?></h3>
-                        <div class="prices">
-                            <p class="price">Rp <?php echo number_format($product['price'] * (100 - $product['discount']) / 100, 0, ',', '.'); ?></p>
-                            <p class="original-price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></p>
-                        </div>
-                        <div class="rating">
-                            <?php 
-                            $rating = isset($product['avg_rating']) ? round($product['avg_rating']) : 0;
-                            for($i = 1; $i <= 5; $i++): ?>
-                                <i class="fas fa-<?php echo $i <= $rating ? 'star' : ($i - 0.5 <= $rating ? 'star-half-alt' : 'star'); ?>"></i>
-                            <?php endfor; ?>
-                            <span>(<?php echo isset($product['rating_count']) ? (int)$product['rating_count'] : 0; ?>)</span>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
-<section class="category-container">
-    <div class="container">
-        <div class="separator"></div>
-        <div class="header-category">
-            <div>
-                <div class="categories">Categories</div>
-                <div class="title">Browse by Category</div>
-            </div>
-        </div>
-        <div class="categories-container">
-            <div class="category active">
-                <i class="fas fa-mobile-alt"></i>
-                <span>Phones</span>
-            </div>
-            <div class="category">
-                <i class="fas fa-desktop"></i>
-                <span>Computers</span>
-            </div>
-            <div class="category">
-                <i class="fas fa-clock"></i>
-                <span>SmartWatch</span>
-            </div>
-            <div class="category">
-                <i class="fas fa-camera"></i>
-                <span>Camera</span>
-            </div>
-            <div class="category">
-                <i class="fas fa-headphones-alt"></i>
-                <span>Headphones</span>
-            </div>
-            <div class="category">
-                <i class="fas fa-gamepad"></i>
-                <span>Gaming</span>
-            </div>
-        </div>
-        <div class="separator"></div>
-    </div>
-</section>
-
-<section class="best-selling">
-    <div class="header-category">
-        <div class="header-left">
-            <div class="categories">This Month</div>
-            <div class="title">Best Selling Products</div>
-        </div>
-        <div class="view-all">View All</div>
-    </div>
-    <div class="products-bs">
-        <?php foreach ($bestSelling as $product): ?>
+        <div class="products-grid">
+            <?php if (!empty($featuredProducts)): ?>
+            <?php foreach ($featuredProducts as $product): ?>
             <div class="product-card">
-                <img src="<?php echo htmlspecialchars($product['image_path']); ?>" 
-                     alt="<?php echo htmlspecialchars($product['name']); ?>" />
-                <div class="product-info">
-                    <h3><?php echo htmlspecialchars($product['name']); ?></h3>
-                    <p class="price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></p>
-                    <div class="rating">
-                        <?php 
-                        $rating = isset($product['avg_rating']) ? round($product['avg_rating']) : 0;
-                        for($i = 1; $i <= 5; $i++): ?>
-                            <i class="fas fa-<?php echo $i <= $rating ? 'star' : ($i - 0.5 <= $rating ? 'star-half-alt' : 'star'); ?>"></i>
-                        <?php endfor; ?>
-                        <span>(<?php echo isset($product['rating_count']) ? (int)$product['rating_count'] : 0; ?>)</span>
+                <a href="<?= createProductSlug($product['name']) ?>">
+                    <div class="product-image">
+                        <img src="<?= htmlspecialchars($product['image_path']) ?>"
+                            alt="<?= htmlspecialchars($product['name']) ?>">
+                        <?php if($product['discount'] > 0): ?>
+                        <span class="discount-badge">-<?= $product['discount'] ?>%</span>
+                        <?php endif; ?>
                     </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-</section>
-
-<div class="our-product-container">
-    <div class="our-product-hero">
-        <div class="our-product-hero-text">
-            <p>Categories</p>
-            <h1>Enhance Your Music Experience</h1>
-            <div class="our-product-timer">
-                <div>
-                    <span>23</span>
-                    <small>Days</small>
-                </div>
-                <div>
-                    <span>05</span>
-                    <small>Hours</small>
-                </div>
-                <div>
-                    <span>59</span>
-                    <small>Minutes</small>
-                </div>
-                <div>
-                    <span>35</span>
-                    <small>Seconds</small>
-                </div>
-            </div>
-            <button class="our-product-btn">Buy Now!</button>
-        </div>
-        <img alt="Black portable speaker with red logo" height="100%" src="/assets/img/jbl.png" width="100%" />
-    </div>
-    <div class="our-product-list-container">
-        <div class="header-category">
-            <div>
-                <div class="categories">Our Products</div>
-                <div class="title">Explore Our Products</div>
-            </div>
-        </div>
-        <div class="our-product-list">
-            <?php foreach ($exploredProducts as $product): ?>
-                <div class="product-card">
-                    <img src="<?php echo htmlspecialchars($product['image_path']); ?>" 
-                         alt="<?php echo htmlspecialchars($product['name']); ?>" />
                     <div class="product-info">
-                        <h3><?php echo htmlspecialchars($product['name']); ?></h3>
-                        <p class="price">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></p>
-                        <div class="rating">
-                            <?php 
-                            $rating = isset($product['avg_rating']) ? round($product['avg_rating']) : 0;
-                            for($i = 1; $i <= 5; $i++): ?>
-                                <i class="fas fa-<?php echo $i <= $rating ? 'star' : ($i - 0.5 <= $rating ? 'star-half-alt' : 'star'); ?>"></i>
-                            <?php endfor; ?>
-                            <span>(<?php echo isset($product['rating_count']) ? (int)$product['rating_count'] : 0; ?>)</span>
+                        <h3><?= htmlspecialchars($product['name']) ?></h3>
+                        <div class="price-group">
+                            <?php if($product['discount'] > 0): ?>
+                            <span class="price-current">Rp
+                                <?= number_format($product['discounted_price'], 0, ',', '.') ?></span>
+                            <span class="price-original">Rp <?= number_format($product['price'], 0, ',', '.') ?></span>
+                            <?php else: ?>
+                            <span class="price-current">Rp <?= number_format($product['price'], 0, ',', '.') ?></span>
+                            <?php endif; ?>
                         </div>
                     </div>
-                </div>
+                </a>
+                <button class="add-to-cart-btn" data-id="<?= $product['productId'] ?>">
+                    Add to Cart
+                </button>
+            </div>
             <?php endforeach; ?>
+            <?php else: ?>
+            <p class="no-products">No featured products available</p>
+            <?php endif; ?>
         </div>
-    </div>
-</div>
+    </section>
 
-
-<div class="container-na">
-    <div class="header-category">
-        <div>
-            <div class="categories">Featured</div>
-            <div class="title">New Arrival</div>
-        </div>
-    </div>
-    <div class="products-na">
-        <?php foreach ($newArrivals as $index => $product): ?>
-            <div class="product-na <?php echo $index === 0 ? 'product-vertical-na' : ($index === 1 ? 'product-horizontal-na' : 'product-square-na'); ?>">
-                <img src="<?php echo htmlspecialchars($product['image_path']); ?>" 
-                     alt="<?php echo htmlspecialchars($product['name']); ?>">
-                <div class="product-info-na">
-                    <h3><?php echo htmlspecialchars($product['name']); ?></h3>
-                    <p><?php echo strlen($product['description']) > 100 ? substr(htmlspecialchars($product['description']), 0, 100) . '...' : htmlspecialchars($product['description'] ?? ''); ?></p>
-                    <a href="<?php echo createProductSlug($product['name']); ?>">Shop Now</a>
+    <!-- Flash Sales Section -->
+    <section class="flash-sales">
+        <div class="section-header">
+            <div class="header-group">
+                <span class="section-tag">Limited Time</span>
+                <div>
+                    <h2>Flash Sales</h2>
+                    <a href="/flash-sales" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="countdown" id="flash-sale-timer">
+                    <div class="time-block">
+                        <span id="hours">24</span>
+                        <label>Hours</label>
+                    </div>
+                    <div class="time-block">
+                        <span id="minutes">00</span>
+                        <label>Minutes</label>
+                    </div>
+                    <div class="time-block">
+                        <span id="seconds">00</span>
+                        <label>Seconds</label>
+                    </div>
                 </div>
             </div>
-        <?php endforeach; ?>
-    </div>
+        </div>
 
-    <div class="features-na">
-        <div class="feature-na">
-            <i class="fas fa-shipping-fast"></i>
-            <h4>FREE AND FAST DELIVERY</h4>
-            <p>Free delivery for all orders over $140</p>
+        <div class="products-grid">
+            <?php foreach ($flashSaleProducts as $product): ?>
+            <div class="product-card sale">
+                <a href="<?= createProductSlug($product['name']) ?>">
+                    <div class="product-image">
+                        <img src="<?= htmlspecialchars($product['image_path']) ?>"
+                            alt="<?= htmlspecialchars($product['name']) ?>">
+                        <span class="discount-badge">-<?= $product['discount'] ?>%</span>
+                    </div>
+                    <div class="product-info">
+                        <h3><?= htmlspecialchars($product['name']) ?></h3>
+                        <div class="price-group">
+                            <?php if($product['discount'] > 0): ?>
+                            <span class="price-current">Rp
+                                <?= number_format($product['discounted_price'], 0, ',', '.') ?></span>
+                            <span class="price-original">Rp <?= number_format($product['price'], 0, ',', '.') ?></span>
+                            <?php else: ?>
+                            <span class="price-current">Rp <?= number_format($product['price'], 0, ',', '.') ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="stock-info">
+                            <div class="stock-bar">
+                                <div class="stock-progress"
+                                    style="width: <?= min(100, ($product['sold_count'] / $product['quantity']) * 100) ?>%">
+                                </div>
+                            </div>
+                            <span class="stock-text">Sold: <?= $product['sold_count'] ?></span>
+                        </div>
+                    </div>
+                </a>
+                <button class="add-to-cart-btn" data-id="<?= $product['productId'] ?>">
+                    Add to Cart
+                </button>
+            </div>
+            <?php endforeach; ?>
         </div>
-        <div class="feature-na">
-            <i class="fas fa-headset"></i>
-            <h4>24/7 CUSTOMER SERVICE</h4>
-            <p>Friendly 24/7 customer support</p>
+    </section>
+
+    <!-- New Arrivals Section -->
+    <section class="products-section">
+        <div class="section-header">
+            <div class="header-group">
+                <span class="section-tag">Latest Products</span>
+                <div>
+                    <h2>New Arrivals</h2>
+                    <a href="/new-arrivals" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
         </div>
-        <div class="feature-na">
-            <i class="fas fa-undo"></i>
-            <h4>MONEY BACK GUARANTEE</h4>
-            <p>We return money within 30 days</p>
+
+        <div class="products-grid">
+            <?php foreach($newArrivals as $product): ?>
+            <article class="product-card">
+                <div class="product-image">
+                    <img src="<?= htmlspecialchars($product['image_path']) ?>"
+                        alt="<?= htmlspecialchars($product['name']) ?>">
+                    <?php if($product['discount'] > 0): ?>
+                    <span class="discount-badge">-<?= $product['discount'] ?>%</span>
+                    <?php endif; ?>
+                    <div class="quick-actions">
+                        <button class="action-btn cart" data-id="<?= $product['productId'] ?>">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                        <button class="action-btn wishlist">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h3><?= htmlspecialchars($product['name']) ?></h3>
+                    <div class="price-group">
+                        <?php if($product['discount'] > 0): ?>
+                        <span class="price-current">
+                            Rp <?= number_format($product['price'] * (100 - $product['discount']) / 100, 0, ',', '.') ?>
+                        </span>
+                        <span class="price-original">
+                            Rp <?= number_format($product['price'], 0, ',', '.') ?>
+                        </span>
+                        <?php else: ?>
+                        <span class="price-current">
+                            Rp <?= number_format($product['price'], 0, ',', '.') ?>
+                        </span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </article>
+            <?php endforeach; ?>
         </div>
-    </div>
-</div>
+    </section>
+
+    <!-- Explore Section -->
+    <section class="products-section explore-section">
+        <div class="section-header">
+            <div class="header-group">
+                <span class="section-tag">Browse All</span>
+                <div>
+                    <h2>Explore Our Products</h2>
+                    <a href="/products" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="products-grid">
+            <?php foreach($allProducts as $product): ?>
+            <article class="product-card">
+                <a href="<?= createProductSlug($product['name']) ?>">
+                    <div class="product-image">
+                        <img src="<?= htmlspecialchars($product['image_path']) ?>"
+                            alt="<?= htmlspecialchars($product['name']) ?>">
+                        <?php if($product['discount'] > 0): ?>
+                        <span class="discount-badge">-<?= $product['discount'] ?>%</span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="product-info">
+                        <h3><?= htmlspecialchars($product['name']) ?></h3>
+                        <div class="price-group">
+                            <?php if($product['discount'] > 0): ?>
+                            <span class="price-current">Rp
+                                <?= number_format($product['discounted_price'], 0, ',', '.') ?></span>
+                            <span class="price-original">Rp <?= number_format($product['price'], 0, ',', '.') ?></span>
+                            <?php else: ?>
+                            <span class="price-current">Rp <?= number_format($product['price'], 0, ',', '.') ?></span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </a>
+                <button class="add-to-cart-btn" data-id="<?= $product['productId'] ?>">
+                    Add to Cart
+                </button>
+            </article>
+            <?php endforeach; ?>
+        </div>
+    </section>
+
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Remove category tabs initialization
+    const quickActions = document.querySelectorAll('.quick-actions .action-btn');
+    quickActions.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Add cart/wishlist logic here
+        });
+    });
+});
+</script>

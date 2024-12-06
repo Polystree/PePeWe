@@ -89,6 +89,12 @@
     outline: none;
 }
 
+.profile-form input[type="text"]:not(:placeholder-shown),
+.profile-form input[type="email"]:not(:placeholder-shown),
+.profile-form input[type="password"]:not(:placeholder-shown) {
+    color: #000000;
+}
+
 .profile-form .form-actions {
     display: flex;
     gap: 1rem;
@@ -160,15 +166,15 @@
     margin: 0; /* Remove any margin */
 }
 
+/* Fix profile image preview */
 .profile-image-preview {
     width: 100%;
-    padding-bottom: 100%; /* Make it square */
+    height: 300px; /* Fixed height instead of padding-bottom */
     position: relative;
     border: 2px dashed #ccc;
     border-radius: 8px;
     background: white;
     margin-bottom: 1rem;
-    overflow: hidden;
 }
 
 .profile-image-preview img {
@@ -300,6 +306,24 @@
 
 .btn-secondary:hover {
     background: #f5f5f5;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+}
+
+.alert strong {
+    font-weight: 600;
+    margin-right: 0.5rem;
 }
 
 @media (max-width: 768px) {

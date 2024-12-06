@@ -203,7 +203,6 @@ input[type="email"],
 input[type="number"],
 input[type="file"],
 a {
-  background-color: transparent !important;
   all: unset;
   width: 100%;
 }

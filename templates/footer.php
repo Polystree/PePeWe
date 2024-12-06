@@ -35,15 +35,13 @@
             </div>
             <div class="footer-links">
                 <div class="account">Account</div>
-                <?php if (isset($_SESSION['user_id'])): ?>
+                <?php if (isset($_SESSION['username'])): ?>
                     <a href="/account" class="my-account">My Account</a>
                     <a href="/login/logout.php" class="login-register">Logout</a>
                 <?php else: ?>
                     <a href="/login" class="login-register">Login / Register</a>
                 <?php endif; ?>
                 <a href="/cart" class="cart">Cart</a>
-                <a href="/wishlist" class="wishlist">Wishlist</a>
-                <a href="/shop" class="shop">Shop</a>
             </div>
             <div class="footer-links">
                 <div class="quick-link">Quick Link</div>
