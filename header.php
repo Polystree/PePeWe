@@ -26,6 +26,7 @@ if (isset($_SESSION['username'])) {
 
             <?php if (isset($_SESSION['username']) && $_SESSION['username'] === 'admin'): ?>
                 <a href="/admin" class="header-item">Admin</a>
+                <a href="/admin/generate_coupon.php" class="header-item">Coupon</a>
             <?php endif; ?>
 
             <div class="search-input">
