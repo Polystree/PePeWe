@@ -72,30 +72,6 @@
   font-weight: 500;
 }
 
-.quick-actions {
-  position: absolute;
-  bottom: -50px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.9);
-  transition: bottom 0.3s ease;
-}
-
-.action-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: white;
-  color: var(--text-color);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
 /* Product Info Styling */
 .product-info {
   padding: 1rem;
@@ -400,22 +376,6 @@
   color: var(--text-light);
   text-decoration: line-through;
   font-size: 0.875rem;
-}
-
-.add-to-cart-btn {
-  width: 100%;
-  padding: 0.75rem;
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s;
-}
-
-.add-to-cart-btn:hover {
-  background: var(--accent-color);
 }
 
 /* Flash Sale Timer */

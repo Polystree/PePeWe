@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/Database.php';
 
-// Initialize searchQuery
 $searchQuery = isset($_GET['query']) ? trim($_GET['query']) : '';
 
 ?>
@@ -15,7 +14,7 @@ $searchQuery = isset($_GET['query']) ? trim($_GET['query']) : '';
 </form>
 
 <?php
-$db = Database::getInstance();  // This already returns the mysqli connection
+$db = Database::getInstance();
 
 if (!empty($searchQuery)) {
     $searchQuery = htmlspecialchars($searchQuery);
@@ -31,7 +30,7 @@ if (!empty($searchQuery)) {
             break;
     }
 
-    $stmt = $db->prepare("SELECT * FROM products WHERE name LIKE ? $orderBy");  // Use $db directly
+    $stmt = $db->prepare("SELECT * FROM products WHERE name LIKE ? $orderBy");
     if ($stmt) {
         $likeQuery = "%" . $searchQuery . "%";
         $stmt->bind_param("s", $likeQuery);

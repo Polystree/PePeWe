@@ -91,9 +91,6 @@ function createProductSlug($name) {
                         </div>
                     </div>
                 </a>
-                <button class="add-to-cart-btn" data-id="<?= $product['productId'] ?>">
-                    Add to Cart
-                </button>
             </div>
             <?php endforeach; ?>
             <?php else: ?>
@@ -158,9 +155,6 @@ function createProductSlug($name) {
                         </div>
                     </div>
                 </a>
-                <button class="add-to-cart-btn" data-id="<?= $product['productId'] ?>">
-                    Add to Cart
-                </button>
             </div>
             <?php endforeach; ?>
         </div>
@@ -181,38 +175,40 @@ function createProductSlug($name) {
         <div class="products-grid">
             <?php foreach($newArrivals as $product): ?>
             <article class="product-card">
-                <div class="product-image">
-                    <img src="<?= htmlspecialchars($product['image_path']) ?>"
-                        alt="<?= htmlspecialchars($product['name']) ?>">
-                    <?php if($product['discount'] > 0): ?>
-                    <span class="discount-badge">-<?= $product['discount'] ?>%</span>
-                    <?php endif; ?>
-                    <div class="quick-actions">
-                        <button class="action-btn cart" data-id="<?= $product['productId'] ?>">
-                            <i class="fas fa-shopping-cart"></i>
-                        </button>
-                        <button class="action-btn wishlist">
-                            <i class="fas fa-heart"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="product-info">
-                    <h3><?= htmlspecialchars($product['name']) ?></h3>
-                    <div class="price-group">
+                <a href="<?= createProductSlug($product['name']) ?>">
+                    <div class="product-image">
+                        <img src="<?= htmlspecialchars($product['image_path']) ?>"
+                            alt="<?= htmlspecialchars($product['name']) ?>">
                         <?php if($product['discount'] > 0): ?>
-                        <span class="price-current">
-                            Rp <?= number_format($product['price'] * (100 - $product['discount']) / 100, 0, ',', '.') ?>
-                        </span>
-                        <span class="price-original">
-                            Rp <?= number_format($product['price'], 0, ',', '.') ?>
-                        </span>
-                        <?php else: ?>
-                        <span class="price-current">
-                            Rp <?= number_format($product['price'], 0, ',', '.') ?>
-                        </span>
+                        <span class="discount-badge">-<?= $product['discount'] ?>%</span>
                         <?php endif; ?>
+                        <div class="quick-actions">
+                            <button class="action-btn cart" data-id="<?= $product['productId'] ?>">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                            <button class="action-btn wishlist">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
+                    <div class="product-info">
+                        <h3><?= htmlspecialchars($product['name']) ?></h3>
+                        <div class="price-group">
+                            <?php if($product['discount'] > 0): ?>
+                            <span class="price-current">
+                                Rp <?= number_format($product['price'] * (100 - $product['discount']) / 100, 0, ',', '.') ?>
+                            </span>
+                            <span class="price-original">
+                                Rp <?= number_format($product['price'], 0, ',', '.') ?>
+                            </span>
+                            <?php else: ?>
+                            <span class="price-current">
+                                Rp <?= number_format($product['price'], 0, ',', '.') ?>
+                            </span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </a>
             </article>
             <?php endforeach; ?>
         </div>
@@ -254,9 +250,6 @@ function createProductSlug($name) {
                         </div>
                     </div>
                 </a>
-                <button class="add-to-cart-btn" data-id="<?= $product['productId'] ?>">
-                    Add to Cart
-                </button>
             </article>
             <?php endforeach; ?>
         </div>

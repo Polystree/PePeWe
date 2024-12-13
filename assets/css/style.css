@@ -204,7 +204,6 @@ input[type="number"],
 input[type="file"],
 a {
   all: unset;
-  width: 100%;
 }
 
 input[value] {
@@ -227,9 +226,6 @@ input[type="file"]:focus {
 input[type="number"],
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -moz-appearance: textfield;
-  -webkit-appearance: none;
-  appearance: none;
   margin: 0;
 }
 

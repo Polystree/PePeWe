@@ -34,17 +34,23 @@ $product = [
     'price' => '',
     'image_path' => '',
     'description' => '',
-    'quantity' => ''
+    'quantity' => '',
+    'category' => '',
+    'status' => 'active',
+    'is_featured' => 0
 ];
 $productId = null;
 
 if (isset($_GET['productId'])) {
     $productId = (int)$_GET['productId'];
-    $stmt = $connect->prepare("SELECT name, price, image_path, description, quantity FROM products WHERE productId = ?");
+    $stmt = $connect->prepare("SELECT name, price, image_path, description, quantity, category, status, is_featured 
+        FROM products WHERE productId = ?");
     $stmt->bind_param("i", $productId);
     $stmt->execute();
-    $stmt->bind_result($product['name'], $product['price'], $product['image_path'], $product['description'], $product['quantity']);
-    $stmt->fetch();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $product = array_merge($product, $row);
+    }
     $stmt->close();
 }
 
@@ -179,10 +185,9 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
                         <span class='description-toggle'>Show More</span>
                     </div>
 
-                    <form method='POST' class='cart-form'>
-                        <input type='hidden' name='product_name' value='<?php echo htmlspecialchars(\$product["name"]); ?>'>
-                        <input type='hidden' name='price' value='<?php echo \$product["price"]; ?>'>
-                        <input type='hidden' name='image_path' value='<?php echo htmlspecialchars(\$product["image_path"]); ?>'>
+                    <?php if (isset(\$_SESSION['username']) && \$_SESSION['username'] !== 'admin'): ?>
+                    <form method='POST' action='/includes/add_to_cart.php' class='cart-form'>
+                        <input type='hidden' name='productId' value='<?php echo \$product["productId"]; ?>'>
                         
                         <div class='quantity-input'>
                             <label for='quantity'>Quantity</label>
@@ -194,8 +199,14 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span class='total-price-amount'>Rp <?php echo number_format(\$product["price"], 0, ',', '.'); ?></span>
                         </div>
                         
-                        <button type='submit' class='add-to-cart-btn' name='cart'>Add to Cart</button>
+                        <button type='submit' class='add-to-cart-btn'>Add to Cart</button>
                     </form>
+                    <?php else: ?>
+                    <div class='login-prompt'>
+                        <p>Please <a href="/login">login</a> to add items to your cart.</p>
+                    </div>
+                    <?php endif; ?>
+
                 </div>
             </div>
 
@@ -243,12 +254,18 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
                             <p><?php echo nl2br(htmlspecialchars(\$review["review"])); ?></p>
                             
                             <?php if (isset(\$_SESSION["userId"]) && \$_SESSION["userId"] == \$review["userId"]): ?>
+                                <div class='review-actions'>
+                                    <button type='button' onclick='toggleEditForm(this)' class='edit-review-btn'>Edit</button>
+                                    <form method='POST' style='display: inline;'>
+                                        <input type='hidden' name='review_id' value='<?php echo \$review["id"]; ?>'>
+                                        <button type='submit' name='delete_review' class='delete-review-btn'>Delete</button>
+                                    </form>
+                                </div>
                                 <form method='POST' class='review-form'>
                                     <input type='hidden' name='review_id' value='<?php echo \$review["id"]; ?>'>
                                     <textarea name='review' class='input-description'><?php echo htmlspecialchars(\$review["review"]); ?></textarea>
                                     <div class='review-actions'>
-                                        <button type='submit' name='edit_review' class='edit-review-btn'>Edit</button>
-                                        <button type='submit' name='delete_review' class='delete-review-btn'>Delete</button>
+                                        <button type='submit' name='edit_review' class='edit-review-btn'>Save</button>
                                     </div>
                                 </form>
                             <?php endif; ?>
@@ -349,14 +366,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['productId'])) {
         $productId = (int)$_POST['productId'];
-        $stmt = $connect->prepare("UPDATE products SET name = ?, price = ?, image_path = ?, description = ?, quantity = ?, url = ? WHERE productId = ?");
-        $stmt->bind_param("sissisi", $name, $price, $image_path, $description, $quantity, $url, $productId);
+        $stmt = $connect->prepare("UPDATE products SET name = ?, price = ?, image_path = ?, description = ?, 
+            quantity = ?, url = ?, category = ?, status = ?, is_featured = ? WHERE productId = ?");
+        $stmt->bind_param("sissiissii", $name, $price, $image_path, $description, $quantity, $url, 
+            $_POST['category'], $_POST['status'], isset($_POST['is_featured']) ? 1 : 0, $productId);
     } else {
-        $stmt = $connect->prepare("INSERT INTO products (name, price, image_path, description, quantity, url) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sissis", $name, $price, $image_path, $description, $quantity, $url);
+        $stmt = $connect->prepare("INSERT INTO products (name, price, image_path, description, quantity, url, 
+            category, status, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sissiissi", $name, $price, $image_path, $description, $quantity, $url,
+            $_POST['category'], $_POST['status'], isset($_POST['is_featured']) ? 1 : 0);
     }
     $stmt->execute();
+    $newProductId = $stmt->insert_id;
     $stmt->close();
+
+    // Check if this is an AJAX request
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+        strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'product' => [
+                'productId' => $newProductId,
+                'name' => $name,
+                'price' => $price,
+                'image_path' => $image_path,
+                'description' => $description,
+                'quantity' => $quantity
+            ]
+        ]);
+        exit();
+    }
+    
     header('Location: index.php');
     exit();
 }
@@ -428,6 +469,35 @@ $connect->close();
                                 <input type="number" name="quantity" id="quantity" 
                                        value="<?php echo htmlspecialchars($product['quantity']); ?>" min="1" required>
                             </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <select name="category" id="category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Smartphone" <?php echo $product['category'] === 'Smartphone' ? 'selected' : ''; ?>>Smartphone</option>
+                                    <option value="Laptop" <?php echo $product['category'] === 'Laptop' ? 'selected' : ''; ?>>Laptop</option>
+                                    <option value="Tablet" <?php echo $product['category'] === 'Tablet' ? 'selected' : ''; ?>>Tablet</option>
+                                    <option value="Accessories" <?php echo $product['category'] === 'Accessories' ? 'selected' : ''; ?>>Accessories</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select name="status" id="status" required>
+                                    <option value="active" <?php echo $product['status'] === 'active' ? 'selected' : ''; ?>>Active</option>
+                                    <option value="inactive" <?php echo $product['status'] === 'inactive' ? 'selected' : ''; ?>>Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-featured">
+                            <label class="featured-toggle">
+                                <input type="checkbox" name="is_featured" id="is_featured" 
+                                    <?php echo $product['is_featured'] ? 'checked' : ''; ?>>
+                                <span class="featured-slider"></span>
+                                <span class="featured-text">Featured Product</span>
+                            </label>
                         </div>
 
                         <div class="form-group">
@@ -508,6 +578,40 @@ $connect->close();
         document.querySelector('form').addEventListener('submit', function(e) {
             priceInput.value = priceInput.value.replace(/\./g, '');
         });
+
+        // Form submission handler
+        document.querySelector('form.product-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Remove price formatting
+            priceInput.value = priceInput.value.replace(/\./g, '');
+            
+            try {
+                const formData = new FormData(this);
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    if (window.opener && !window.opener.closed) {
+                        // If opened in new window/tab, update parent and close
+                        window.opener.addProductRow(result.product);
+                        window.close();
+                    } else {
+                        // Regular navigation
+                        window.location.href = 'index.php';
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while saving the product');
+            }
+        });
     </script>
 </body>
-</html> 
+</html>

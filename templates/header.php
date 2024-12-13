@@ -114,14 +114,27 @@ $is_login_page = (strpos($current_uri, '/login') === 0);
             if (!empty($cartItems)) {
                 foreach ($cartItems as $item) {
                     echo '<div class="cart-item">';
-                    echo '<img src="/' . htmlspecialchars($item['image_path']) . '" alt="' . htmlspecialchars($item['product_name']) . '" />';
+                    echo '<div class="cart-item-header">';
+                    echo '<img src="/' . htmlspecialchars($item['image_path'] ?? '') . '" 
+                               alt="' . htmlspecialchars($item['product_name'] ?? 'Product') . '" />';
                     echo '<div class="cart-item-details">';
-                    echo '<h4>' . htmlspecialchars($item['product_name']) . '</h4>';
-                    echo '<p>Rp ' . number_format($item['price'], 0, ',', '.') . ' x ' . $item['quantity'] . '</p>';
+                    echo '<h4>' . htmlspecialchars($item['product_name'] ?? 'Product') . '</h4>';
+                    echo '</div>';
+                    echo '</div>';
+                    echo '<div class="cart-item-price-row">';
+                    echo '<span>Rp ' . number_format((float)($item['price'] ?? 0), 0, ',', '.') . ' × </span>';
+                    echo '<input type="number" class="cart-quantity" 
+                            data-product-id="' . $item['productId'] . '" 
+                            value="' . ((int)$item['quantity'] ?? 1) . '" min="1">';
+                    echo '<span class="item-total">= Rp ' . 
+                         number_format((float)($item['price'] ?? 0) * ((int)$item['quantity'] ?? 1), 0, ',', '.') . 
+                         '</span>';
+                    echo '<button class="delete-cart-item" 
+                            data-product-id="' . $item['productId'] . '">&times;</button>';
                     echo '</div>';
                     echo '</div>';
                 }
-                echo '<a href="/cart" class="view-cart-btn">View Cart</a>';
+                echo '<a href="/cart/" class="view-cart-btn">View Cart</a>';
             } else {
                 echo '<p>Your cart is empty</p>';
             }
@@ -145,6 +158,59 @@ document.addEventListener('DOMContentLoaded', function() {
     // Prevent cart sidebar click from closing
     document.querySelector('.cart-sidebar').addEventListener('click', function(e) {
         e.stopPropagation();
+    });
+
+    // Handle quantity changes
+    document.querySelectorAll('.cart-quantity').forEach(input => {
+        input.addEventListener('change', function() {
+            const productId = this.dataset.productId;
+            const quantity = this.value;
+            
+            fetch('/includes/update_cart.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Optionally refresh cart here
+                    location.reload();
+                }
+            });
+        });
+    });
+
+    // Handle delete buttons
+    document.querySelectorAll('.delete-cart-item').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            
+            fetch('/includes/update_cart.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    quantity: 0
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.closest('.cart-item').remove();
+                    if (document.querySelectorAll('.cart-item').length === 0) {
+                        document.getElementById('cart-items').innerHTML = '<p>Your cart is empty</p>';
+                    }
+                }
+            });
+        });
     });
 });
 </script>

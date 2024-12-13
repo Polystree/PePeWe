@@ -14,7 +14,6 @@ $config = include(__DIR__ . '/../config/config.php');
 <body>
     <?php 
     include __DIR__ . '/header.php';
-    // Only show ad-header if not on login page
     if (strpos($_SERVER['REQUEST_URI'], '/login') === false) {
         include __DIR__ . '/ad-header.php';
     }

@@ -83,12 +83,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         $connect->commit();
-        header("Location: index.php");
+        // Replace redirect with JSON response
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
         exit();
     } catch (Exception $e) {
         $connect->rollback();
         error_log("Error deleting product: " . $e->getMessage());
-        echo "Error deleting product: " . $e->getMessage();
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => false, 
+            'message' => 'Error deleting product: ' . $e->getMessage()
+        ]);
+        exit();
     }
 }
 

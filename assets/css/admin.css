@@ -131,12 +131,12 @@
 /* Set specific column widths */
 .cart-table th:nth-child(1),
 .cart-table td:nth-child(1) {
-    width: 200px; /* Changed from 380px */
+    width: 200px; /* Product image column */
 }
 
 .cart-table th:nth-child(2),
 .cart-table td:nth-child(2) {
-    width: 125px; /* Changed from 200px */
+    width: 125px; /* Name column */
 }
 
 .cart-table th:nth-child(4),
@@ -146,18 +146,17 @@
 
 .cart-table th:nth-child(5),
 .cart-table td:nth-child(5) {
-    width: 100px; /* Quantity column */
+    width: 80px; /* Quantity column - made narrower */
 }
 
-.cart-table th:nth-child(6),
-.cart-table td:nth-child(6) {
+.cart-table th:nth-child(7),
+.cart-table td:nth-child(7) {
+    width: 150px; /* Stats column - made wider */
+}
+
+.cart-table th:nth-child(10),
+.cart-table td:nth-child(10) {
     width: 120px; /* Actions column */
-}
-
-/* Description column will take remaining space */
-.description-cell {
-    max-width: none; /* Remove max-width limit */
-    min-width: 300px; /* Ensure minimum width */
 }
 
 .cart-table tr:last-child td {
@@ -307,7 +306,7 @@
 
 .form-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;  /* Back to two columns */
     gap: 1rem;
     margin-bottom: 1.5rem;
 }
@@ -335,6 +334,30 @@
 .form-group textarea:focus {
     border-color: var(--accent-color);
     box-shadow: 0 0 0 2px rgba(216, 96, 43, 0.1);
+}
+
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius-md);
+    background: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(216, 96, 43, 0.1);
+}
+
+/* Remove these sections as they're now in add-product.css */
+.form-featured,
+.featured-toggle,
+.featured-slider,
+.featured-text,
+.checkbox-label {
+    display: none;
 }
 
 .form-actions {
@@ -405,4 +428,43 @@
     .image-preview {
         height: 250px;
     }
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.status-badge.active {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-badge.inactive {
+    background-color: #dc3545;
+    color: white;
+}
+
+.featured-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.featured-badge.yes {
+    background-color: #ffd700;
+    color: black;
+}
+
+.featured-badge.no {
+    background-color: #6c757d;
+    color: white;
+}
+
+.timestamp {
+    font-size: 0.8em;
+    color: #666;
 }
