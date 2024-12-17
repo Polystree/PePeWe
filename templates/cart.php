@@ -53,7 +53,6 @@ if (!$userId) {
 
 $cart = new Cart();
 
-// Handle POST requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
     foreach ($_POST['quantity'] as $productId => $quantity) {
         $cart->updateQuantity($userId, $productId, (int)$quantity);

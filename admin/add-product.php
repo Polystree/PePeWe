@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Get database connection using correct config keys
 $config = include(__DIR__ . '/../config/config.php');
 $db_config = $config['db'];
 
@@ -17,13 +16,11 @@ if ($connect->connect_error) {
     die("Connection failed. Please try again later.");
 }
 
-// Add this after the database connection code
 $product_image_dir = __DIR__ . '/../assets/img/product';
 if (!is_dir($product_image_dir)) {
     mkdir($product_image_dir, 0777, true);
 }
 
-// Strict admin check with redirect
 if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin') {
     header('Location: /login');
     exit();
@@ -54,7 +51,6 @@ if (isset($_GET['productId'])) {
     $stmt->close();
 }
 
-// Modify the product page generation function
 function generateProductPage($name, $price, $image_path, $description, $quantity, $productId) {
     $price_clean = (float)str_replace('.', '', $price);
     $image_path = str_replace('../', '/', $image_path);
@@ -78,7 +74,6 @@ if (\$connect->connect_error) {
     die("Connection failed. Please try again later.");
 }
 
-// Initialize product data
 \$product = [
     'name' => '$name',
     'price' => $price_clean,
@@ -86,6 +81,12 @@ if (\$connect->connect_error) {
     'description' => '$description',
     'quantity' => $quantity
 ];
+
+\$product_name = \$product['name'];
+\$stmt = \$connect->prepare('UPDATE products SET view_count = view_count + 1 WHERE name = ?');
+\$stmt->bind_param('s', \$product_name);
+\$stmt->execute();
+\$stmt->close();
 
 function getProductId(\$product_name, \$connect) {
     \$stmt = \$connect->prepare('SELECT productId FROM products WHERE name = ? LIMIT 1');
@@ -97,7 +98,6 @@ function getProductId(\$product_name, \$connect) {
     return \$productId;
 }
 
-// Fetch full product details
 \$stmt = \$connect->prepare('SELECT * FROM products WHERE name = ?');
 \$stmt->bind_param('s', \$product['name']);
 \$stmt->execute();
@@ -107,7 +107,6 @@ if (\$prod = \$result->fetch_assoc()) {
 }
 \$stmt->close();
 
-// Handle review operations
 if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset(\$_POST['add_review'])) {
         \$userId = \$_SESSION['userId'];
@@ -141,9 +140,8 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 }
-
-// ...existing code for reviews...
 ?>
+
 <!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -165,11 +163,6 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class='gallery-section'>
                     <div class='main-image'>
                         <img src='{$image_path}' alt='{$name} Main Image' id='mainImage'>
-                    </div>
-                    <div class='thumbnail-grid'>
-                        <div class='thumbnail active'>
-                            <img src='{$image_path}' alt='{$name} Thumbnail 1'>
-                        </div>
                     </div>
                 </div>
 
@@ -210,36 +203,37 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
 
-            <!-- Reviews Section -->
             <div class='reviews-section'>
                 <div class='reviews-header'>
                     <h2 class='reviews-title'>Customer Reviews</h2>
                 </div>
 
                 <?php
-                // Fetch reviews for this product
-                \$product_name = '{$name}';
+                \$product_name = '$name';
                 \$productId = getProductId(\$product_name, \$connect);
+                
+                \$userLoggedIn = isset(\$_SESSION['userId']);
+                
+                \$userHasReviewed = false;
+                if (\$userLoggedIn) {
+                    \$stmt = \$connect->prepare('SELECT COUNT(*) as count FROM reviews WHERE userId = ? AND productId = ?');
+                    \$stmt->bind_param('ii', \$_SESSION['userId'], \$productId);
+                    \$stmt->execute();
+                    \$result = \$stmt->get_result();
+                    \$row = \$result->fetch_assoc();
+                    \$userHasReviewed = (\$row['count'] > 0);
+                    \$stmt->close();
+                }
+
                 \$stmt = \$connect->prepare('SELECT r.id, r.review, r.userId, u.username, u.profile_image 
-                                           FROM reviews r 
-                                           JOIN users u ON r.userId = u.id 
-                                           WHERE r.productId = ?');
+                                       FROM reviews r 
+                                       JOIN users u ON r.userId = u.id 
+                                       WHERE r.productId = ?
+                                       ORDER BY r.id DESC');
                 \$stmt->bind_param('i', \$productId);
                 \$stmt->execute();
-                \$result = \$stmt->get_result();
-                \$reviews = \$result->fetch_all(MYSQLI_ASSOC);
+                \$reviews = \$stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 \$stmt->close();
-
-                // Check if user has already reviewed
-                \$userHasReviewed = false;
-                if (isset(\$_SESSION['userId'])) {
-                    foreach (\$reviews as \$review) {
-                        if (\$review['userId'] == \$_SESSION['userId']) {
-                            \$userHasReviewed = true;
-                            break;
-                        }
-                    }
-                }
                 ?>
 
                 <?php foreach (\$reviews as \$review): ?>
@@ -273,11 +267,15 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 <?php endforeach; ?>
 
-                <?php if (isset(\$_SESSION["userId"]) && !\$userHasReviewed): ?>
-                    <form method='POST' class='review-form'>
-                        <textarea name='review' placeholder='Write your review here...'></textarea>
+                <?php if (\$userLoggedIn && !\$userHasReviewed && \$_SESSION['username'] !== 'admin'): ?>
+                    <form method='POST' class='review-form' style='display: block;'>
+                        <textarea name='review' placeholder='Write your review here...' required></textarea>
                         <button type='submit' name='add_review' class='add-to-cart-btn'>Submit Review</button>
                     </form>
+                <?php elseif (!\$userLoggedIn && \$_SESSION['username'] == 'admin'): ?>
+                    <div class='login-prompt'>
+                        <p>Please <a href="/login">login</a> to write a review.</p>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -286,16 +284,6 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php include __DIR__ . '/../../templates/footer.php'; ?>
 
     <script>
-        // Image gallery functionality
-        document.querySelectorAll('.thumbnail').forEach(thumb => {
-            thumb.addEventListener('click', function() {
-                document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                document.getElementById('mainImage').src = this.querySelector('img').src;
-            });
-        });
-
-        // Description toggle
         const description = document.querySelector('.description');
         const toggle = document.querySelector('.description-toggle');
         
@@ -304,7 +292,6 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
             toggle.textContent = description.classList.contains('expanded') ? 'Show Less' : 'Show More';
         });
 
-        // Dynamic price calculation
         const quantity = document.getElementById('quantity');
         const totalPrice = document.querySelector('.total-price-amount');
         const basePrice = <?php echo \$product['price']; ?>;
@@ -313,12 +300,17 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
             const total = basePrice * quantity.value;
             totalPrice.textContent = `Rp \${total.toLocaleString('id-ID')}`;
         });
+
+        function toggleEditForm(button) {
+            const reviewItem = button.closest('.review-item');
+            const form = reviewItem.querySelector('.review-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
     </script>
 </body>
 </html>
 PHP;
 
-    // Create directory and file with new structure
     $dirName = __DIR__ . '/../products/' . strtolower(str_replace(' ', '-', $name));
     if (!is_dir($dirName)) {
         mkdir($dirName, 0777, true);
@@ -328,12 +320,29 @@ PHP;
     return $fileName;
 }
 
-// Modify the POST handling section
+function deleteProductPage($oldName) {
+    $oldDirName = __DIR__ . '/../products/' . strtolower(str_replace(' ', '-', $oldName));
+    if (is_dir($oldDirName)) {
+        $files = glob($oldDirName . '/*');
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+        rmdir($oldDirName);
+        return true;
+    }
+    return false;
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
-    $price = str_replace('.', '', $_POST['price']); // Remove dots from price
+    $price = str_replace('.', '', $_POST['price']);
     $description = $_POST['description'];
     $quantity = $_POST['quantity'];
+    $category = $_POST['category'];
+    $status = $_POST['status'];
+    $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
         $image_dir = __DIR__ . '/../assets/img/product/';
@@ -351,13 +360,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 unlink($old_image);
             }
         }
-
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
-            // Image uploaded successfully
-        } else {
-            error_log("Failed to move uploaded file to $upload_path");
-            die("Failed to upload image. Please try again.");
-        }
     } else {
         $image_path = $product['image_path'];
     }
@@ -366,40 +368,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['productId'])) {
         $productId = (int)$_POST['productId'];
+        
+        $stmt = $connect->prepare("SELECT name FROM products WHERE productId = ?");
+        $stmt->bind_param("i", $productId);
+        $stmt->execute();
+        $oldName = $stmt->get_result()->fetch_assoc()['name'];
+        $stmt->close();
         $stmt = $connect->prepare("UPDATE products SET name = ?, price = ?, image_path = ?, description = ?, 
             quantity = ?, url = ?, category = ?, status = ?, is_featured = ? WHERE productId = ?");
         $stmt->bind_param("sissiissii", $name, $price, $image_path, $description, $quantity, $url, 
-            $_POST['category'], $_POST['status'], isset($_POST['is_featured']) ? 1 : 0, $productId);
+            $category, $status, $is_featured, $productId);
+        
+        if ($stmt->execute()) {
+            if ($oldName !== $name) {
+                deleteProductPage($oldName);
+            }
+            header('Location: index.php');
+            exit();
+        } else {
+            die("Error updating product: " . $stmt->error);
+        }
     } else {
         $stmt = $connect->prepare("INSERT INTO products (name, price, image_path, description, quantity, url, 
             category, status, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("sissiissi", $name, $price, $image_path, $description, $quantity, $url,
-            $_POST['category'], $_POST['status'], isset($_POST['is_featured']) ? 1 : 0);
-    }
-    $stmt->execute();
-    $newProductId = $stmt->insert_id;
-    $stmt->close();
-
-    // Check if this is an AJAX request
-    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-        strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true,
-            'product' => [
-                'productId' => $newProductId,
-                'name' => $name,
-                'price' => $price,
-                'image_path' => $image_path,
-                'description' => $description,
-                'quantity' => $quantity
-            ]
-        ]);
-        exit();
+            $category, $status, $is_featured);
     }
     
-    header('Location: index.php');
-    exit();
+    if ($stmt->execute()) {
+        header('Location: index.php');
+        exit();
+    } else {
+        die("Error saving product: " . $stmt->error);
+    }
+    $stmt->close();
 }
 
 $connect->close();
@@ -431,7 +433,6 @@ $connect->close();
                 <?php endif; ?>
 
                 <div class="form-grid">
-                    <!-- Image Preview Section -->
                     <div class="image-section">
                         <div class="image-preview" id="imagePreview">
                             <?php if (!empty($product['image_path'])): ?>
@@ -450,7 +451,6 @@ $connect->close();
                         </div>
                     </div>
 
-                    <!-- Product Details Section -->
                     <div class="details-section">
                         <div class="form-group">
                             <label for="name">Product Name</label>
@@ -523,7 +523,6 @@ $connect->close();
     <?php include __DIR__ . '/../templates/footer.php'; ?>
 
     <script>
-        // Image preview functionality
         document.getElementById('image').addEventListener('change', function(e) {
             const preview = document.getElementById('imagePreview');
             const file = e.target.files[0];
@@ -537,80 +536,31 @@ $connect->close();
             }
         });
         
-        // Price formatting - updated version
         const priceInput = document.getElementById('price');
         
-        // Format initial value if it exists
         if (priceInput.value) {
             priceInput.value = parseInt(priceInput.value).toLocaleString('id-ID').replace(/,/g, '.');
         }
 
         priceInput.addEventListener('input', function(e) {
-            // Get cursor position
             let cursorPos = this.selectionStart;
             
-            // Get unformatted value
             let value = this.value.replace(/\./g, '');
             
-            // Remove any non-digits
             value = value.replace(/\D/g, '');
             
             if (value) {
-                // Get current length before formatting
                 const beforeLen = this.value.length;
-                
-                // Format with Indonesian thousand separators
                 const formatted = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
                 this.value = formatted;
-                
-                // Adjust cursor position based on whether we added a separator
                 cursorPos += this.value.length - beforeLen;
-                
-                // Make sure cursor position is within bounds
                 cursorPos = Math.max(0, Math.min(cursorPos, this.value.length));
-                
-                // Set cursor position
                 this.setSelectionRange(cursorPos, cursorPos);
             }
         });
 
-        // Remove formatting before form submission
         document.querySelector('form').addEventListener('submit', function(e) {
             priceInput.value = priceInput.value.replace(/\./g, '');
-        });
-
-        // Form submission handler
-        document.querySelector('form.product-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            // Remove price formatting
-            priceInput.value = priceInput.value.replace(/\./g, '');
-            
-            try {
-                const formData = new FormData(this);
-                const response = await fetch(this.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    if (window.opener && !window.opener.closed) {
-                        // If opened in new window/tab, update parent and close
-                        window.opener.addProductRow(result.product);
-                        window.close();
-                    } else {
-                        // Regular navigation
-                        window.location.href = 'index.php';
-                    }
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while saving the product');
-            }
         });
     </script>
 </body>

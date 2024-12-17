@@ -4,12 +4,12 @@ return [
         'host' => '127.0.0.1',
         'username' => 'root',
         'password' => '',
-        'database' => 'ecommerce_v3'  // Change this to match your SQL file
+        'database' => 'ecommerce_v3'
     ],
     'google' => [
         'client_id' => '932071323991-87k4jsu4bh90o5u259f98n090v853g2h.apps.googleusercontent.com',
         'client_secret' => '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',
-        'redirect_uri' => 'http://localhost/login/glogin.php'  // Must match exactly what's in Google Console
+        'redirect_uri' => 'http://localhost/login/glogin.php'
     ],
     'paths' => [
         'templates' => __DIR__ . '/../templates',

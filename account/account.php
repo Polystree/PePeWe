@@ -5,7 +5,6 @@ if ($conn->connect_error) {
 }
 session_start();
 
-// Add security questions array
 $securityQuestions = [
     "What was the name of your first pet?",
     "In which city were you born?",
@@ -14,21 +13,29 @@ $securityQuestions = [
     "What was the name of your first school?"
 ];
 
-// Initialize security-related variables
 $currentSecurityQuestion = '';
 $currentSecurityAnswer = '';
 
-// Fetch current user data including security settings
 $currentUsername = $_SESSION['username'];
-$stmt = $conn->prepare("SELECT email, profile_image, contact_details, address, security_question, security_answer FROM users WHERE username = ?");
+$stmt = $conn->prepare("SELECT email, profile_image, contact_details, security_question, security_answer FROM users WHERE username = ?");
 $stmt->bind_param("s", $currentUsername);
 $stmt->execute();
 $result = $stmt->get_result();
 $userData = $result->fetch_assoc();
 
+$stmt = $conn->prepare("
+    SELECT * FROM user_addresses 
+    WHERE user_id = (SELECT id FROM users WHERE username = ?) 
+    AND is_default = 1 
+    LIMIT 1
+");
+$stmt->bind_param("s", $currentUsername);
+$stmt->execute();
+$addressResult = $stmt->get_result();
+$defaultAddress = $addressResult->fetch_assoc();
+
 $currentEmail = $userData['email'];
 $currentContact = $userData['contact_details'];
-$currentAddress = $userData['address'];
 $currentProfileImage = !empty($userData['profile_image']) ? $userData['profile_image'] : '/assets/img/Generic avatar.svg';
 $currentSecurityQuestion = $userData['security_question'];
 $currentSecurityAnswer = $userData['security_answer'];
@@ -41,7 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $newContactDetails = $_POST['contact_details'];
     $newAddress = $_POST['address'];
     
-    // Add this helper function at the start of the file
     function deleteOldProfileImage($imagePath) {
         if ($imagePath && $imagePath !== '/assets/img/Generic avatar.svg') {
             $fullPath = dirname(__DIR__) . $imagePath;
@@ -51,7 +57,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Handle profile image upload with better error handling
     $newProfileImage = null;
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['size'] > 0) {
         $targetDir = dirname(__DIR__) . "/assets/img/profile/";
@@ -67,7 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         $randomNumber = mt_rand(1000, 9999);
-        // Use currentUsername instead of newUsername for file naming
         $newFileName = $randomNumber . '-' . $currentUsername . '.' . $extension;
         $targetFile = $targetDir . $newFileName;
         
@@ -79,7 +83,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Check if the new username or email already exists
     $stmtCheck = $conn->prepare("SELECT username, email FROM users WHERE (username = ? OR email = ?) AND username != ?");
     $stmtCheck->bind_param("sss", $newUsername, $newEmail, $currentUsername);
     $stmtCheck->execute();
@@ -90,7 +93,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Handle security question/answer update
     $securityQuestion = $_POST['security_question'];
     $securityAnswer = $_POST['security_answer'];
     
@@ -105,13 +107,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
     }
 
-    // Prepare the update query
+    $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, contact_details = ? WHERE username = ?");
+    $stmt->bind_param("ssss", $newUsername, $newEmail, $newContactDetails, $currentUsername);
+
     if ($newProfileImage) {
-        $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, profile_image = ?, contact_details = ?, address = ? WHERE username = ?");
-        $stmt->bind_param("ssssss", $newUsername, $newEmail, $newProfileImage, $newContactDetails, $newAddress, $currentUsername);
+        $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, profile_image = ?, contact_details = ? WHERE username = ?");
+        $stmt->bind_param("sssss", $newUsername, $newEmail, $newProfileImage, $newContactDetails, $currentUsername);
     } else {
-        $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, contact_details = ?, address = ? WHERE username = ?");
-        $stmt->bind_param("sssss", $newUsername, $newEmail, $newContactDetails, $newAddress, $currentUsername);
+        $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, contact_details = ? WHERE username = ?");
+        $stmt->bind_param("ssss", $newUsername, $newEmail, $newContactDetails, $currentUsername);
     }
 
     if (!empty($newPassword)) {
@@ -123,7 +127,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($stmt->execute()) {
         $_SESSION['username'] = $newUsername;
-        // Add redirect to refresh page with new data
         header("Location: /account");
         exit();
     } else {
@@ -133,7 +136,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 }
 
-// Change this part
 $securityNotice = '';
 if (empty($currentSecurityQuestion) || empty($currentSecurityAnswer)) {
     $securityNotice = '<div class="alert alert-warning">

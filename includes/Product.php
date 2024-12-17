@@ -34,7 +34,6 @@ class Product {
 
     public function getFlashSaleProducts($limit = 8) {
         try {
-            // Remove unnecessary GROUP BY and add error logging
             $sql = "SELECT p.*, 
                     d.discount_percent as discount,
                     p.price * (100 - d.discount_percent) / 100 as discounted_price,
@@ -45,7 +44,6 @@ class Product {
                     AND p.status = 'active'
                     AND CURRENT_TIMESTAMP BETWEEN d.start_date AND d.end_date";
             
-            // Log the actual SQL and parameters
             error_log("Flash sale SQL: " . $sql);
             error_log("Current timestamp: " . date('Y-m-d H:i:s'));
             

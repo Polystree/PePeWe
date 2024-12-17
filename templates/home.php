@@ -4,38 +4,16 @@ require_once __DIR__ . '/../includes/Template.php';
 
 $product = new Product();
 $template = Template::getInstance();
-
-// Add error logging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Fetch all required product data
-$featuredProducts = $product->getFeaturedProducts(8);
-if (empty($featuredProducts)) {
-    error_log("No featured products returned from query");
-}
-
-$recentProducts = $product->getRecentlyUpdated(10);
-$flashSaleProducts = $product->getFlashSaleProducts(8);
-if (empty($flashSaleProducts)) {
-    error_log("No flash sale products returned from query");
-}
-
-$bestSelling = $product->getBestSelling(5);
-$newArrivals = $product->getNewArrivals(4);
+$featuredProducts = $product->getFeaturedProducts(10);
+$flashSaleProducts = $product->getFlashSaleProducts(10);
+$newArrivals = $product->getNewArrivals(5);
 $allProducts = $product->getAllProducts(20);
-
-// Helper function to create URL-friendly product slug
 function createProductSlug($name) {
     return './products/' . strtolower(str_replace(' ', '-', $name)) . '/';
 }
 
-// Keep existing CSS and hero section
 ?>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="/assets/css/home.css">
-
-<!-- Hero Banner Section -->
 <section class="hero-banner">
     <div class="hero-content container">
         <div class="hero-text">
@@ -45,7 +23,7 @@ function createProductSlug($name) {
             </div>
             <h1>iPhone 16 Pro</h1>
             <p>Experience the future with the latest flagship device</p>
-            <a href="#products" class="cta-button">Shop Now</a>
+            <a href="/products/iphone-16-pro/" class="cta-button">Shop Now</a>
         </div>
         <div class="hero-image">
             <img src="/assets/img/hero.webp" alt="iPhone 16 Pro">
@@ -54,14 +32,12 @@ function createProductSlug($name) {
 </section>
 
 <main class="container">
-    <!-- Featured Products Grid -->
     <section class="featured-section">
         <div class="section-header">
             <div class="header-group">
                 <span class="section-tag">Best Deals</span>
                 <div>
                     <h2>Featured Products</h2>
-                    <a href="/featured" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
@@ -99,28 +75,12 @@ function createProductSlug($name) {
         </div>
     </section>
 
-    <!-- Flash Sales Section -->
     <section class="flash-sales">
         <div class="section-header">
             <div class="header-group">
                 <span class="section-tag">Limited Time</span>
                 <div>
                     <h2>Flash Sales</h2>
-                    <a href="/flash-sales" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="countdown" id="flash-sale-timer">
-                    <div class="time-block">
-                        <span id="hours">24</span>
-                        <label>Hours</label>
-                    </div>
-                    <div class="time-block">
-                        <span id="minutes">00</span>
-                        <label>Minutes</label>
-                    </div>
-                    <div class="time-block">
-                        <span id="seconds">00</span>
-                        <label>Seconds</label>
-                    </div>
                 </div>
             </div>
         </div>
@@ -160,14 +120,12 @@ function createProductSlug($name) {
         </div>
     </section>
 
-    <!-- New Arrivals Section -->
     <section class="products-section">
         <div class="section-header">
             <div class="header-group">
                 <span class="section-tag">Latest Products</span>
                 <div>
                     <h2>New Arrivals</h2>
-                    <a href="/new-arrivals" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
@@ -214,14 +172,12 @@ function createProductSlug($name) {
         </div>
     </section>
 
-    <!-- Explore Section -->
     <section class="products-section explore-section">
         <div class="section-header">
             <div class="header-group">
                 <span class="section-tag">Browse All</span>
                 <div>
                     <h2>Explore Our Products</h2>
-                    <a href="/products" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
@@ -254,18 +210,4 @@ function createProductSlug($name) {
             <?php endforeach; ?>
         </div>
     </section>
-
 </main>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Remove category tabs initialization
-    const quickActions = document.querySelectorAll('.quick-actions .action-btn');
-    quickActions.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Add cart/wishlist logic here
-        });
-    });
-});
-</script>

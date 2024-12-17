@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Get database connection using correct config keys
 $config = include(__DIR__ . '/../config/config.php');
 $db_config = $config['db'];
 
@@ -33,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $connect->begin_transaction();
 
     try {
-        // Get product details first
         $stmt = $connect->prepare("SELECT name, image_path FROM products WHERE productId = ?");
         $stmt->bind_param("i", $productId);
         $stmt->execute();
@@ -43,10 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $stmt->close();
 
-        // Delete the product image file
         if ($image_path) {
-            // Convert relative path (../assets/img/product/image.jpg) to absolute path
-            $image_path = ltrim($image_path, './'); // Remove leading ./ or ../
+            $image_path = ltrim($image_path, './');
             $absolute_path = __DIR__ . '/../' . $image_path;
             $absolute_path = realpath($absolute_path);
             
@@ -60,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        // Delete from products table
         $stmt = $connect->prepare("DELETE FROM products WHERE productId = ?");
         $stmt->bind_param("i", $productId);
         $stmt->execute();
@@ -69,13 +64,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $stmt->close();
 
-        // Delete from cart
         $stmt = $connect->prepare("DELETE FROM cart WHERE productId = ?");
         $stmt->bind_param("i", $productId);
         $stmt->execute();
         $stmt->close();
 
-        // Delete product file and directory
         $productDir = __DIR__ . '/../products/' . strtolower(str_replace(' ', '-', $product_name));
         if (is_dir($productDir)) {
             array_map('unlink', glob("$productDir/*.*"));
@@ -83,7 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         $connect->commit();
-        // Replace redirect with JSON response
         header('Content-Type: application/json');
         echo json_encode(['success' => true]);
         exit();

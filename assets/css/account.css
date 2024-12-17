@@ -326,6 +326,23 @@
     margin-right: 0.5rem;
 }
 
+.default-address {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.default-address p {
+    margin: 5px 0;
+}
+
+.no-address {
+    color: #6c757d;
+    font-style: italic;
+    margin: 5px 0;
+}
+
 @media (max-width: 768px) {
     .form-grid {
         grid-template-columns: 1fr;

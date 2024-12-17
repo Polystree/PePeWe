@@ -15,7 +15,6 @@ class Cart {
             return self::$cache[$cacheKey];
         }
 
-        // Updated query to use only cart table fields
         $stmt = $this->db->prepare(
             "SELECT c.cartId, c.product_name, c.price, c.quantity, c.image_path, c.userId, c.productId 
              FROM cart c 
@@ -56,7 +55,6 @@ class Cart {
     }
 
     public function addToCart($userId, $productId, $quantity) {
-        // Check if item already exists in cart
         $stmt = $this->db->prepare(
             "SELECT cartId, quantity FROM cart WHERE userId = ? AND productId = ?"
         );
@@ -65,11 +63,9 @@ class Cart {
         $result = $stmt->get_result();
         
         if ($row = $result->fetch_assoc()) {
-            // Update quantity if item exists
             $newQuantity = $row['quantity'] + $quantity;
             return $this->updateQuantity($userId, $productId, $newQuantity);
         } else {
-            // Add new item if it doesn't exist
             $stmt = $this->db->prepare(
                 "INSERT INTO cart (userId, productId, quantity, product_name, price, image_path) 
                  SELECT ?, ?, ?, name, price, image_path 
@@ -81,5 +77,11 @@ class Cart {
             unset(self::$cache["cart_$userId"]);
             return $success;
         }
+    }
+
+    public function clearCart($userId) {
+        $stmt = $this->db->prepare("DELETE FROM cart WHERE userId = ?");
+        $stmt->bind_param("i", $userId);
+        return $stmt->execute();
     }
 }

@@ -25,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $productId = $_POST['productId'];
     $quantity = (int)$_POST['quantity'];
     
-    // First fetch product details
     $stmt = $connect->prepare("SELECT name as product_name, price, image_path FROM products WHERE productId = ?");
     $stmt->bind_param("i", $productId);
     $stmt->execute();
@@ -33,22 +32,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $product = $result->fetch_assoc();
     $stmt->close();
 
-    // Store the referring URL
     $redirect_url = $_SERVER['HTTP_REFERER'] ?? '/cart';
 
-    // Check if product already exists in cart
     $stmt = $connect->prepare("SELECT cartId, quantity FROM cart WHERE userId = ? AND productId = ?");
     $stmt->bind_param("ii", $userId, $productId);
     $stmt->execute();
     $result = $stmt->get_result();
     
     if ($row = $result->fetch_assoc()) {
-        // Update existing cart item
         $newQuantity = $row['quantity'] + $quantity;
         $stmt = $connect->prepare("UPDATE cart SET quantity = ? WHERE cartId = ?");
         $stmt->bind_param("ii", $newQuantity, $row['cartId']);
     } else {
-        // Insert new cart item with product details
         $stmt = $connect->prepare("INSERT INTO cart (userId, productId, product_name, price, quantity, image_path) 
                                  VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("iissis", $userId, $productId, $product['product_name'], 

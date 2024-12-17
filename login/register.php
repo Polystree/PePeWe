@@ -9,7 +9,6 @@ require_once __DIR__ . '/../includes/Database.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db = Database::getInstance();
     
-    // Validate captcha
     $captcha = $_POST['captcha'] ?? '';
     $expected_sum = $_SESSION['captcha_numbers']['sum'] ?? 0;
     
@@ -19,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Get and sanitize input
     $username = $db->real_escape_string($_POST['username'] ?? '');
     $email = $db->real_escape_string($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -31,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Check if username already exists
     $stmt = $db->prepare("SELECT id FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -41,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Check if email already exists
     $stmt = $db->prepare("SELECT id FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
@@ -51,10 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Hash password
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insert new user
     $stmt = $db->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
     $stmt->bind_param("sss", $username, $email, $hashed_password);
     
@@ -67,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     exit;
 } else {
-    // If not POST request, redirect to login page
     header('Location: /login');
     exit;
 }

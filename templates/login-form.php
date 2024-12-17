@@ -3,7 +3,6 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Initialize captcha numbers if not set
 if (!isset($_SESSION['captcha_numbers'])) {
     $number1 = rand(1, 10);
     $number2 = rand(1, 10);
@@ -17,11 +16,9 @@ if (!isset($_SESSION['captcha_numbers'])) {
     $number2 = $_SESSION['captcha_numbers']['number2'];
 }
 
-// Initialize error and success variables if not set
 $errors = $_SESSION['errors'] ?? [];
 $success = $_SESSION['success'] ?? false;
 
-// Clear session messages after use
 unset($_SESSION['errors']);
 unset($_SESSION['success']);
 ?>
@@ -41,7 +38,6 @@ unset($_SESSION['success']);
                     <label for="show-register">Register</label>
                 </div>
 
-                <!-- Register Form -->
                 <form class="register" method="POST" action="/login/register.php">
                     <div class="credential-form">
                         <img alt="" src="/assets/img/user.svg" />
@@ -64,7 +60,6 @@ unset($_SESSION['success']);
                         </span>
                     </div>
                     
-                    <!-- Add captcha to register form -->
                     <div class="captcha">
                         <div id="captcha">
                             <label for="register-captcha" id="captcha-question"><?php echo $number1 ?> + <?php echo $number2 ?></label>
@@ -89,7 +84,6 @@ unset($_SESSION['success']);
                     <button class="next-button" name="register">Submit</button>
                 </form>
 
-                <!-- Login Form -->
                 <form class="login" method="POST" action="/login/login.php">
                     <div class="credential-form">
                         <img alt="" src="/assets/img/user.svg" />

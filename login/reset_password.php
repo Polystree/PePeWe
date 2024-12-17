@@ -25,7 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if ($stmt->affected_rows > 0) {
             $success = "Password reset successful. You can now login with your new password.";
-            // Clear session variables
             unset($_SESSION['reset_password']);
             unset($_SESSION['recover_user_id']);
         } else {

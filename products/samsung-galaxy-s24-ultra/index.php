@@ -16,7 +16,6 @@ if ($connect->connect_error) {
     die("Connection failed. Please try again later.");
 }
 
-// Initialize product data
 $product = [
     'name' => 'Samsung Galaxy S24 Ultra',
     'price' => 18999000,
@@ -24,6 +23,12 @@ $product = [
     'description' => 'Features Snapdragon 8 Gen 3, 200MP camera, and S Pen functionality',
     'quantity' => 45
 ];
+
+$product_name = $product['name'];
+$stmt = $connect->prepare('UPDATE products SET view_count = view_count + 1 WHERE name = ?');
+$stmt->bind_param('s', $product_name);
+$stmt->execute();
+$stmt->close();
 
 function getProductId($product_name, $connect) {
     $stmt = $connect->prepare('SELECT productId FROM products WHERE name = ? LIMIT 1');
@@ -35,7 +40,6 @@ function getProductId($product_name, $connect) {
     return $productId;
 }
 
-// Fetch full product details
 $stmt = $connect->prepare('SELECT * FROM products WHERE name = ?');
 $stmt->bind_param('s', $product['name']);
 $stmt->execute();
@@ -45,7 +49,6 @@ if ($prod = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-// Handle review operations
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['add_review'])) {
         $userId = $_SESSION['userId'];
@@ -80,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// ...existing code for reviews...
 ?>
 <!DOCTYPE html>
 <html lang='en'>
@@ -103,11 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class='gallery-section'>
                     <div class='main-image'>
                         <img src='/assets/img/product/1733487293-samsung-galaxy-s24-ultra.jpg' alt='Samsung Galaxy S24 Ultra Main Image' id='mainImage'>
-                    </div>
-                    <div class='thumbnail-grid'>
-                        <div class='thumbnail active'>
-                            <img src='/assets/img/product/1733487293-samsung-galaxy-s24-ultra.jpg' alt='Samsung Galaxy S24 Ultra Thumbnail 1'>
-                        </div>
                     </div>
                 </div>
 
@@ -148,36 +145,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
 
-            <!-- Reviews Section -->
             <div class='reviews-section'>
                 <div class='reviews-header'>
                     <h2 class='reviews-title'>Customer Reviews</h2>
                 </div>
 
                 <?php
-                // Fetch reviews for this product
                 $product_name = 'Samsung Galaxy S24 Ultra';
                 $productId = getProductId($product_name, $connect);
+                
+                $userLoggedIn = isset($_SESSION['userId']);
+                
+                $userHasReviewed = false;
+                if ($userLoggedIn) {
+                    $stmt = $connect->prepare('SELECT COUNT(*) as count FROM reviews WHERE userId = ? AND productId = ?');
+                    $stmt->bind_param('ii', $_SESSION['userId'], $productId);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $userHasReviewed = ($row['count'] > 0);
+                    $stmt->close();
+                }
+
                 $stmt = $connect->prepare('SELECT r.id, r.review, r.userId, u.username, u.profile_image 
-                                           FROM reviews r 
-                                           JOIN users u ON r.userId = u.id 
-                                           WHERE r.productId = ?');
+                                       FROM reviews r 
+                                       JOIN users u ON r.userId = u.id 
+                                       WHERE r.productId = ?
+                                       ORDER BY r.id DESC');
                 $stmt->bind_param('i', $productId);
                 $stmt->execute();
-                $result = $stmt->get_result();
-                $reviews = $result->fetch_all(MYSQLI_ASSOC);
+                $reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 $stmt->close();
-
-                // Check if user has already reviewed
-                $userHasReviewed = false;
-                if (isset($_SESSION['userId'])) {
-                    foreach ($reviews as $review) {
-                        if ($review['userId'] == $_SESSION['userId']) {
-                            $userHasReviewed = true;
-                            break;
-                        }
-                    }
-                }
                 ?>
 
                 <?php foreach ($reviews as $review): ?>
@@ -211,11 +209,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 <?php endforeach; ?>
 
-                <?php if (isset($_SESSION["userId"]) && !$userHasReviewed): ?>
-                    <form method='POST' class='review-form'>
-                        <textarea name='review' placeholder='Write your review here...'></textarea>
+                <?php if ($userLoggedIn && !$userHasReviewed && $_SESSION['username'] !== 'admin'): ?>
+                    <form method='POST' class='review-form' style='display: block;'>
+                        <textarea name='review' placeholder='Write your review here...' required></textarea>
                         <button type='submit' name='add_review' class='add-to-cart-btn'>Submit Review</button>
                     </form>
+                <?php elseif (!$userLoggedIn || $_SESSION['username'] == 'admin' ): ?>
+                    <div class='login-prompt'>
+                        <p>Please <a href="/login">login</a> to write a review.</p>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -224,16 +226,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php include __DIR__ . '/../../templates/footer.php'; ?>
 
     <script>
-        // Image gallery functionality
-        document.querySelectorAll('.thumbnail').forEach(thumb => {
-            thumb.addEventListener('click', function() {
-                document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                document.getElementById('mainImage').src = this.querySelector('img').src;
-            });
-        });
-
-        // Description toggle
         const description = document.querySelector('.description');
         const toggle = document.querySelector('.description-toggle');
         
@@ -242,7 +234,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             toggle.textContent = description.classList.contains('expanded') ? 'Show Less' : 'Show More';
         });
 
-        // Dynamic price calculation
         const quantity = document.getElementById('quantity');
         const totalPrice = document.querySelector('.total-price-amount');
         const basePrice = <?php echo $product['price']; ?>;
@@ -251,6 +242,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             const total = basePrice * quantity.value;
             totalPrice.textContent = `Rp ${total.toLocaleString('id-ID')}`;
         });
+
+        function toggleEditForm(button) {
+            const reviewItem = button.closest('.review-item');
+            const form = reviewItem.querySelector('.review-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
     </script>
 </body>
 </html>

@@ -62,7 +62,7 @@
     color: var(--accent-color, #d8602b);
 }
 
-/* Table Styles */
+/* Table Styles - Optimized */
 .cart-table {
     width: 100%;
     border-collapse: separate;
@@ -71,7 +71,7 @@
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    margin: 2rem 0;
+    margin: 1rem 0;  /* Reduced margin */
 }
 
 .cart-table thead {
@@ -80,10 +80,10 @@
 }
 
 .cart-table th {
-    padding: 1.2rem;
+    padding: 0.8rem;  /* Reduced padding */
     text-align: left;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;  /* Smaller font */
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: #fff;
@@ -91,20 +91,21 @@
     white-space: nowrap;
 }
 
-/* Table cell styles */
+/* Table cell styles - Optimized */
 .cart-table td {
-    padding: 1rem;
+    padding: 0.8rem;  /* Reduced padding */
     border-bottom: 1px solid #eee;
     vertical-align: middle;
-    height: 180px; /* Fixed height for rows */
+    height: auto;  /* Remove fixed height */
+    font-size: 0.9rem;  /* Slightly smaller font */
 }
 
-/* Product image styling */
+/* Product image styling - Optimized */
 .cart-table img {
-    width: 180px; /* Revert back to original width */
-    height: 180px;
+    width: 80px;  /* Smaller images */
+    height: 80px;
     object-fit: contain;
-    border-radius: 5px;
+    border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     background: white;
     padding: 0;  /* Remove padding to use full space */
@@ -115,12 +116,12 @@
 
 /* Table cell that contains image */
 .cart-table td:first-child {
-    width: 180px; /* Match image width */
+    width: 80px;  /* Match new image width */
     padding: 0.5rem; /* Add padding to cell instead */
     text-align: center; /* Center image in cell */
 }
 
-/* Column widths */
+/* Column widths - Optimized */
 .cart-table th,
 .cart-table td {
     padding: 1rem;
@@ -131,7 +132,7 @@
 /* Set specific column widths */
 .cart-table th:nth-child(1),
 .cart-table td:nth-child(1) {
-    width: 200px; /* Product image column */
+    width: 90px;  /* Image column */
 }
 
 .cart-table th:nth-child(2),
@@ -171,22 +172,22 @@
     background-color: #f8f8f8;
 }
 
-/* Action buttons container */
+/* Action buttons container - Optimized */
 .manage-product-btn {
     display: flex;
     flex-direction: column; /* Stack buttons vertically */
-    gap: 0.75rem; /* Consistent spacing between buttons */
-    justify-content: center;
+    gap: 0.5rem;  /* Reduced gap */
+    justify-content: flex-start;  /* Align left */
     align-items: center;
-    height: 100%;
-    padding: 1rem 0;
+    height: auto;
+    padding: 0.5rem;
 }
 
 .manage-product-btn button {
-    width: 120px; /* Fixed width for buttons */
-    padding: 0.75rem 0;
+    width: auto;  /* Remove fixed width */
+    padding: 0.5rem 0.8rem;  /* Reduced padding */
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 500;
 }
 
@@ -202,11 +203,14 @@
 
 /* Simple description cell styling */
 .description-cell {
-    max-width: none; /* Remove max-width limit */
-    min-width: 300px; /* Ensure minimum width */
+    max-width: 250px;  /* Limit width */
+    min-width: 150px;
     padding: 0.8rem;
     font-size: 0.85rem !important;
     line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Product Form Styles */
@@ -431,9 +435,9 @@
 }
 
 .status-badge {
-    padding: 4px 8px;
+    padding: 0.25rem 0.5rem;
     border-radius: 4px;
-    font-size: 0.8em;
+    font-size: 0.75rem;
     font-weight: bold;
 }
 
@@ -448,9 +452,9 @@
 }
 
 .featured-badge {
-    padding: 4px 8px;
+    padding: 0.25rem 0.5rem;
     border-radius: 4px;
-    font-size: 0.8em;
+    font-size: 0.75rem;
     font-weight: bold;
 }
 
@@ -465,6 +469,227 @@
 }
 
 .timestamp {
-    font-size: 0.8em;
+    font-size: 0.75rem;
     color: #666;
+}
+
+/* Tab Styles */
+.admin-tabs {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 2px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+}
+
+.tab-button:hover {
+    color: var(--accent-color);
+}
+
+.tab-button.active {
+    border-bottom: 2px solid var(--accent-color);
+    color: var(--accent-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: var(--border-radius-lg);
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal h2 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 4px solid var(--accent-color);
+}
+
+.close {
+    position: absolute;
+    right: 1.5rem;
+    top: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: var(--accent-color);
+}
+
+/* Modal Form Styles */
+#discountForm {
+    background: var(--light-gray);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-md);
+}
+
+#discountForm .form-group {
+    margin-bottom: 1.5rem;
+}
+
+#discountForm label {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+#discountForm input,
+#discountForm select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius-md);
+    background: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#discountForm input:focus,
+#discountForm select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(216, 96, 43, 0.1);
+    outline: none;
+}
+
+#discountForm button[type="submit"] {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+#discountForm button[type="submit"]:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+/* Responsive adjustments for modal */
+@media (max-width: 768px) {
+    .modal-content {
+        margin: 10% auto;
+        padding: 1.5rem;
+        width: 95%;
+    }
+    
+    #discountForm {
+        padding: 1rem;
+    }
+}
+
+/* Additional Status Badges */
+.status-badge.scheduled {
+    background-color: #007bff;
+    color: white;
+}
+
+.status-badge.expired {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Modal Form Styles */
+#discountForm {
+    margin-top: 1rem;
+}
+
+#discountForm .form-group {
+    margin-bottom: 1rem;
+}
+
+#discountForm label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+#discountForm input,
+#discountForm select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#discountForm .btn-primary {
+    background-color: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+#discountForm .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Make discounts tab content visible when active */
+.tab-content.active {
+    display: block;
+}
+
+/* Coupon specific styles - Optimized */
+.coupon-code {
+    font-family: monospace;
+    background: #f5f5f5;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.85rem;
+}
+
+/* Table specific to coupons tab */
+#coupons .cart-table th,
+#coupons .cart-table td {
+    padding: 0.6rem 0.8rem;  /* Even more compact for coupons */
+}
+
+#coupons .cart-table {
+    max-width: 800px;  /* Limit table width for coupons */
+    margin: 1rem auto;  /* Center the table */
 }

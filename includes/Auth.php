@@ -28,7 +28,6 @@ class Auth {
             $result = $stmt->get_result();
             
             if ($user = $result->fetch_assoc()) {
-                // Debug logging
                 error_log("Attempting login for user: " . $identifier);
                 error_log("Stored hash: " . $user['password']);
                 error_log("Password verify result: " . (password_verify($password, $user['password']) ? 'true' : 'false'));
@@ -53,7 +52,6 @@ class Auth {
         }
 
         try {
-            // Check if username or email already exists
             $check = $this->db->prepare("SELECT id FROM users WHERE username = ? OR email = ? LIMIT 1");
             $check->bind_param("ss", $username, $email);
             $check->execute();
@@ -61,7 +59,6 @@ class Auth {
                 return ['success' => false, 'error' => 'Username or email already exists'];
             }
 
-            // Create new user
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $this->db->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
             $stmt->bind_param("sss", $username, $email, $hashedPassword);
@@ -75,7 +72,6 @@ class Auth {
     }
 
     private function isAdmin($userId) {
-        // Implement admin check logic here
         return false;
     }
 }

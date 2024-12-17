@@ -8,7 +8,6 @@ $db = Database::getInstance();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $identifier = $db->real_escape_string($_POST['identifier']);
     
-    // First check if the account exists
     $stmt = $db->prepare("SELECT id, username, security_question, security_answer FROM users WHERE username = ? OR email = ?");
     $stmt->bind_param("ss", $identifier, $identifier);
     $stmt->execute();
@@ -17,7 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         
-        // Then check if security question is set
         if (empty($user['security_question']) || empty($user['security_answer'])) {
             $error = "Please set up your security question in Account Settings before attempting password recovery.";
         } else {

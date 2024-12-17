@@ -16,11 +16,9 @@ require_once __DIR__ . '/../includes/Database.php';
 $db = Database::getInstance();
 
 if ($quantity <= 0) {
-    // Delete item
     $stmt = $db->prepare("DELETE FROM cart WHERE userId = ? AND productId = ?");
     $stmt->bind_param("ii", $_SESSION['userId'], $productId);
 } else {
-    // Update quantity
     $stmt = $db->prepare("UPDATE cart SET quantity = ? WHERE userId = ? AND productId = ?");
     $stmt->bind_param("iii", $quantity, $_SESSION['userId'], $productId);
 }

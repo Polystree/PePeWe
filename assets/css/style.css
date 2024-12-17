@@ -115,6 +115,7 @@ input:focus, select:focus, textarea:focus {
   width: var(--container-width);
   margin: 0 auto;
   padding: 0 20px;
+  min-height: 60vh;
 }
 
 .text-center { text-align: center; }
@@ -207,7 +208,7 @@ a {
 }
 
 input[value] {
-  color: gray;
+  color: black;
 }
 
 
@@ -695,6 +696,38 @@ input[type="checkbox"]:checked::before {
     color: var(--primary-color, #007bff);
     border-bottom: 2px solid var(--primary-color, #007bff);
     background: transparent;
+}
+
+.success-message,
+.cancel-message {
+    text-align: center;
+    padding: 40px;
+    margin: 40px auto;
+    max-width: 600px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.success-message h1 {
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+.cancel-message h1 {
+    color: #dc3545;
+    margin-bottom: 20px;
+}
+
+.success-message .btn,
+.cancel-message .btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    background: #007bff;
+    color: white;
 }
 
 @media (max-width: 576px) {

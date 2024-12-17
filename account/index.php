@@ -22,7 +22,6 @@
             <form method="POST" class="profile-form" enctype="multipart/form-data">
             <?php if (isset($securityNotice)) echo $securityNotice; ?>
                 <div class="form-grid">
-                    <!-- Image Section -->
                     <div class="image-section">
                         <div class="profile-image-preview">
                             <img src="<?php echo htmlspecialchars($currentProfileImage); ?>" alt="Profile Image">
@@ -33,7 +32,6 @@
                         </div>
                     </div>
 
-                    <!-- Details Section -->
                     <div class="details-section">
                         <div class="form-group">
                             <label for="username">Username</label>
@@ -70,10 +68,19 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="address">Shipping Address</label>
-                            <input type="text" id="address" name="address"
-                                   placeholder="<?php echo htmlspecialchars($currentAddress); ?>"
-                                   value="<?php echo htmlspecialchars($currentAddress); ?>" required>
+                            <label>Default Shipping Address</label>
+                            <?php if ($defaultAddress): ?>
+                                <div class="default-address">
+                                    <p><strong><?php echo htmlspecialchars($defaultAddress['recipient_name']); ?></strong></p>
+                                    <p><?php echo htmlspecialchars($defaultAddress['phone']); ?></p>
+                                    <p><?php echo htmlspecialchars($defaultAddress['address']); ?></p>
+                                    <p><?php echo htmlspecialchars($defaultAddress['city']) . ' ' . htmlspecialchars($defaultAddress['postal_code']); ?></p>
+                                </div>
+                                <small class="help-text">You can manage your addresses in the checkout page</small>
+                            <?php else: ?>
+                                <p class="no-address">No default address set</p>
+                                <small class="help-text">Add an address during checkout to set it as default</small>
+                            <?php endif; ?>
                         </div>
 
                         <div class="form-group">
@@ -111,7 +118,6 @@
     <?php include __DIR__ . '/../templates/footer.php'; ?>
 
     <script>
-        // Profile image preview
         document.getElementById('profile_image').addEventListener('change', function(e) {
             const preview = document.querySelector('.profile-image-preview img');
             const file = e.target.files[0];

@@ -7,7 +7,7 @@ require_once __DIR__ . '/../includes/Database.php';
 require_once __DIR__ . '/../includes/Cart.php';
 $db = Database::getInstance();
 $userId = null;
-$profileImage = '/assets/img/Generic avatar.svg'; // Set default image first
+$profileImage = '/assets/img/Generic avatar.svg';
 
 if (isset($_SESSION['username'])) {
     try {
@@ -24,9 +24,8 @@ if (isset($_SESSION['username'])) {
                 }
                 $userId = $userData['id'];
             } else {
-                // User not found in database
                 error_log("User {$username} not found in database");
-                unset($_SESSION['username']); // Clear invalid session
+                unset($_SESSION['username']);
             }
         }
     } catch (Exception $e) {
@@ -34,12 +33,19 @@ if (isset($_SESSION['username'])) {
     }
 }
 
-// Replace the current page detection with this
 $current_uri = $_SERVER['REQUEST_URI'];
 $is_login_page = (strpos($current_uri, '/login') === 0);
 ?>
 
-<link rel="stylesheet" href="/assets/css/header.css" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $title ?? 'iniGadget'; ?></title>
+    <link rel="icon" type="image/x-icon" href="/assets/img/logo-light.svg" />
+    <link rel="stylesheet" href="/assets/css/header.css" />
+</head>
 <input type="checkbox" name="cart-switch" id="cart-switch">
 <header>
     <div class="frame">
@@ -107,7 +113,7 @@ $is_login_page = (strpos($current_uri, '/login') === 0);
     </h2>
     <div id="cart-items">
         <?php
-        if (isset($_SESSION['username'])) {  // Change this condition from userId to username
+        if (isset($_SESSION['username'])) {
             $cart = new Cart();
             $cartItems = $cart->getCartItems($_SESSION['userId']);
             
@@ -147,20 +153,16 @@ $is_login_page = (strpos($current_uri, '/login') === 0);
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Get overlay element
     const overlay = document.querySelector('.cart-overlay');
 
-    // Handle overlay click to close cart
     overlay.addEventListener('click', function() {
         document.getElementById('cart-switch').checked = false;
     });
 
-    // Prevent cart sidebar click from closing
     document.querySelector('.cart-sidebar').addEventListener('click', function(e) {
         e.stopPropagation();
     });
 
-    // Handle quantity changes
     document.querySelectorAll('.cart-quantity').forEach(input => {
         input.addEventListener('change', function() {
             const productId = this.dataset.productId;
@@ -179,14 +181,12 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Optionally refresh cart here
                     location.reload();
                 }
             });
         });
     });
 
-    // Handle delete buttons
     document.querySelectorAll('.delete-cart-item').forEach(button => {
         button.addEventListener('click', function() {
             const productId = this.dataset.productId;
@@ -214,3 +214,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+</body>
+</html>

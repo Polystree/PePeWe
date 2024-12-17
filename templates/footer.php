@@ -13,17 +13,6 @@
                         <label for="email-submit"><img class="email-icon" alt="" src="/assets/img/send.svg" /></label>
                     </div>
                 </div>
-                <?php if (isset($_POST['email-submit'])): ?>
-                    <?php
-                    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
-                    if ($email) {
-                        $stmt = $db->prepare("INSERT INTO newsletter (email) VALUES (?) ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP");
-                        $stmt->bind_param("s", $email);
-                        $stmt->execute();
-                        echo '<div class="success-message">Thank you for subscribing!</div>';
-                    }
-                    ?>
-                <?php endif; ?>
             </div>
             <div class="footer-links">
                 <div class="support">Support</div>
@@ -53,13 +42,10 @@
             <div class="footer-links">
                 <div class="download-app">Download App</div>
                 <div class="save-rp9999-with-app-new-user-parent">
-                    <!-- Promo banner -->
                     <div class="save-rp9999-with" role="banner">
                         <span class="discount-text">Save Rp9.999</span>
                         <span class="new-user-badge">New User Only</span>
                     </div>
-                    
-                    <!-- Download options -->
                     <div class="qr-code-parent">
                         <img class="qr-code-icon" alt="QR Code to download app" src="/assets/img/qr-code.png" />
                         <div class="store-parent">
@@ -72,7 +58,6 @@
                         </div>
                     </div>
                     
-                    <!-- Social media links -->
                     <div class="social-media-parent" role="navigation" aria-label="Social media links">
                         <a href="">
                             <img class="social-media" alt="" src="/assets/img/Icon-Facebook.svg" />
@@ -95,24 +80,3 @@
         ©️ Copyright Team 3 <?php echo date('Y'); ?>. All right reserved
     </div>
 </footer>
-
-<script>
-document.querySelector('.email-footer form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = e.target.querySelector('input[type="email"]').value;
-    
-    try {
-        const response = await fetch('/api/newsletter-signup.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-        });
-        
-        if (response.ok) {
-            e.target.innerHTML = '<div class="success-message">Thank you for subscribing!</div>';
-        }
-    } catch (err) {
-        console.error('Newsletter signup failed:', err);
-    }
-});
-</script>

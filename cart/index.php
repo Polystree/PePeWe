@@ -1,30 +1,24 @@
 <?php
 session_start();
-
-require_once __DIR__ . '/../includes/Database.php';
 require_once __DIR__ . '/../includes/Cart.php';
+$config = require_once __DIR__ . '/../config/config.php';
 
-// Check both session variables to ensure user is logged in
-if (!isset($_SESSION['username']) || !isset($_SESSION['userId'])) {
+if (!isset($_SESSION['userId'])) {
     header('Location: /login');
     exit();
 }
 
 $userId = $_SESSION['userId'];
 $cart = new Cart();
+$cartItems = $cart->getCartItems($userId);
+$totalPrice = 0;
 
-// Handle POST requests for quantity updates
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
-    foreach ($_POST['quantity'] as $productId => $quantity) {
-        $cart->updateQuantity($userId, $productId, (int)$quantity);
-    }
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit();
+foreach ($cartItems as $item) {
+    $totalPrice += $item['price'] * $item['quantity'];
 }
 
-$cartItems = $cart->getCartItems($userId);
-$totalPrice = array_reduce($cartItems, function($carry, $item) {
-    return $carry + ($item['price'] * $item['quantity']);
-}, 0);
+$title = 'Shopping Cart - iniGadget';
 
-require_once __DIR__ . '/../templates/cart/index.php';
+include __DIR__ . '/../templates/header.php';
+include __DIR__ . '/../templates/cart/index.php';
+include __DIR__ . '/../templates/footer.php';
