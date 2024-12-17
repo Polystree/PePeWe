@@ -40,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../assets/css/add-product.css">
 </head>
 <body>
+<<<<<<< HEAD
     <?php include __DIR__ . '/../templates/header.php'; ?>
     <div class="main-content">
         <div class="product-form-container">
@@ -60,6 +61,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 onclick="window.location.href='/login'">Cancel</button>
                         <button type="submit" class="btn btn-primary">Continue</button>
                     </div>
+=======
+    <?php include '../header.php'; ?>
+    <div class="main">
+        <div id="upload-product-title">
+            <span>Recover Password</span>
+        </div>
+        <form method="POST" id="upload-product-form">
+            <div class="upload-product-item">
+                <div class="credential-form">
+                    <label for="identifier" class="upload-label">Email or Username:</label>
+                    <input type="text" id="identifier" name="identifier" required>
+>>>>>>> 39a9da2ee0140380fe74f6faf86f6643403945cc
                 </div>
             </form>
         </div>

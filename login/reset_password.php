@@ -82,6 +82,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </form>
         </div>
+<<<<<<< HEAD
+=======
+        <form method="POST" id="upload-product-form">
+            <div class="upload-product-item">
+                <div class="credential-form">
+                    <label for="new_password" class="upload-label">New Password:</label>
+                    <input type="password" id="new_password" name="new_password" required>
+                </div>
+                <div class="credential-form">
+                    <label for="confirm_password" class="upload-label">Confirm Password:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+                <?php if ($error): ?>
+                    <p class="error"><?php echo $error; ?></p>
+                <?php endif; ?>
+                <?php if ($success): ?>
+                    <p class="success"><?php echo $success; ?></p>
+                <?php endif; ?>
+                <button type="submit" class="next-button">Reset Password</button>
+            </div>
+        </form>
+>>>>>>> 39a9da2ee0140380fe74f6faf86f6643403945cc
     </div>
     <?php include __DIR__ . '/../templates/footer.php'; ?>
 </body>

@@ -48,6 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../assets/css/add-product.css">
 </head>
 <body>
+<<<<<<< HEAD
     <?php include __DIR__ . '/../templates/header.php'; ?>
     <div class="main-content">
         <div class="product-form-container">
@@ -82,6 +83,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             Verify Answer
                         </button>
                     </div>
+=======
+    <?php include '../header.php'; ?>
+    <div class="main">
+        <div id="upload-product-title">
+            <span>Security Question</span>
+        </div>
+        <form method="POST" id="upload-product-form">
+            <div class="upload-product-item">
+                <?php if (!$isQuestionSet): ?>
+                    <div class="credential-form">
+                        <label for="security_question" class="upload-label">Select a Security Question:</label>
+                        <select id="security_question" name="security_question" required>
+                            <?php foreach ($securityQuestions as $question): ?>
+                                <option value="<?php echo htmlspecialchars($question); ?>"><?php echo htmlspecialchars($question); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php else: ?>
+                    <div class="credential-form">
+                        <label class="upload-label">Your Security Question:</label>
+                        <p><?php echo htmlspecialchars($user['security_question']); ?></p>
+                    </div>
+                <?php endif; ?>
+                <div class="credential-form">
+                    <label for="security_answer" class="upload-label">Your Answer:</label>
+                    <input type="text" id="security_answer" name="security_answer" required>
+>>>>>>> 39a9da2ee0140380fe74f6faf86f6643403945cc
                 </div>
             </form>
         </div>
