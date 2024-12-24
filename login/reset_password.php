@@ -82,8 +82,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </form>
         </div>
-<<<<<<< HEAD
-=======
         <form method="POST" id="upload-product-form">
             <div class="upload-product-item">
                 <div class="credential-form">
@@ -103,7 +101,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <button type="submit" class="next-button">Reset Password</button>
             </div>
         </form>
->>>>>>> 39a9da2ee0140380fe74f6faf86f6643403945cc
     </div>
     <?php include __DIR__ . '/../templates/footer.php'; ?>
 </body>
