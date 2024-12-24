@@ -48,42 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../assets/css/add-product.css">
 </head>
 <body>
-<<<<<<< HEAD
-    <?php include __DIR__ . '/../templates/header.php'; ?>
-    <div class="main-content">
-        <div class="product-form-container">
-            <h1 class="page-title">Security Question</h1>
-            
-            <form method="POST" class="product-form">
-                <div class="details-section">
-                    <div class="form-group">
-                        <label>Your Security Question</label>
-                        <div class="readonly-text">
-                            <?php echo htmlspecialchars($user['security_question']); ?>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="security_answer">Your Answer</label>
-                        <input type="text" id="security_answer" name="security_answer" 
-                               placeholder="Enter your answer" required>
-                    </div>
-
-                    <?php if ($error): ?>
-                        <p class="error"><?php echo $error; ?></p>
-                    <?php endif; ?>
-                    <?php if ($success): ?>
-                        <p class="success"><?php echo $success; ?></p>
-                    <?php endif; ?>
-
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" 
-                                onclick="window.location.href='recover.php'">Back</button>
-                        <button type="submit" class="btn btn-primary">
-                            Verify Answer
-                        </button>
-                    </div>
-=======
     <?php include '../header.php'; ?>
     <div class="main">
         <div id="upload-product-title">
@@ -109,7 +73,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="credential-form">
                     <label for="security_answer" class="upload-label">Your Answer:</label>
                     <input type="text" id="security_answer" name="security_answer" required>
->>>>>>> 39a9da2ee0140380fe74f6faf86f6643403945cc
                 </div>
             </form>
         </div>

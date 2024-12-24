@@ -44,8 +44,6 @@ body {
   font-family: 'Poppins', 'Inter', 'Smooch Sans', sans-serif;
 }
 
-/* Remove any footer-related styles */
-
 /* Common form styles */
 input[type="text"],
 input[type="password"],
@@ -207,7 +205,6 @@ a {
   all: unset;
 }
 
-<<<<<<< HEAD
 input[value] {
   color: black;
 }
@@ -217,8 +214,6 @@ input[value] {
   width: unset;
 }
 
-=======
->>>>>>> 39a9da2ee0140380fe74f6faf86f6643403945cc
 input[type="text"]:focus,
 input[type="password"]:focus,
 input[type="email"]:focus,
