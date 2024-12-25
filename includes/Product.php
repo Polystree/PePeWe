@@ -33,38 +33,33 @@ class Product {
     }
 
     public function getFlashSaleProducts($limit = 8) {
-        try {
-            $sql = "SELECT p.*, 
-                    d.discount_percent as discount,
-                    p.price * (100 - d.discount_percent) / 100 as discounted_price,
-                    COALESCE(p.sold_count, 0) as sold_count
-                    FROM products p
-                    INNER JOIN discounts d ON p.productId = d.product_id
-                    WHERE d.is_flash_sale = 1
-                    AND p.status = 'active'
-                    AND CURRENT_TIMESTAMP BETWEEN d.start_date AND d.end_date";
-            
-            error_log("Flash sale SQL: " . $sql);
-            error_log("Current timestamp: " . date('Y-m-d H:i:s'));
-            
-            $stmt = $this->db->prepare($sql);
-            if (!$stmt) {
-                error_log("Failed to prepare flash sale query: " . $this->db->error);
-                return [];
-            }
-            
-            if (!$stmt->execute()) {
-                error_log("Failed to execute flash sale query: " . $stmt->error);
-                return [];
-            }
-            
-            $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-            error_log("Flash sale query returned " . count($result) . " products");
-            return $result;
-        } catch (Exception $e) {
-            error_log("Error fetching flash sale products: " . $e->getMessage());
+        $sql = "SELECT p.*, 
+                d.discount_percent as discount,
+                p.price * (100 - d.discount_percent) / 100 as discounted_price,
+                COALESCE(p.sold_count, 0) as sold_count
+                FROM products p
+                INNER JOIN discounts d ON p.productId = d.product_id
+                WHERE d.is_flash_sale = 1
+                AND p.status = 'active'
+                AND CURRENT_TIMESTAMP BETWEEN d.start_date AND d.end_date";
+        
+        error_log("Flash sale SQL: " . $sql);
+        error_log("Current timestamp: " . date('Y-m-d H:i:s'));
+        
+        $stmt = $this->db->prepare($sql);
+        if (!$stmt) {
+            error_log("Failed to prepare flash sale query: " . $this->db->error);
             return [];
         }
+        
+        if (!$stmt->execute()) {
+            error_log("Failed to execute flash sale query: " . $stmt->error);
+            return [];
+        }
+        
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        error_log("Flash sale query returned " . count($result) . " products");
+        return $result;
     }
 
     public function getBestSelling($limit = 5) {
@@ -100,15 +95,10 @@ class Product {
                   ORDER BY p.created_at DESC 
                   LIMIT ?";
         
-        try {
-            $stmt = $this->db->prepare($query);
-            $stmt->bind_param("i", $limit);
-            $stmt->execute();
-            return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error fetching new arrivals: " . $e->getMessage());
-            return [];
-        }
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function getExploredProducts($limit = 8) {
@@ -120,28 +110,23 @@ class Product {
     }
 
     public function getFeaturedProducts($limit = 8) {
-        try {
-            $sql = "SELECT p.*, 
-                    CASE WHEN d.discount_percent > 0 
-                        THEN p.price * (100 - d.discount_percent) / 100 
-                        ELSE p.price 
-                    END as discounted_price,
-                    COALESCE(d.discount_percent, 0) as discount
-                    FROM products p
-                    LEFT JOIN discounts d ON p.productId = d.product_id 
-                        AND CURRENT_TIMESTAMP BETWEEN d.start_date AND d.end_date
-                    WHERE p.is_featured = 1 
-                    AND p.status = 'active'
-                    LIMIT ?";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->bind_param("i", $limit);
-            $stmt->execute();
-            return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error fetching featured products: " . $e->getMessage());
-            return [];
-        }
+        $sql = "SELECT p.*, 
+                CASE WHEN d.discount_percent > 0 
+                    THEN p.price * (100 - d.discount_percent) / 100 
+                    ELSE p.price 
+                END as discounted_price,
+                COALESCE(d.discount_percent, 0) as discount
+                FROM products p
+                LEFT JOIN discounts d ON p.productId = d.product_id 
+                    AND CURRENT_TIMESTAMP BETWEEN d.start_date AND d.end_date
+                WHERE p.is_featured = 1 
+                AND p.status = 'active'
+                LIMIT ?";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function getTrendingProducts($limit = 8) {
@@ -156,27 +141,22 @@ class Product {
     }
 
     public function getAllProducts($limit = 20) {
-        try {
-            $sql = "SELECT p.*, 
-                    CASE WHEN d.discount_percent > 0 
-                        THEN p.price * (100 - d.discount_percent) / 100 
-                        ELSE p.price 
-                    END as discounted_price,
-                    COALESCE(d.discount_percent, 0) as discount
-                    FROM products p
-                    LEFT JOIN discounts d ON p.productId = d.product_id 
-                        AND CURRENT_TIMESTAMP BETWEEN d.start_date AND d.end_date
-                    WHERE p.status = 'active'
-                    ORDER BY p.created_at DESC 
-                    LIMIT ?";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->bind_param("i", $limit);
-            $stmt->execute();
-            return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error fetching all products: " . $e->getMessage());
-            return [];
-        }
+        $sql = "SELECT p.*, 
+                CASE WHEN d.discount_percent > 0 
+                    THEN p.price * (100 - d.discount_percent) / 100 
+                    ELSE p.price 
+                END as discounted_price,
+                COALESCE(d.discount_percent, 0) as discount
+                FROM products p
+                LEFT JOIN discounts d ON p.productId = d.product_id 
+                    AND CURRENT_TIMESTAMP BETWEEN d.start_date AND d.end_date
+                WHERE p.status = 'active'
+                ORDER BY p.created_at DESC 
+                LIMIT ?";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 }

@@ -10,26 +10,22 @@ $userId = null;
 $profileImage = '/assets/img/Generic avatar.svg';
 
 if (isset($_SESSION['username'])) {
-    try {
-        $username = $db->real_escape_string($_SESSION['username']);
-        $stmt = $db->prepare("SELECT id, profile_image FROM users WHERE username = ?");
-        if ($stmt) {
-            $stmt->bind_param("s", $username);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            if ($result && $userData = $result->fetch_assoc()) {
-                $_SESSION['userId'] = $userData['id'];
-                if (!empty($userData['profile_image'])) {
-                    $profileImage = $userData['profile_image'];
-                }
-                $userId = $userData['id'];
-            } else {
-                error_log("User {$username} not found in database");
-                unset($_SESSION['username']);
+    $username = $db->real_escape_string($_SESSION['username']);
+    $stmt = $db->prepare("SELECT id, profile_image FROM users WHERE username = ?");
+    if ($stmt) {
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result && $userData = $result->fetch_assoc()) {
+            $_SESSION['userId'] = $userData['id'];
+            if (!empty($userData['profile_image'])) {
+                $profileImage = $userData['profile_image'];
             }
+            $userId = $userData['id'];
+        } else {
+            error_log("User {$username} not found in database");
+            unset($_SESSION['username']);
         }
-    } catch (Exception $e) {
-        error_log("Error fetching user data: " . $e->getMessage());
     }
 }
 

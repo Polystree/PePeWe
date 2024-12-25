@@ -13,11 +13,6 @@ class Database {
             $db_config['password'],
             $db_config['database']
         );
-
-        if ($this->connection->connect_error) {
-            throw new Exception("Database connection failed: " . $this->connection->connect_error);
-        }
-
         $this->connection->set_charset('utf8mb4');
     }
 

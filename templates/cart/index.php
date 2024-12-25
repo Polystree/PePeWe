@@ -175,7 +175,6 @@ $totalPrice = 0;
                                         const finalAmount = parseInt(finalAmountText.replace(/[^0-9]/g, ''));
 
                                         if (elements.savedAddress.value === 'new') {
-                                            // Save new address before processing payment
                                             const saved = await saveNewAddress(formData);
                                             if (!saved) return;
                                         }
@@ -355,7 +354,6 @@ $totalPrice = 0;
                 }
 
                 try {
-                    console.log('Sending coupon request:', code);
                     const response = await fetch('/cart/validate_coupon.php', {
                         method: 'POST',
                         headers: {
@@ -365,7 +363,6 @@ $totalPrice = 0;
                     });
 
                     const data = await response.json();
-                    console.log('Coupon response:', data);
                     
                     if (data.success) {
                         currentDiscount = data.discount;
@@ -378,13 +375,11 @@ $totalPrice = 0;
 
                         if (typeof paypal !== 'undefined') {
                             const paypalAmount = (finalAmount / <?php echo $paypalConfig['exchange_rate']; ?>).toFixed(2);
-                            console.log('Updating PayPal amount:', paypalAmount);
                         }
                     } else {
                         throw new Error(data.error || 'Failed to apply coupon');
                     }
                 } catch (error) {
-                    console.error('Coupon error:', error);
                     if (elements.couponMessage) {
                         elements.couponMessage.textContent = error.message || 'Error applying coupon';
                         elements.couponMessage.style.color = 'red';
@@ -465,7 +460,6 @@ $totalPrice = 0;
                     document.querySelector('.address-details').style.display = 'block';
                 }
             } catch (error) {
-                console.error('Error loading addresses:', error);
                 document.querySelector('.address-details').style.display = 'block';
             }
         }
@@ -494,34 +488,26 @@ $totalPrice = 0;
         }
 
         async function saveNewAddress(formData) {
-            try {
-                const response = await fetch('/cart/save_address.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
+            const response = await fetch('/cart/save_address.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
 
-                const data = await response.json();
-                if (data.success) {
-                    const option = document.createElement('option');
-                    option.value = data.address_id;
-                    option.textContent = data.address_label;
-                    option.dataset.address = JSON.stringify(formData);
-                    option.selected = true;
-                    elements.savedAddress.insertBefore(option, elements.savedAddress.children[1]);
-                    
-                    document.querySelector('.address-details').style.display = 'none';
-                    
-                    return true;
-                } else {
-                    throw new Error(data.error);
-                }
-            } catch (error) {
-                console.error('Error saving address:', error);
-                alert('Failed to save address: ' + error.message);
-                return false;
+            const data = await response.json();
+            if (data.success) {
+                const option = document.createElement('option');
+                option.value = data.address_id;
+                option.textContent = data.address_label;
+                option.dataset.address = JSON.stringify(formData);
+                option.selected = true;
+                elements.savedAddress.insertBefore(option, elements.savedAddress.children[1]);
+                
+                document.querySelector('.address-details').style.display = 'none';
+                
+                return true;
             }
         }
 

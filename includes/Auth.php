@@ -21,29 +21,24 @@ class Auth {
             return ['success' => false, 'error' => 'Invalid captcha'];
         }
 
-        try {
-            $stmt = $this->db->prepare("SELECT id, username, password FROM users WHERE username = ? OR email = ?");
-            $stmt->bind_param("ss", $identifier, $identifier);
-            $stmt->execute();
-            $result = $stmt->get_result();
+        $stmt = $this->db->prepare("SELECT id, username, password FROM users WHERE username = ? OR email = ?");
+        $stmt->bind_param("ss", $identifier, $identifier);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($user = $result->fetch_assoc()) {
+            error_log("Attempting login for user: " . $identifier);
+            error_log("Stored hash: " . $user['password']);
+            error_log("Password verify result: " . (password_verify($password, $user['password']) ? 'true' : 'false'));
             
-            if ($user = $result->fetch_assoc()) {
-                error_log("Attempting login for user: " . $identifier);
-                error_log("Stored hash: " . $user['password']);
-                error_log("Password verify result: " . (password_verify($password, $user['password']) ? 'true' : 'false'));
-                
-                if (password_verify($password, $user['password'])) {
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['username'] = $user['username'];
-                    return ['success' => true, 'isAdmin' => $this->isAdmin($user['id'])];
-                }
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                return ['success' => true, 'isAdmin' => $this->isAdmin($user['id'])];
             }
-            
-            return ['success' => false, 'error' => 'Invalid credentials'];
-        } catch (Exception $e) {
-            error_log("Login error: " . $e->getMessage());
-            return ['success' => false, 'error' => 'Login failed'];
         }
+        
+        return ['success' => false, 'error' => 'Invalid credentials'];
     }
 
     public function register($username, $email, $password) {
@@ -51,24 +46,19 @@ class Auth {
             return ['success' => false, 'error' => 'Invalid email format'];
         }
 
-        try {
-            $check = $this->db->prepare("SELECT id FROM users WHERE username = ? OR email = ? LIMIT 1");
-            $check->bind_param("ss", $username, $email);
-            $check->execute();
-            if ($check->get_result()->num_rows > 0) {
-                return ['success' => false, 'error' => 'Username or email already exists'];
-            }
-
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $this->db->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $username, $email, $hashedPassword);
-            $stmt->execute();
-            
-            return ['success' => true];
-        } catch (Exception $e) {
-            error_log("Registration error: " . $e->getMessage());
-            return ['success' => false, 'error' => 'Registration failed'];
+        $check = $this->db->prepare("SELECT id FROM users WHERE username = ? OR email = ? LIMIT 1");
+        $check->bind_param("ss", $username, $email);
+        $check->execute();
+        if ($check->get_result()->num_rows > 0) {
+            return ['success' => false, 'error' => 'Username or email already exists'];
         }
+
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $this->db->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $username, $email, $hashedPassword);
+        $stmt->execute();
+        
+        return ['success' => true];
     }
 
     private function isAdmin($userId) {

@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $db->real_escape_string($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    // Validate input
     if (empty($username) || empty($email) || empty($password)) {
         $_SESSION['errors']['register'] = 'All fields are required';
         header('Location: /login');

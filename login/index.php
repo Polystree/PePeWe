@@ -1,13 +1,8 @@
 <?php
 session_start();
 
-try {
-    require_once '../includes/Auth.php';
-    $auth = new Auth();
-} catch (Exception $e) {
-    die("Configuration error: " . $e->getMessage());
-}
-
+require_once '../includes/Auth.php';
+$auth = new Auth();
 $errors = [];
 $success = false;
 
