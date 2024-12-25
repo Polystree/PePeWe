@@ -1,6 +1,13 @@
 :root {
   --cart-padding: 20px 40px;
   --border-light: 1px solid var(--border-color);
+  --accent-color: #007bff;
+  --accent-dark: #0056b3;
+  --danger-color: #ff4444;
+  --danger-dark: #cc0000;
+  --border-color: #ddd;
+  --primary-color: #00695c;
+  --primary-hover: #004d40;
 }
 
 .breadcrumb {
@@ -17,7 +24,32 @@
   padding-bottom: 2em;
 }
 
-/* Button styles are inherited from style.css */
+.btn-small {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-small:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-small:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
 
 .cart-table {
   width: 100%;
@@ -77,7 +109,7 @@
 .coupon button {
   width: 100%;
   padding: 1rem;
-  background: #000;
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: 8px;
@@ -87,8 +119,9 @@
   transition: all 0.2s ease;
 }
 .coupon button:hover {
-  background: #333;
+  background: var(--primary-hover);
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 #couponMessage {
   display: block;
@@ -112,7 +145,7 @@
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  margin-top: 0; /* Remove top margin since we're using gap */
+  margin-top: 0;
 }
 .cart-total h3 {
   margin: 0 0 20px 0;
@@ -268,7 +301,7 @@
     margin-top: 1.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid #eee;
-    display: none; /* Hidden by default, shown when no addresses or new address needed */
+    display: none;
 }
 
 .address-details.show {
@@ -319,10 +352,8 @@
 
 .address-select option[value="new"] {
     font-weight: 600;
-    color: var(--accent-color);
 }
 
-/* Update media query for mobile */
 @media (max-width: 768px) {
   .cart-actions {
     flex-direction: column;
@@ -337,7 +368,6 @@
   }
 }
 
-/* Remove Stripe-specific styles */
 .payment-button,
 .payment-button:hover,
 #payment-element {
@@ -363,7 +393,7 @@
 .midtrans-button {
     width: 100%;
     padding: 1rem;
-    background: #00695c;
+    background: var(--primary-color);
     color: white;
     border: none;
     border-radius: 8px;
@@ -375,11 +405,28 @@
 }
 
 .midtrans-button:hover {
-    background: #004d40;
+    background: var(--primary-hover);
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .midtrans-button:active {
     transform: translateY(0);
+}
+
+.address-form-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.address-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#setDefaultAddress {
+    margin-right: 0.5rem;
 }
