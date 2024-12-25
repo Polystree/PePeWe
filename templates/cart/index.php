@@ -1,6 +1,21 @@
 <?php 
 $paypalConfig = $GLOBALS['paypalConfig'] ?? null;
 $totalPrice = 0;
+
+$config = include(__DIR__ . '/../../config/config.php');
+$db_config = $config['db'];
+$connect = new mysqli($db_config['host'], $db_config['username'], $db_config['password'], $db_config['database']);
+
+function getActiveCoupons($connect) {
+    $currentDate = date('Y-m-d');
+    $stmt = $connect->prepare("SELECT id, code, discount FROM coupons WHERE expiry_date >= ? ORDER BY discount DESC");
+    $stmt->bind_param("s", $currentDate);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+$activeCoupons = getActiveCoupons($connect);
 ?>
 <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
 <link rel="stylesheet" type="text/css" href="/assets/css/cart.css">
@@ -114,7 +129,14 @@ $totalPrice = 0;
             <div class="coupon-box">
                 <h3>Apply Coupon</h3>
                 <div class="coupon">
-                    <input type="text" id="couponInput" placeholder="Enter your coupon code" />
+                    <select id="couponSelect">
+                        <option value="">Select a coupon</option>
+                        <?php foreach ($activeCoupons as $coupon): ?>
+                            <option value="<?php echo htmlspecialchars($coupon['code']); ?>" data-discount="<?php echo $coupon['discount']; ?>">
+                                <?php echo htmlspecialchars($coupon['code'] . ' - ' . $coupon['discount'] . '% off'); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                     <button type="button" id="applyCoupon">Apply</button>
                 </div>
                 <span id="couponMessage"></span>
@@ -245,7 +267,7 @@ $totalPrice = 0;
         const elements = {
             quantityInputs: document.querySelectorAll('.quantity-input'),
             cartTotal: document.querySelector('.cart-total'),
-            couponInput: document.getElementById('couponInput'),
+            couponSelect: document.getElementById('couponSelect'),
             applyCouponBtn: document.getElementById('applyCoupon'),
             couponMessage: document.getElementById('couponMessage'),
             discountRow: document.getElementById('discountRow'),
@@ -345,17 +367,18 @@ $totalPrice = 0;
             });
         }
 
-        if (elements.applyCouponBtn && elements.couponInput && elements.couponMessage) {
+        if (elements.applyCouponBtn && elements.couponSelect && elements.couponMessage) {
             elements.applyCouponBtn.addEventListener('click', async function() {
-                const code = elements.couponInput.value.trim();
+                const selectedOption = elements.couponSelect.options[elements.couponSelect.selectedIndex];
+                const code = selectedOption.value;
                 if (!code) {
-                    elements.couponMessage.textContent = 'Please enter a coupon code';
+                    elements.couponMessage.textContent = 'Please select a coupon';
                     elements.couponMessage.style.color = 'red';
                     return;
                 }
-
+        
                 try {
-                    console.log('Sending coupon request:', code);
+                    console.log('Applying coupon:', code);
                     const response = await fetch('/cart/validate_coupon.php', {
                         method: 'POST',
                         headers: {
@@ -363,7 +386,7 @@ $totalPrice = 0;
                         },
                         body: JSON.stringify({ code: code })
                     });
-
+        
                     const data = await response.json();
                     console.log('Coupon response:', data);
                     
@@ -375,7 +398,7 @@ $totalPrice = 0;
                             elements.couponMessage.textContent = `Coupon applied! ${currentDiscount}% discount`;
                             elements.couponMessage.style.color = 'green';
                         }
-
+        
                         if (typeof paypal !== 'undefined') {
                             const paypalAmount = (finalAmount / <?php echo $paypalConfig['exchange_rate']; ?>).toFixed(2);
                             console.log('Updating PayPal amount:', paypalAmount);
