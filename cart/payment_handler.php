@@ -99,7 +99,10 @@ try {
         $orderNumber,
         $amount,
         $shippingAddress,
-        $cartItems
+        $cartItems,
+        $shippingCost,
+        $shippingService,
+        $discountAmount
     );
 
     $items = [];

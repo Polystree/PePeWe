@@ -26,7 +26,12 @@ $allOrders = $order->getAllOrders();
                             <small><?= htmlspecialchars($orderItem['email']) ?></small>
                         </td>
                         <td><?= htmlspecialchars($orderItem['shipping_address']) ?></td>
-                        <td>Rp <?= number_format($orderItem['total_amount'], 0, ',', '.') ?></td>
+                        <td>
+                            Rp <?= number_format($orderItem['total_amount'], 0, ',', '.') ?>
+                            <?php if($orderItem['discount_amount'] > 0): ?>
+                                <br><small class="text-success">-Rp <?= number_format($orderItem['discount_amount'], 0, ',', '.') ?></small>
+                            <?php endif; ?>
+                        </td>
                         <td>
                             <div class="order-items-preview">
                                 <?php foreach ($orderItem['items'] as $item): ?>

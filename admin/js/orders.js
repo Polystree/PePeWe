@@ -48,6 +48,22 @@ function viewOrderDetails(orderNumber) {
                 
                 <div class="order-summary">
                     <h3>Order Summary</h3>
+                    <div class="info-group">
+                        <label>Subtotal:</label>
+                        <span>Rp ${parseInt(data.total_amount - data.shipping_cost + data.discount_amount).toLocaleString()}</span>
+                    </div>
+                    ${data.shipping_cost > 0 ? `
+                    <div class="info-group">
+                        <label>Shipping:</label>
+                        <span>Rp ${parseInt(data.shipping_cost).toLocaleString()}</span>
+                    </div>
+                    ` : ''}
+                    ${data.discount_amount > 0 ? `
+                    <div class="info-group">
+                        <label>Discount:</label>
+                        <span>-Rp ${parseInt(data.discount_amount).toLocaleString()}</span>
+                    </div>
+                    ` : ''}
                     <div class="info-group total">
                         <label>Total Amount:</label>
                         <span class="total-amount">Rp ${parseInt(data.total_amount).toLocaleString()}</span>

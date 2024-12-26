@@ -528,13 +528,15 @@
 
 .modal-content {
     background-color: #fff;
-    margin: 5% auto;
+    margin: 2% auto;
     padding: 2rem;
     border-radius: var(--border-radius-lg);
     width: 90%;
-    max-width: 600px;
+    max-width: 800px;
+    max-height: 90vh; /* Limit height to 90% of viewport height */
     position: relative;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .modal h2 {
@@ -812,4 +814,74 @@
     margin: 0.25rem 0;
     font-size: 0.9rem;
     color: var(--order-text-light);
+}
+
+.text-success {
+    color: #28a745;
+}
+
+.order-items-preview {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    max-width: 200px;
+}
+
+.order-item-mini {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.order-item-mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.order-item-mini span {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: #333;
+    color: white;
+    font-size: 10px;
+    padding: 2px 4px;
+    border-radius: 10px;
+}
+
+/* Ensure the order details content is properly spaced */
+#orderDetailsContent {
+    padding-right: 1rem; /* Add padding for scrollbar */
+}
+
+#orderDetailsContent .order-items-details {
+    max-height: 50vh; /* Limit height of items section */
+    overflow-y: auto; /* Enable scrolling for long item lists */
+    margin: 1rem 0;
+    padding-right: 0.5rem;
+}
+
+/* Style scrollbar for webkit browsers */
+.modal-content::-webkit-scrollbar,
+#orderDetailsContent .order-items-details::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track,
+#orderDetailsContent .order-items-details::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb,
+#orderDetailsContent .order-items-details::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover,
+#orderDetailsContent .order-items-details::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

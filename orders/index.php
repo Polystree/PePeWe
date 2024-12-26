@@ -96,12 +96,27 @@ $orderHistory = $order->getUserOrders($_SESSION['userId']);
 
                     <div class="order-summary">
                         <h2>Order Summary</h2>
+                        <div class="info-group">
+                            <label>Subtotal:</label>
+                            <span>Rp <?= number_format($orderDetails['total_amount'] - $orderDetails['shipping_cost'] + $orderDetails['discount_amount'], 0, ',', '.') ?></span>
+                        </div>
+                        <?php if ($orderDetails['shipping_cost'] > 0): ?>
+                        <div class="info-group">
+                            <label>Shipping:</label>
+                            <span>Rp <?= number_format($orderDetails['shipping_cost'], 0, ',', '.') ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <?php if ($orderDetails['discount_amount'] > 0): ?>
+                        <div class="info-group">
+                            <label>Discount:</label>
+                            <span>-Rp <?= number_format($orderDetails['discount_amount'], 0, ',', '.') ?></span>
+                        </div>
+                        <?php endif; ?>
                         <div class="info-group total">
                             <label>Total Amount:</label>
                             <span class="total-amount">Rp <?= number_format($orderDetails['total_amount'], 0, ',', '.') ?></span>
                         </div>
                     </div>
-                </div>
                 
                 <div class="action-buttons">
                     <a href="/orders" class="order-btn order-btn-secondary">Back to Orders</a>

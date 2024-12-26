@@ -13,22 +13,32 @@ class Order {
         );
     }
 
-    public function createOrder($userId, $orderNumber, $totalAmount, $shippingAddress, $items) {
+    public function createOrder($userId, $orderNumber, $totalAmount, $shippingAddress, $items, $shippingCost = 0, $shippingMethod = '', $discountAmount = 0) {
         $this->db->begin_transaction();
 
         try {
-            // Insert order
-            $stmt = $this->db->prepare("INSERT INTO orders (user_id, order_number, total_amount, shipping_address) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("isds", $userId, $orderNumber, $totalAmount, $shippingAddress);
+            // Insert order with shipping and discount info
+            $stmt = $this->db->prepare("INSERT INTO orders (user_id, order_number, total_amount, shipping_address, shipping_cost, shipping_method, discount_amount) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("isdssdd", $userId, $orderNumber, $totalAmount, $shippingAddress, $shippingCost, $shippingMethod, $discountAmount);
             $stmt->execute();
             $orderId = $this->db->insert_id;
 
-            // Insert order items
+            // Insert order items and update product quantities
             $stmt = $this->db->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
+            $updateStmt = $this->db->prepare("UPDATE products SET quantity = quantity - ?, sold_count = sold_count + ? WHERE productId = ?");
             
             foreach ($items as $item) {
+                // Insert order item
                 $stmt->bind_param("iiid", $orderId, $item['productId'], $item['quantity'], $item['price']);
                 $stmt->execute();
+
+                // Update product quantity and sold count
+                $updateStmt->bind_param("iii", $item['quantity'], $item['quantity'], $item['productId']);
+                $updateStmt->execute();
+
+                if ($updateStmt->affected_rows === 0) {
+                    throw new Exception('Failed to update product quantity');
+                }
             }
 
             $this->db->commit();
@@ -107,7 +117,8 @@ class Order {
         $stmt = $this->db->prepare("
             SELECT o.*, oi.quantity, oi.price as item_price, 
                    p.name, p.image_path, p.description,
-                   u.username, u.email
+                   u.username, u.email,
+                   o.shipping_cost, o.shipping_method, o.discount_amount
             FROM orders o
             LEFT JOIN order_items oi ON o.id = oi.order_id
             LEFT JOIN products p ON oi.product_id = p.productId
@@ -126,6 +137,9 @@ class Order {
                     'order_number' => $row['order_number'],
                     'total_amount' => $row['total_amount'],
                     'shipping_address' => $row['shipping_address'],
+                    'shipping_cost' => $row['shipping_cost'],
+                    'shipping_method' => $row['shipping_method'],
+                    'discount_amount' => $row['discount_amount'],
                     'created_at' => $row['created_at'],
                     'status' => 'success',
                     'customer' => [
