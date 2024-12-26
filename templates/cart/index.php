@@ -48,6 +48,13 @@ $connect = new mysqli($db_config['host'], $db_config['username'], $db_config['pa
                                     const finalTotal = document.getElementById('finalTotal').textContent
                                         .replace('Rp ', '').replace(/\./g, '');
                                     
+                                    const shippingSelect = document.getElementById('shipping');
+                                    const selectedShipping = shippingSelect.selectedOptions[0];
+                                    const shippingCost = selectedShipping ? parseInt(selectedShipping.dataset.price) : 0;
+                                    const shippingService = selectedShipping ? selectedShipping.dataset.service : '';
+                                    
+                                    const discountAmount = parseInt(document.getElementById('discountAmount').textContent.replace(/\./g, '')) || 0;
+                                    
                                     const response = await fetch('/cart/payment_handler.php', {
                                         method: 'POST',
                                         headers: { 
@@ -55,7 +62,10 @@ $connect = new mysqli($db_config['host'], $db_config['username'], $db_config['pa
                                             'Accept': 'application/json'
                                         },
                                         body: JSON.stringify({ 
-                                            amount: parseInt(finalTotal)
+                                            amount: parseInt(finalTotal),
+                                            shipping_cost: shippingCost,
+                                            shipping_service: shippingService,
+                                            discount_amount: discountAmount
                                         })
                                     });
                                     

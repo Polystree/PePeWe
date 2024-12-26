@@ -28,7 +28,9 @@ try {
         throw new Exception('Invalid JSON input: ' . json_last_error_msg());
     }
 
-    if (!isset($_SESSION['userId']) || !isset($decoded['amount'])) {
+    if (!isset($_SESSION['userId']) || !isset($decoded['amount']) || 
+        !isset($decoded['shipping_cost']) || !isset($decoded['shipping_service']) || 
+        !isset($decoded['discount_amount'])) {
         throw new Exception('Missing required parameters');
     }
 
@@ -78,6 +80,9 @@ try {
     $userId = $_SESSION['userId'];
     $orderId = 'ORDER-' . time() . '-' . $userId;
     $amount = (int)$decoded['amount'];
+    $shippingCost = (int)$decoded['shipping_cost'];
+    $shippingService = $decoded['shipping_service'];
+    $discountAmount = (int)$decoded['discount_amount'];
 
     $cart = new Cart();
     $cartItems = $cart->getCartItems($userId);
@@ -107,14 +112,41 @@ try {
         ];
     }
 
+    // Add shipping cost as an item if present
+    if ($shippingCost > 0) {
+        $items[] = [
+            'id' => 'SHIPPING',
+            'price' => $shippingCost,
+            'quantity' => 1,
+            'name' => 'Shipping Cost (' . $shippingService . ')'
+        ];
+    }
+
+    // Add discount as a negative item if present
+    if ($discountAmount > 0) {
+        $items[] = [
+            'id' => 'DISCOUNT',
+            'price' => -$discountAmount,
+            'quantity' => 1,
+            'name' => 'Discount'
+        ];
+    }
+
     $transaction = [
         'transaction_details' => [
             'order_id' => $orderNumber,
-            'gross_amount' => $amount
+            'gross_amount' => $amount // This should now match items total
         ],
         'customer_details' => [
             'first_name' => $user['username'] ?? 'Customer',
-            'email' => $user['email'] ?? 'customer@example.com'
+            'email' => $user['email'] ?? 'customer@example.com',
+            'shipping_address' => [
+                'first_name' => $address['recipient_name'],
+                'phone' => $address['phone'],
+                'address' => $address['address'],
+                'city' => $address['city'],
+                'postal_code' => $address['postal_code']
+            ]
         ],
         'item_details' => $items
     ];
