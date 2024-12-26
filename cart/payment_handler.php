@@ -1,9 +1,4 @@
 <?php
-// Prevent PHP errors from being output
-error_reporting(0);
-ini_set('display_errors', 0);
-
-// Set JSON content type header
 header('Content-Type: application/json');
 
 session_start();
@@ -63,7 +58,6 @@ try {
         throw new Exception('Cart is empty');
     }
 
-    // Create order record
     $order = new Order();
     $orderNumber = 'ORD-' . time() . '-' . $_SESSION['userId'];
     
