@@ -353,12 +353,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $image_path = '../assets/img/product/' . $image_filename;
         $upload_path = $image_dir . $image_filename;
 
-        // Delete old image if exists in edit mode
-        if (isset($productId) && !empty($product['image_path'])) {
-            $old_image = __DIR__ . '/..' . $product['image_path'];
-            if (file_exists($old_image)) {
-                unlink($old_image);
+        // Move the uploaded file to the target directory
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
+            // Delete old image if exists in edit mode
+            if (isset($productId) && !empty($product['image_path'])) {
+                $old_image = __DIR__ . '/..' . $product['image_path'];
+                if (file_exists($old_image)) {
+                    unlink($old_image);
+                }
             }
+        } else {
+            // Handle the error if the file could not be moved
+            die("Failed to upload image. Please try again.");
         }
     } else {
         $image_path = $product['image_path'];
