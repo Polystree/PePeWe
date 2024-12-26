@@ -1,5 +1,16 @@
 <?php
 header('Content-Type: application/json');
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
+
+// Create a log function
+function logError($message, $context = []) {
+    error_log(sprintf(
+        "[Payment Error] %s | Context: %s", 
+        $message, 
+        json_encode($context)
+    ));
+}
 
 session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -7,12 +18,21 @@ require_once __DIR__ . '/../includes/Cart.php';
 require_once __DIR__ . '/../includes/Order.php';
 
 try {
-    $midtransConfig = require_once __DIR__ . '/../config/midtrans_config.php';
-    $input = json_decode(file_get_contents('php://input'), true);
-
-    if (!isset($_SESSION['userId']) || !isset($input['amount'])) {
-        throw new Exception('Invalid request parameters');
+    $input = file_get_contents('php://input');
+    if (!$input) {
+        throw new Exception('No input received');
     }
+
+    $decoded = json_decode($input, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception('Invalid JSON input: ' . json_last_error_msg());
+    }
+
+    if (!isset($_SESSION['userId']) || !isset($decoded['amount'])) {
+        throw new Exception('Missing required parameters');
+    }
+
+    $midtransConfig = require_once __DIR__ . '/../config/midtrans_config.php';
 
     $config = require_once __DIR__ . '/../config/config.php';
     $db_config = $config['db'];
@@ -57,7 +77,7 @@ try {
 
     $userId = $_SESSION['userId'];
     $orderId = 'ORDER-' . time() . '-' . $userId;
-    $amount = (int)$input['amount'];
+    $amount = (int)$decoded['amount'];
 
     $cart = new Cart();
     $cartItems = $cart->getCartItems($userId);
@@ -102,24 +122,37 @@ try {
     try {
         $snapToken = \Midtrans\Snap::getSnapToken($transaction);
         if (!$snapToken) {
-            throw new Exception('Failed to generate Midtrans token');
+            throw new Exception('Empty token received from Midtrans');
         }
-        echo json_encode([
+        
+        $response = [
             'success' => true,
-            'token' => $snapToken, 
+            'token' => $snapToken,
             'order_id' => $orderNumber
-        ]);
+        ];
+        
+        echo json_encode($response);
         exit;
+        
     } catch (Exception $e) {
-        throw new Exception('Failed to get Midtrans token: ' . $e->getMessage());
+        logError('Midtrans token error', [
+            'error' => $e->getMessage(),
+            'transaction' => $transaction
+        ]);
+        throw new Exception('Payment gateway error: ' . $e->getMessage());
     }
 
 } catch (Exception $e) {
+    logError($e->getMessage(), [
+        'input' => $input ?? null,
+        'userId' => $_SESSION['userId'] ?? null
+    ]);
+    
     http_response_code(500);
     echo json_encode([
         'success' => false,
         'error' => $e->getMessage(),
         'detail' => 'An error occurred while processing your request'
-    ]);
+    ], JSON_PARTIAL_OUTPUT_ON_ERROR);
     exit;
 }

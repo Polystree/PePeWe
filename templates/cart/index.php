@@ -59,9 +59,16 @@ $connect = new mysqli($db_config['host'], $db_config['username'], $db_config['pa
                                         })
                                     });
                                     
-                                    const data = await response.json();
+                                    if (!response.ok) {
+                                        const errorData = await response.json().catch(() => null);
+                                        throw new Error(errorData?.error || `Server error: ${response.status}`);
+                                    }
                                     
-                                    if (!data.token) {
+                                    const data = await response.json().catch(() => {
+                                        throw new Error('Invalid response from server');
+                                    });
+                                    
+                                    if (!data.success || !data.token) {
                                         throw new Error(data.error || 'Failed to get payment token');
                                     }
                                     
@@ -83,7 +90,7 @@ $connect = new mysqli($db_config['host'], $db_config['username'], $db_config['pa
                                     });
                                 } catch (error) {
                                     console.error('Payment error:', error);
-                                    alert('Error initializing payment: ' + error.message);
+                                    alert('Error: ' + (error.message || 'Failed to initialize payment'));
                                     resetPaymentButton();
                                 }
                             });
