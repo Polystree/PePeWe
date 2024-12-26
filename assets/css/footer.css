@@ -1,269 +1,359 @@
-.support {
-    font-size: 1.25rem;
-    line-height: 1.5rem;
-    display: inline-block;
-    width: 5.338rem;
+/* Variables needed for footer */
+:root {
+  --primary-color: #000;
+  --accent-color: #d8602b;
+  --font-poppins: Poppins;
+  --footer-column-width: 220px;  /* Increased from 200px */
+  --footer-link-spacing: 1rem;  /* Increased from 0.875rem */
+  --footer-max-width: 1400px;  /* Increased from 1200px */
+  --footer-banner-height: 60px;
+  --footer-logo-height: 45px;  /* Added for consistent logo sizing */
+  --footer-text-color: rgba(255, 255, 255, 0.9);  /* New variable */
+  --footer-hover-transition: 0.2s ease-in-out;  /* New variable */
+}
+
+/* Base footer styles */
+footer {
+  background-color: #000; /* Explicit color instead of var for fallback */
+  color: #fff;
+  padding: 4rem 0 1rem;
+  line-height: 1.6;  /* Added for better readability */
+}
+
+.footer {
+  font-size: 1rem;  /* Increased from 0.875rem */
+  width: 95%;  /* Increased from 85% */
+  max-width: var(--footer-max-width);
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Footer layout */
+.logo-parent {
+  width: 100%;
+  max-width: var(--footer-max-width);
+  height: auto;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);  /* Fixed 5 columns instead of auto-fit */
+  gap: 2rem;
+  margin: 0 auto 3rem;
+}
+
+/* Footer links common styles */
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--footer-link-spacing);
+  min-width: var(--footer-column-width);
+  transition: transform var(--footer-hover-transition);
+}
+
+.footer-links a {
+  color: var(--footer-text-color);
+  text-decoration: none;
+  line-height: 1.5;
+  font-weight: 300;
+  width: 100%;
+  font-size: 0.875rem;
+  padding: 0.25rem 0;  /* Added padding for better click targets */
+  transition: all var(--footer-hover-transition);
+  position: relative;  /* For hover effect */
+}
+
+.footer-links a:hover {
+  color: #fff;
+  transform: translateX(5px);
+  text-decoration: none;  /* Changed from underline */
+}
+
+.footer-links:first-child {
+  min-width: 200px; /* Reduced from 250px */
+  max-width: 280px; /* Added maximum width */
+}
+
+.footer-links div:not(.subscribe):not(.support):not(.account):not(.quick-link):not(.download-app):not(.email) {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  width: 90%;
+  color: #f5f5f5;
+}
+
+.footer-links .logo {
+  width: auto;
+  height: var(--footer-logo-height);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.footer-links .logo img {
+  height: 100%;
+  width: auto;
+  max-width: 180px; /* Limit maximum width */
+  object-fit: contain;
+}
+
+/* Section headers */
+.support, .account, .quick-link, .download-app {
+  font-size: 1.25rem;  /* Increased from 1.125rem */
+  font-weight: 600;
+  margin-bottom: 1rem; /* Increased from 0.5rem */
+  line-height: 1.5rem;
+  display: inline-block;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.support:after, .account:after, .quick-link:after, .download-app:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 2rem;
+  height: 2px;
+  background-color: var(--accent-color);
+}
+
+.subscribe {
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+  display: inline-block;
+  width: 100%;
+}
+
+.get-10-your {
+  line-height: 1.5rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 100%;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+}
+
+/* Email section */
+.email {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.email-footer {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  padding: 0.75rem;
+  font-size: 0.75rem;
+  font-family: var(--font-poppins);
+  justify-content: space-between;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  transition: border-color var(--footer-hover-transition);
+}
+
+.email-footer:focus-within {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(216, 96, 43, 0.2);
+}
+
+.email-input {
+  flex: 1;
+  padding: 0.75rem;   /* Increased padding */
+  color: #fff;
+  background: transparent;
+  border: none;
+  font-size: 0.9rem;  /* Increased from 0.75rem */
+}
+
+.email-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.email label {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* App download section redesign */
+.save-rp9999-with-app-new-user-parent {
+  margin-top: 0.375rem;  /* Reduced from 0.5rem */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;  /* Reduced from 0.75rem */
+}
+
+/* Promo banner */
+.save-rp9999-with {
+  border-radius: 4px;
+  padding-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.discount-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  line-height: 1.2;
+}
+
+.new-user-badge {
+  font-size: 0.75rem;
+  background: var(--accent-color);
+  color: white;
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* Download options */
+.qr-code-parent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 4px;
+}
+
+.qr-code-icon {
+  width: 4.5rem;    /* Added back size limit */
+  height: 4.5rem;
+  border-radius: 2px;
+}
+
+.store-parent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.googleplay-icon,
+.appstore-icon {
+  height: 2.125rem;  /* Added back height limit */
+  width: auto;
+}
+
+/* Social media section */
+.social-media-parent {
+  padding-top: 0.75rem; /* Reduced from 1rem */
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  gap: 1rem;
+}
+
+.social-media {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.social-media:hover {
+  opacity: 0.8;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1400px) {
+  .logo-parent {
+    grid-template-columns: repeat(auto-fit, minmax(var(--footer-column-width), 1fr));
   }
-  
-  .subscribe {
-    font-size: 1.125rem;
-    line-height: 1.5rem;
-    display: inline-block;
-    width: 10.188rem;
-  }
-  
-  .get-10-your {
-    line-height: 1.5rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .div {
-    line-height: 1.5rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .sigmaskibidigmailcom {
-    text-decoration: underline;
-    line-height: 1.5rem;
-    font-weight: 300;
-    color: inherit;
-    display: inline-block;
-    width: 12rem;
-  }
-  
-  .fanum-v-blok {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .my-account {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .email {
-    display: flex;
-  }
-  
-  .login-register {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .cart {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .wishlist {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .privacy-policy {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .terms-of-use {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .faq {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .contact {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .shop {
-    line-height: 1rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 10.813rem;
-  }
-  
-  .account {
-    font-size: 1.25rem;
-    line-height: 1.5rem;
-    display: inline-block;
-    width: 5.6rem;
-  }
-  
-  .quick-link {
-    font-size: 1.25rem;
-    line-height: 1.5rem;
-    display: inline-block;
-    width: 6.538rem;
-  }
-  
-  .download-app {
-    font-size: 1.25rem;
-    line-height: 1.5rem;
-    display: inline-block;
-    width: 9.8rem;
+}
+
+@media (max-width: 1200px) {
+  .footer {
+    width: 90%;
   }
   
   .logo-parent {
-    height: 100%;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-evenly;
-    flex-direction: row;
+    gap: 2rem;
+    padding: 0 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    width: 95%;
   }
   
-  .vector-icon {
-    height: 33.49%;
-    width: 11.56%;
-    max-width: 100%;
-    overflow: hidden;
-    max-height: 100%;
+  .logo-parent {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));  /* Increased from 160px */
+    gap: 2rem;  /* Increased from 1.5rem */
   }
   
-  .email-footer {
-    border: 2px solid #edecec;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: row;
-    padding: 0.5rem 1rem 0.5rem 1rem;
-    font-size: 0.75rem;
-    font-family: var(--font-poppins);
-    justify-content: space-between;
+  .footer-links:first-child {
+    min-width: 180px;  /* Increased from 160px */
+    max-width: 240px;
   }
   
-  .save-rp9999-with {
-    position: relative;
-    line-height: 1.125rem;
-    font-weight: 500;
-    opacity: 0.7;
+  .footer-links .logo {
+    height: 35px; /* Smaller logo on mobile */
   }
   
-  .qr-code-icon {
-    width: 5rem;
-    position: relative;
-    height: 5rem;
-    overflow: hidden;
-    flex-shrink: 0;
-    object-fit: cover;
+  .subscribe {
+    font-size: 1.2rem;  /* Increased from 1.125rem */
   }
   
-  .googleplay-icon {
-    position: relative;
-    height: 2.5rem;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  
-  .appstore-icon {
-    position: relative;
-    height: 2.5rem;
-    overflow: hidden;
-    flex-shrink: 0;
-    object-fit: cover;
-  }
-  
-  .store-parent {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 0.25rem;
-  }
-  
-  .qr-code-parent {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.5rem;
-  }
-  
-  .save-rp9999-with-app-new-user-parent {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 0.5rem;
-    color: #fafafa;
-  }
-  
-  .social-media {
-    width: 1.5rem;
-    position: relative;
-    height: 1.5rem;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  
-  .social-media-parent {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 1.5rem;
+  .email-input {
+    font-size: 1rem;  /* Increased for mobile */
+    padding: 0.8rem;
   }
 
-  footer {
-    margin-top: 2.5rem;
-    background-color: #000;
+  .save-rp9999-with-app-new-user-parent {
+    gap: 0.5rem;
   }
-  
-  .footer-links a {
-    color: #fff;
-    text-decoration: none;
-  }
-  
-  .footer-links a:hover {
-    color: #d8602b;
-    text-decoration: underline;
-  }
-  
-  .footer {
-    font-size: 0.75rem;
-    color: #fff;
-    font-family: var(--font-poppins);
-    padding: 5vh 0;
-  }
-  
-  .footer-links {
-    display: flex;
+
+  .save-rp9999-with {
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-start;
-    gap: 1rem;
+    padding: 0.375rem;
   }
-  
-  .copyright-team-3 {
-    font-size: 0.5rem;
-    display: flex;
-    justify-content: center;
-    color: #c7c7c7;
-    padding-bottom: 0.5rem;
+
+  .qr-code-parent {
+    padding: 0.375rem;
   }
-  
+
+  .qr-code-icon {
+    width: 3.75rem;  /* Increased from 3.25rem */
+    height: 3.75rem;
+  }
+
+  .googleplay-icon,
+  .appstore-icon {
+    height: 1.75rem;  /* Increased from 1.5rem */
+  }
+}
+
+/* Accessibility improvements */
+.email-input:focus,
+.footer-links a:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* Copyright */
+.copyright-team-3 {
+  font-size: 0.75rem;  /* Increased from 0.5rem for better readability */
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);  /* Softer color */
+  padding: 1rem 0 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 2rem;
+  font-weight: 300;  /* Lighter weight for cleaner look */
+  letter-spacing: 0.02em;  /* Slight letter spacing for clarity */
+}

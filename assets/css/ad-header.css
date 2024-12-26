@@ -11,29 +11,58 @@
 .summer-sale-parent {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
 }
 
-.english {
-  line-height: 1.3rem;
+/* Remove .english and .english-parent styles as they're no longer needed */
+
+.frame-parent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0 2rem;
 }
 
-.english-parent {
+.top-header {
+  background-color: var(--primary-color);
+  height: 3rem;
+  color: #f0f0f0;
+  font-family: 'Poppins', sans-serif;
+  width: 100%;
   display: flex;
   align-items: center;
 }
 
-.frame-parent {
-  display: flex;
-  justify-content: space-between;
-  gap: 15rem;
-  height: 100%;
-  margin: 0 2rem;
+#close-btn {
+  display: none;
 }
 
-.top-header {
-  background-color: #000;
-  height: 3rem;
-  color: #f0f0f0;
-  font-family: var(--font-poppins);
+#close-btn:checked ~ .top-header,
+#close-btn:checked ~ #close-btn-label {
+  display: none;
+}
+
+#ad-header {
+  display: flex;
+  align-items: center;
+  background-color: var(--primary-color);
+}
+
+#close-btn-label {
+  font-size: 1.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+#close-btn-x {
+  cursor: pointer;
 }
