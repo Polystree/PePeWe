@@ -8,11 +8,12 @@ $featuredProducts = $product->getFeaturedProducts(10);
 $flashSaleProducts = $product->getFlashSaleProducts(10);
 $newArrivals = $product->getNewArrivals(5);
 $allProducts = $product->getAllProducts(20);
+
 function createProductSlug($name) {
     return './products/' . strtolower(str_replace(' ', '-', $name)) . '/';
 }
-
 ?>
+
 <link rel="stylesheet" href="/assets/css/home.css">
 <section class="hero-banner">
     <div class="hero-content container">

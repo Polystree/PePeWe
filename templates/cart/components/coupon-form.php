@@ -1,11 +1,7 @@
 <?php
 function getActiveCoupons($connect) {
     $currentDate = date('Y-m-d');
-    $stmt = $connect->prepare(
-        "SELECT id, code, discount FROM coupons 
-         WHERE expiry_date >= ? 
-         ORDER BY discount DESC"
-    );
+    $stmt = $connect->prepare("SELECT id, code, discount FROM coupons WHERE expiry_date >= ? ORDER BY discount DESC");
     $stmt->bind_param("s", $currentDate);
     $stmt->execute();
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -35,16 +31,12 @@ function updateTotal(discountPercent = 0) {
     const subtotal = parseFloat(document.getElementById('subtotalAmount').value);
     const shippingSelect = document.getElementById('shipping');
     const shippingCost = shippingSelect.value ? parseFloat(shippingSelect.selectedOptions[0].dataset.price) : 0;
-    
     const discountAmount = Math.round(subtotal * discountPercent / 100);
-    
     const finalTotal = Math.max(0, subtotal - discountAmount + shippingCost);
-    
     document.getElementById('currentDiscount').value = discountPercent;
     document.getElementById('discountRow').style.display = discountPercent > 0 ? 'flex' : 'none';
     document.getElementById('discountAmount').textContent = discountAmount.toLocaleString('id-ID');
     document.getElementById('finalTotal').textContent = 'Rp ' + finalTotal.toLocaleString('id-ID');
-    
     const payButton = document.getElementById('pay-button');
     if (payButton) {
         payButton.textContent = 'Pay Rp ' + finalTotal.toLocaleString('id-ID');

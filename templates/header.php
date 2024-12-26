@@ -1,7 +1,5 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() == PHP_SESSION_NONE) session_start();
 
 require_once __DIR__ . '/../includes/Database.php';
 require_once __DIR__ . '/../includes/Cart.php';
@@ -18,12 +16,9 @@ if (isset($_SESSION['username'])) {
         $result = $stmt->get_result();
         if ($result && $userData = $result->fetch_assoc()) {
             $_SESSION['userId'] = $userData['id'];
-            if (!empty($userData['profile_image'])) {
-                $profileImage = $userData['profile_image'];
-            }
+            if (!empty($userData['profile_image'])) $profileImage = $userData['profile_image'];
             $userId = $userData['id'];
         } else {
-            error_log("User {$username} not found in database");
             unset($_SESSION['username']);
         }
     }

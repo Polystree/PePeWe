@@ -4,7 +4,6 @@ $stmt->execute();
 $coupons = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 ?>
-
 <div id="coupons" class="tab-content">
     <button onclick="showAddCouponModal()" class="add-product-btn">Add Coupon</button>
     <table class="cart-table">
@@ -23,20 +22,10 @@ $stmt->close();
                     <td><span class="coupon-code"><?= htmlspecialchars($coupon['code']) ?></span></td>
                     <td><?= $coupon['discount'] ?>%</td>
                     <td><?= date('Y-m-d', strtotime($coupon['expiry_date'])) ?></td>
-                    <td>
-                        <?php 
-                        $now = new DateTime();
-                        $expiry = new DateTime($coupon['expiry_date']);
-                        echo $now > $expiry ? 
-                            '<span class="status-badge expired">Expired</span>' : 
-                            '<span class="status-badge active">Active</span>';
-                        ?>
-                    </td>
+                    <td><?= new DateTime() > new DateTime($coupon['expiry_date']) ? '<span class="status-badge expired">Expired</span>' : '<span class="status-badge active">Active</span>' ?></td>
                     <td class="manage-product-btn">
-                        <button onclick="editCoupon(<?= htmlspecialchars(json_encode($coupon)) ?>)" 
-                                class="edit-button">Edit</button>
-                        <button onclick="deleteCoupon(<?= $coupon['id'] ?>)" 
-                                class="delete-button">Delete</button>
+                        <button onclick="editCoupon(<?= htmlspecialchars(json_encode($coupon)) ?>)" class="edit-button">Edit</button>
+                        <button onclick="deleteCoupon(<?= $coupon['id'] ?>)" class="delete-button">Delete</button>
                     </td>
                 </tr>
             <?php endforeach; ?>

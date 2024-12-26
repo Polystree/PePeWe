@@ -1,10 +1,6 @@
 <?php
 $userId = $_SESSION['userId'];
-$stmt = $connect->prepare(
-    "SELECT * FROM user_addresses 
-     WHERE user_id = ? 
-     ORDER BY is_default DESC, created_at DESC"
-);
+$stmt = $connect->prepare("SELECT * FROM user_addresses WHERE user_id = ? ORDER BY is_default DESC, created_at DESC");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $addresses = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);

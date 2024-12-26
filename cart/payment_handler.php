@@ -1,148 +1,128 @@
 <?php
 header('Content-Type: application/json');
 ini_set('display_errors', 0);
-error_reporting(E_ALL);
-
-// Create a log function
-function logError($message, $context = []) {
-    error_log(sprintf(
-        "[Payment Error] %s | Context: %s", 
-        $message, 
-        json_encode($context)
-    ));
-}
-
+error_reporting(0);
 session_start();
+
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../includes/Cart.php';
 require_once __DIR__ . '/../includes/Order.php';
 
 try {
     $input = file_get_contents('php://input');
-    if (!$input) {
-        throw new Exception('No input received');
-    }
-
     $decoded = json_decode($input, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        throw new Exception('Invalid JSON input: ' . json_last_error_msg());
-    }
-
-    if (!isset($_SESSION['userId']) || !isset($decoded['amount']) || 
-        !isset($decoded['shipping_cost']) || !isset($decoded['shipping_service']) || 
-        !isset($decoded['discount_amount'])) {
-        throw new Exception('Missing required parameters');
+    
+    if (!$input || json_last_error() !== JSON_ERROR_NONE || 
+        !isset($_SESSION['userId'], 
+               $decoded['amount'],
+               $decoded['shipping_cost'],
+               $decoded['shipping_service'],
+               $decoded['discount_amount'])) {
+        exit(json_encode(['success' => false]));
     }
 
     $midtransConfig = require_once __DIR__ . '/../config/midtrans_config.php';
-
     $config = require_once __DIR__ . '/../config/config.php';
-    $db_config = $config['db'];
-    $connect = new mysqli($db_config['host'], $db_config['username'], $db_config['password'], $db_config['database']);
+    
+    $connect = new mysqli(
+        $config['db']['host'], 
+        $config['db']['username'], 
+        $config['db']['password'], 
+        $config['db']['database']
+    );
 
     if ($connect->connect_error) {
-        throw new Exception('Database connection failed');
+        exit(json_encode(['success' => false]));
     }
 
-    $stmt = $connect->prepare("SELECT username, email FROM users WHERE id = ?");
-    $stmt->bind_param("i", $_SESSION['userId']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
+    // Get user and address
+    ($stmt = $connect->prepare("SELECT username, email FROM users WHERE id = ?"))->bind_param("i", $_SESSION['userId']); $stmt->execute();
+    if (!($user = $stmt->get_result()->fetch_assoc())) exit(json_encode(['success' => false]));
 
-    if (!isset($user) || !$user) {
-        throw new Exception('User not found');
-    }
+    ($stmt = $connect->prepare("SELECT * FROM user_addresses WHERE user_id = ? AND is_default = 1"))->bind_param("i", $_SESSION['userId']); $stmt->execute();
+    if (!($address = $stmt->get_result()->fetch_assoc())) exit(json_encode(['success' => false]));
 
-    $stmt = $connect->prepare("SELECT a.* FROM user_addresses a WHERE a.user_id = ? AND a.is_default = 1");
-    $stmt->bind_param("i", $_SESSION['userId']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $address = $result->fetch_assoc();
-
-    if (!isset($address) || !$address) {
-        throw new Exception('No default shipping address found');
-    }
-
-    $shippingAddress = $address ? 
-        $address['recipient_name'] . ' - ' . 
-        $address['phone'] . ' | ' . 
-        $address['address'] . ', ' . 
-        $address['city'] . ' ' . 
+    $shippingAddress = sprintf(
+        "%s - %s | %s, %s %s",
+        $address['recipient_name'],
+        $address['phone'],
+        $address['address'],
+        $address['city'],
         $address['postal_code']
-        : 'No address provided';
+    );
 
+    // Setup Midtrans
     \Midtrans\Config::$serverKey = $midtransConfig['server_key'];
-    \Midtrans\Config::$isProduction = $midtransConfig['is_production'];
+    \Midtrans\Config::$isProduction = false;
     \Midtrans\Config::$isSanitized = true;
     \Midtrans\Config::$is3ds = true;
 
-    $userId = $_SESSION['userId'];
-    $orderId = 'ORDER-' . time() . '-' . $userId;
-    $amount = (int)$decoded['amount'];
-    $shippingCost = (int)$decoded['shipping_cost'];
-    $shippingService = $decoded['shipping_service'];
-    $discountAmount = (int)$decoded['discount_amount'];
-
+    // Process order
     $cart = new Cart();
-    $cartItems = $cart->getCartItems($userId);
-
+    $cartItems = $cart->getCartItems($_SESSION['userId']);
     if (empty($cartItems)) {
-        throw new Exception('Cart is empty');
+        exit(json_encode(['success' => false]));
     }
 
-    $order = new Order();
     $orderNumber = 'ORD-' . time() . '-' . $_SESSION['userId'];
     
-    $orderId = $order->createOrder(
-        $_SESSION['userId'],
-        $orderNumber,
-        $amount,
-        $shippingAddress,
-        $cartItems,
-        $shippingCost,
-        $shippingService,
-        $discountAmount
-    );
-
+    // Calculate total before creating order
+    $total = 0;
     $items = [];
+    
     foreach ($cartItems as $item) {
+        $total += (int)$item['price'] * (int)$item['quantity'];
         $items[] = [
             'id' => $item['productId'],
-            'price' => $item['price'],
-            'quantity' => $item['quantity'],
+            'price' => (int)$item['price'],
+            'quantity' => (int)$item['quantity'],
             'name' => $item['product_name']
         ];
     }
 
-    // Add shipping cost as an item if present
-    if ($shippingCost > 0) {
+    // Add shipping cost
+    if ((int)$decoded['shipping_cost'] > 0) {
+        $total += (int)$decoded['shipping_cost'];
         $items[] = [
             'id' => 'SHIPPING',
-            'price' => $shippingCost,
+            'price' => (int)$decoded['shipping_cost'],
             'quantity' => 1,
-            'name' => 'Shipping Cost (' . $shippingService . ')'
+            'name' => 'Shipping Cost (' . $decoded['shipping_service'] . ')'
         ];
     }
 
-    // Add discount as a negative item if present
-    if ($discountAmount > 0) {
+    // Subtract discount
+    if ((int)$decoded['discount_amount'] > 0) {
+        $total -= (int)$decoded['discount_amount'];
         $items[] = [
             'id' => 'DISCOUNT',
-            'price' => -$discountAmount,
+            'price' => -(int)$decoded['discount_amount'],
             'quantity' => 1,
             'name' => 'Discount'
         ];
     }
 
-    $transaction = [
+    // Create order after calculating final total
+    $order = new Order();
+    $order->createOrder(
+        $_SESSION['userId'],
+        $orderNumber,
+        $total,
+        $shippingAddress,
+        $cartItems,
+        (int)$decoded['shipping_cost'],
+        $decoded['shipping_service'],
+        (int)$decoded['discount_amount']
+    );
+
+    $transaction_data = [
         'transaction_details' => [
             'order_id' => $orderNumber,
-            'gross_amount' => $amount // This should now match items total
+            'gross_amount' => $total
         ],
         'customer_details' => [
-            'first_name' => $user['username'] ?? 'Customer',
-            'email' => $user['email'] ?? 'customer@example.com',
+            'first_name' => $user['username'],
+            'email' => $user['email'],
             'shipping_address' => [
                 'first_name' => $address['recipient_name'],
                 'phone' => $address['phone'],
@@ -154,40 +134,18 @@ try {
         'item_details' => $items
     ];
 
-    try {
-        $snapToken = \Midtrans\Snap::getSnapToken($transaction);
-        if (!$snapToken) {
-            throw new Exception('Empty token received from Midtrans');
-        }
-        
-        $response = [
-            'success' => true,
-            'token' => $snapToken,
-            'order_id' => $orderNumber
-        ];
-        
-        echo json_encode($response);
-        exit;
-        
-    } catch (Exception $e) {
-        logError('Midtrans token error', [
-            'error' => $e->getMessage(),
-            'transaction' => $transaction
-        ]);
-        throw new Exception('Payment gateway error: ' . $e->getMessage());
+    $snapToken = \Midtrans\Snap::getSnapToken($transaction_data);
+
+    if (!$snapToken) {
+        throw new Exception('Failed to get payment token');
     }
 
-} catch (Exception $e) {
-    logError($e->getMessage(), [
-        'input' => $input ?? null,
-        'userId' => $_SESSION['userId'] ?? null
-    ]);
-    
-    http_response_code(500);
     echo json_encode([
-        'success' => false,
-        'error' => $e->getMessage(),
-        'detail' => 'An error occurred while processing your request'
-    ], JSON_PARTIAL_OUTPUT_ON_ERROR);
-    exit;
+        'success' => true,
+        'token' => $snapToken,
+        'order_id' => $orderNumber
+    ]);
+
+} catch (\Throwable $th) {
+    echo json_encode(['success' => false]);
 }

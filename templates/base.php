@@ -14,15 +14,9 @@ $config = include(__DIR__ . '/../config/config.php');
 <body>
     <?php 
     include __DIR__ . '/header.php';
-    if (strpos($_SERVER['REQUEST_URI'], '/login') === false) {
-        include __DIR__ . '/ad-header.php';
-    }
+    if (strpos($_SERVER['REQUEST_URI'], '/login') === false) include __DIR__ . '/ad-header.php';
     ?>
-    
-    <main class="main">
-        <?php echo $content; ?>
-    </main>
-
+    <main class="main"><?php echo $content; ?></main>
     <?php include __DIR__ . '/footer.php'; ?>
 </body>
 </html>

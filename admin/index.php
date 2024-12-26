@@ -45,8 +45,6 @@ $connect = new mysqli(
         include 'components/orders.php';
         include 'components/discounts.php';
         include 'components/coupons.php';
-        
-        // Include modals
         include 'components/modals/discount_modal.php';
         include 'components/modals/coupon_modal.php';
         include 'components/modals/order_details_modal.php';

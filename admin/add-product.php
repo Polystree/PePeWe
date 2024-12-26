@@ -4,50 +4,27 @@ session_start();
 $config = include(__DIR__ . '/../config/config.php');
 $db_config = $config['db'];
 
-$connect = new mysqli(
-    $db_config['host'],
-    $db_config['username'], 
-    $db_config['password'],
-    $db_config['database']
-);
-
-if ($connect->connect_error) {
-    error_log("Database connection failed: " . $connect->connect_error);
-    die("Connection failed. Please try again later.");
-}
+$connect = new mysqli($db_config['host'], $db_config['username'], $db_config['password'], $db_config['database']);
+if ($connect->connect_error) die("Connection failed. Please try again later.");
 
 $product_image_dir = __DIR__ . '/../assets/img/product';
-if (!is_dir($product_image_dir)) {
-    mkdir($product_image_dir, 0777, true);
-}
+if (!is_dir($product_image_dir)) mkdir($product_image_dir, 0777, true);
 
 if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin') {
     header('Location: /login');
     exit();
 }
 
-$product = [
-    'name' => '',
-    'price' => '',
-    'image_path' => '',
-    'description' => '',
-    'quantity' => '',
-    'category' => '',
-    'status' => 'active',
-    'is_featured' => 0
-];
+$product = ['name' => '', 'price' => '', 'image_path' => '', 'description' => '', 'quantity' => '', 'category' => '', 'status' => 'active', 'is_featured' => 0];
 $productId = null;
 
 if (isset($_GET['productId'])) {
     $productId = (int)$_GET['productId'];
-    $stmt = $connect->prepare("SELECT name, price, image_path, description, quantity, category, status, is_featured 
-        FROM products WHERE productId = ?");
+    $stmt = $connect->prepare("SELECT name, price, image_path, description, quantity, category, status, is_featured FROM products WHERE productId = ?");
     $stmt->bind_param("i", $productId);
     $stmt->execute();
     $result = $stmt->get_result();
-    if ($row = $result->fetch_assoc()) {
-        $product = array_merge($product, $row);
-    }
+    if ($row = $result->fetch_assoc()) $product = array_merge($product, $row);
     $stmt->close();
 }
 
@@ -312,9 +289,7 @@ if (\$_SERVER['REQUEST_METHOD'] == 'POST') {
 PHP;
 
     $dirName = __DIR__ . '/../products/' . strtolower(str_replace(' ', '-', $name));
-    if (!is_dir($dirName)) {
-        mkdir($dirName, 0777, true);
-    }
+    if (!is_dir($dirName)) mkdir($dirName, 0777, true);
     $fileName = $dirName . '/index.php';
     file_put_contents($fileName, $productPageContent);
     return $fileName;
@@ -323,12 +298,7 @@ PHP;
 function deleteProductPage($oldName) {
     $oldDirName = __DIR__ . '/../products/' . strtolower(str_replace(' ', '-', $oldName));
     if (is_dir($oldDirName)) {
-        $files = glob($oldDirName . '/*');
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                unlink($file);
-            }
-        }
+        array_map('unlink', glob($oldDirName . '/*'));
         rmdir($oldDirName);
         return true;
     }
@@ -345,26 +315,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $image_dir = __DIR__ . '/../assets/img/product/';
-        $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
         $random_number = mt_rand(1000, 9999);
         $safe_product_name = preg_replace('/[^a-z0-9]+/', '-', strtolower($name));
+        $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
         $image_filename = $random_number . '-' . $safe_product_name . '.' . $file_extension;
         $image_path = '../assets/img/product/' . $image_filename;
-        $upload_path = $image_dir . $image_filename;
+        $upload_path = __DIR__ . '/' . $image_path;
 
-        // Move the uploaded file to the target directory
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
-            // Delete old image if exists in edit mode
-            if (isset($productId) && !empty($product['image_path'])) {
-                $old_image = __DIR__ . '/..' . $product['image_path'];
-                if (file_exists($old_image)) {
-                    unlink($old_image);
-                }
-            }
-        } else {
-            // Handle the error if the file could not be moved
-            die("Failed to upload image. Please try again.");
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path) && isset($productId) && !empty($product['image_path'])) {
+            $old_image = __DIR__ . '/..' . $product['image_path'];
+            if (file_exists($old_image)) unlink($old_image);
         }
     } else {
         $image_path = $product['image_path'];
@@ -374,38 +334,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['productId'])) {
         $productId = (int)$_POST['productId'];
-        
         $stmt = $connect->prepare("SELECT name FROM products WHERE productId = ?");
         $stmt->bind_param("i", $productId);
         $stmt->execute();
         $oldName = $stmt->get_result()->fetch_assoc()['name'];
         $stmt->close();
-        $stmt = $connect->prepare("UPDATE products SET name = ?, price = ?, image_path = ?, description = ?, 
-            quantity = ?, url = ?, category = ?, status = ?, is_featured = ? WHERE productId = ?");
-        $stmt->bind_param("sissiissii", $name, $price, $image_path, $description, $quantity, $url, 
-            $category, $status, $is_featured, $productId);
+
+        $stmt = $connect->prepare("UPDATE products SET name = ?, price = ?, image_path = ?, description = ?, quantity = ?, url = ?, category = ?, status = ?, is_featured = ? WHERE productId = ?");
+        $stmt->bind_param("sissiissii", $name, $price, $image_path, $description, $quantity, $url, $category, $status, $is_featured, $productId);
         
         if ($stmt->execute()) {
-            if ($oldName !== $name) {
-                deleteProductPage($oldName);
-            }
+            if ($oldName !== $name) deleteProductPage($oldName);
             header('Location: index.php');
             exit();
-        } else {
-            die("Error updating product: " . $stmt->error);
         }
     } else {
-        $stmt = $connect->prepare("INSERT INTO products (name, price, image_path, description, quantity, url, 
-            category, status, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sissiissi", $name, $price, $image_path, $description, $quantity, $url,
-            $category, $status, $is_featured);
-    }
-    
-    if ($stmt->execute()) {
-        header('Location: index.php');
-        exit();
-    } else {
-        die("Error saving product: " . $stmt->error);
+        $stmt = $connect->prepare("INSERT INTO products (name, price, image_path, description, quantity, url, category, status, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sissiissi", $name, $price, $image_path, $description, $quantity, $url, $category, $status, $is_featured);
+        if ($stmt->execute()) {
+            header('Location: index.php');
+            exit();
+        }
     }
     $stmt->close();
 }

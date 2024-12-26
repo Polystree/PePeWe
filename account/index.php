@@ -1,7 +1,6 @@
 <?php include 'account.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, width=device-width" />
@@ -12,7 +11,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap" />
 </head>
-
 <body>
     <?php include __DIR__ . '/../templates/header.php'; ?>
     <div class="main-content">
@@ -20,7 +18,7 @@
             <h1 class="page-title">Account Settings</h1>
             
             <form method="POST" class="profile-form" enctype="multipart/form-data">
-            <?php if (isset($securityNotice)) echo $securityNotice; ?>
+                <?php if (isset($securityNotice)) echo $securityNotice; ?>
                 <div class="form-grid">
                     <div class="image-section">
                         <div class="profile-image-preview">
@@ -121,12 +119,9 @@
         document.getElementById('profile_image').addEventListener('change', function(e) {
             const preview = document.querySelector('.profile-image-preview img');
             const file = e.target.files[0];
-            
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                }
+                reader.onload = e => preview.src = e.target.result;
                 reader.readAsDataURL(file);
             }
         });
