@@ -28,11 +28,19 @@ try {
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
 
+    if (!isset($user) || !$user) {
+        throw new Exception('User not found');
+    }
+
     $stmt = $connect->prepare("SELECT a.* FROM user_addresses a WHERE a.user_id = ? AND a.is_default = 1");
     $stmt->bind_param("i", $_SESSION['userId']);
     $stmt->execute();
     $result = $stmt->get_result();
     $address = $result->fetch_assoc();
+
+    if (!isset($address) || !$address) {
+        throw new Exception('No default shipping address found');
+    }
 
     $shippingAddress = $address ? 
         $address['recipient_name'] . ' - ' . 
@@ -93,7 +101,15 @@ try {
 
     try {
         $snapToken = \Midtrans\Snap::getSnapToken($transaction);
-        echo json_encode(['token' => $snapToken, 'order_id' => $orderNumber]);
+        if (!$snapToken) {
+            throw new Exception('Failed to generate Midtrans token');
+        }
+        echo json_encode([
+            'success' => true,
+            'token' => $snapToken, 
+            'order_id' => $orderNumber
+        ]);
+        exit;
     } catch (Exception $e) {
         throw new Exception('Failed to get Midtrans token: ' . $e->getMessage());
     }
@@ -101,7 +117,9 @@ try {
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
+        'success' => false,
         'error' => $e->getMessage(),
         'detail' => 'An error occurred while processing your request'
     ]);
+    exit;
 }

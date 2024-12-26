@@ -33,8 +33,7 @@ $connect = new mysqli($db_config['host'], $db_config['username'], $db_config['pa
                     <?php if ($totalPrice > 0): ?>
                         <button id="pay-button" class="midtrans-button" disabled>Pay Rp <?php echo number_format($totalPrice, 0, ',', '.'); ?></button>
                         <small class="help-text" id="paymentHelp">Please select a shipping method to continue</small>
-                        <script type="text/javascript" src="http://app.sandbox.midtrans.com/snap/snap.js" 
-                            data-client-key="<?php echo $midtransConfig['client_key']; ?>"></script>
+                        <script type="text/javascript" src="http://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-XvNfPDRV6aHEMfWG"></script>
                         <script>
                             let isPaymentInProgress = false;
                             
