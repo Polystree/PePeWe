@@ -148,6 +148,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password_reset_token` varchar(255) DEFAULT NULL,
   `password_reset_expires` datetime DEFAULT NULL,
   `last_password_change` datetime DEFAULT NULL,
+  `remember_token` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)

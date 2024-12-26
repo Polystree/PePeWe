@@ -37,20 +37,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Recover Password - iniGadget</title>
     <link rel="icon" type="image/x-icon" href="../assets/img/logo-light.svg" />
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/add-product.css">
+    <link rel="stylesheet" href="../assets/css/recover.css">
 </head>
 <body>
-    <?php include '../header.php'; ?>
-    <div class="main">
-        <div id="upload-product-title">
-            <span>Recover Password</span>
-        </div>
-        <form method="POST" id="upload-product-form">
-            <div class="upload-product-item">
-                <div class="credential-form">
-                    <label for="identifier" class="upload-label">Email or Username:</label>
+    <?php include __DIR__ . '/../templates/header.php'; ?>
+    <div class="recover-container">
+        <div class="recover-box">
+            <h1>Recover Password</h1>
+            <?php if (!empty($error)): ?>
+                <div class="error-message"><?php echo $error; ?></div>
+            <?php endif; ?>
+            <form method="POST" class="recover-form">
+                <div class="form-group">
+                    <label for="identifier">Email or Username</label>
                     <input type="text" id="identifier" name="identifier" required>
                 </div>
+                <button type="submit" class="recover-button">Continue</button>
             </form>
         </div>
     </div>
