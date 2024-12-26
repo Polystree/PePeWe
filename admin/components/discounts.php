@@ -40,7 +40,10 @@ $stmt->close();
                     </td>
                     <td class="manage-product-btn">
                         <button onclick="editDiscount(<?= htmlspecialchars(json_encode($discount)) ?>)" class="edit-button">Edit</button>
-                        <button onclick="deleteDiscount(<?= $discount['id'] ?>)" class="delete-button">Delete</button>
+                        <form method="POST" action="delete-discount.php" style="display:inline;">
+                            <input type="hidden" name="discountId" value="<?= $discount['id'] ?>">
+                            <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this discount?')">Delete</button>
+                        </form>
                     </td>
                 </tr>
             <?php endforeach; ?>

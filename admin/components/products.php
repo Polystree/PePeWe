@@ -39,7 +39,10 @@ $stmt->close();
                     <td><span class="featured-badge <?= $product['is_featured'] ? 'yes' : 'no' ?>"><?= $product['is_featured'] ? 'Yes' : 'No' ?></span></td>
                     <td class="manage-product-btn">
                         <button onclick="editProduct(<?= $product['productId'] ?>)" class="edit-button">Edit</button>
-                        <button onclick="deleteProduct(<?= $product['productId'] ?>)" class="delete-button">Delete</button>
+                        <form method="POST" action="delete-product.php" style="display:inline;">
+                            <input type="hidden" name="productId" value="<?= $product['productId'] ?>">
+                            <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
+                        </form>
                     </td>
                 </tr>
             <?php endforeach; ?>
