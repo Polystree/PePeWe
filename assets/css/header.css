@@ -183,7 +183,8 @@ header a:hover {
 }
 
 .frame1,
-.frame1 label {
+.frame1 label,
+.frame1 a {
   height: 32px;
 }
 

@@ -33,7 +33,69 @@ $connect = new mysqli($db_config['host'], $db_config['username'], $db_config['pa
                     <?php if ($totalPrice > 0): ?>
                         <button id="pay-button" class="midtrans-button" disabled>Pay Rp <?php echo number_format($totalPrice, 0, ',', '.'); ?></button>
                         <small class="help-text" id="paymentHelp">Please select a shipping method to continue</small>
-                        <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="<?php echo $midtransConfig['client_key']; ?>"></script>
+                        <script type="text/javascript" src="http://app.sandbox.midtrans.com/snap/snap.js" 
+                            data-client-key="<?php echo $midtransConfig['client_key']; ?>"></script>
+                        <script>
+                            let isPaymentInProgress = false;
+                            
+                            document.getElementById('pay-button').addEventListener('click', async function(e) {
+                                if (isPaymentInProgress) return;
+                                
+                                try {
+                                    isPaymentInProgress = true;
+                                    e.target.disabled = true;
+                                    e.target.textContent = 'Processing...';
+                                    
+                                    const finalTotal = document.getElementById('finalTotal').textContent
+                                        .replace('Rp ', '').replace(/\./g, '');
+                                    
+                                    const response = await fetch('/cart/payment_handler.php', {
+                                        method: 'POST',
+                                        headers: { 
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json'
+                                        },
+                                        body: JSON.stringify({ 
+                                            amount: parseInt(finalTotal)
+                                        })
+                                    });
+                                    
+                                    const data = await response.json();
+                                    
+                                    if (!data.token) {
+                                        throw new Error(data.error || 'Failed to get payment token');
+                                    }
+                                    
+                                    window.snap.pay(data.token, {
+                                        onSuccess: function(result) {
+                                            window.location.href = '/orders?order_id=' + result.order_id;
+                                        },
+                                        onPending: function(result) {
+                                            alert('Payment pending. Please complete your payment.');
+                                            resetPaymentButton();
+                                        },
+                                        onError: function() {
+                                            alert('Payment failed. Please try again.');
+                                            resetPaymentButton();
+                                        },
+                                        onClose: function() {
+                                            resetPaymentButton();
+                                        }
+                                    });
+                                } catch (error) {
+                                    console.error('Payment error:', error);
+                                    alert('Error initializing payment: ' + error.message);
+                                    resetPaymentButton();
+                                }
+                            });
+
+                            function resetPaymentButton() {
+                                isPaymentInProgress = false;
+                                const button = document.getElementById('pay-button');
+                                button.disabled = false;
+                                button.textContent = 'Pay Rp ' + document.getElementById('finalTotal').textContent.replace('Rp ', '');
+                            }
+                        </script>
                     <?php else: ?>
                         <p>Add items to your cart to proceed with payment</p>
                     <?php endif; ?>

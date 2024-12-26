@@ -70,6 +70,9 @@ $is_login_page = (strpos($current_uri, '/login') === 0);
 
             <?php if (isset($_SESSION['username']) && $_SESSION['username'] !== 'admin'): ?>
                 <div class="frame1">
+                    <a href="/orders">
+                        <img class="cart-icon" alt="Orders" src="/assets/img/orders.svg" />
+                    </a>
                     <label for="cart-switch">
                         <img class="cart-icon" alt="" src="/assets/img/cart.svg" />
                     </label>

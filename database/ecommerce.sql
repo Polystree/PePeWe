@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `profile_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '/assets/img/Generic avatar.svg',
-  `contact_details` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `contact_details` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'Contact details',
   `security_question` varchar(255) DEFAULT NULL,
   `security_answer` varchar(255) DEFAULT NULL,
   `oauth_provider` varchar(50) DEFAULT NULL,
@@ -185,6 +185,35 @@ INSERT INTO `user_addresses` (`id`, `user_id`, `address_label`, `recipient_name`
 	(2, 1, 'Office', 'John Doe', '+6281234567891', 'Jl. Thamrin No. 456', 'Jakarta', '12346', 0, '2024-12-17 05:28:29'),
 	(3, 2, 'Home', 'Regular User', '+6281234567892', 'Jl. Asia Afrika No. 789', 'Bandung', '40111', 1, '2024-12-17 05:28:29'),
 	(4, 2, 'Parents', 'User Parents', '+6281234567893', 'Jl. Malioboro No. 101', 'Yogyakarta', '55111', 0, '2024-12-17 05:28:29');
+
+CREATE TABLE IF NOT EXISTS `orders` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `order_number` varchar(50) NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `shipping_address` text NOT NULL,
+  `status` varchar(20) DEFAULT 'pending',
+  `payment_status` varchar(20) DEFAULT 'pending',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Dumping structure for table ecommerce_v3.order_items
+CREATE TABLE IF NOT EXISTS `order_items` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `quantity` int NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `order_id` (`order_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`productId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
